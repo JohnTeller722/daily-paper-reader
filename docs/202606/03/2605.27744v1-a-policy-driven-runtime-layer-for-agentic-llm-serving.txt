@@ -1,0 +1,410 @@
+Title: A Policy-Driven Runtime Layer for Agentic LLM Serving
+
+URL Source: https://arxiv.org/pdf/2605.27744v1
+
+Published Time: Thu, 28 May 2026 00:26:56 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+# A Policy-Driven Runtime Layer for Agentic LLM Serving 
+
+# Rui Zhang 
+
+University of California, Santa Cruz 
+
+# Chaeeun Kim 
+
+University of California, Santa Cruz 
+
+# Liting Hu 
+
+University of California, Santa Cruz 
+
+## Abstract 
+
+Multi-agent LLM systems have become the dominant produc-tion workload, but the serving stack was not built for them. The agent framework above knows agent identities, role schemas, and dispatch structure but never sees an engine-level event; the serving engine below sees every event but knows nothing about agents. A surprising number of cross-cutting policies depend on both: prefix caching, batch shap-ing, speculative execution, fairness, tool-result memoization, safety enforcement, and more. Each lives in the seam be-tween the two layers and is currently solved by a one-off patch into one neighbor or the other. We argue this seam is best addressed by an architectural change rather than point fixes: insert a third tier, an agent runtime layer , between the framework and the engine, ex-posing four primitives ( observe , score , predict , act ) into which any agent-aware policy plugs, with agent identity as the shared coordinate. We map nine concrete policies onto the layer and validate the abstraction in depth on the one with the largest immediate serving-cost lever: KV caching across sessions, instantiated as CacheSage , which learns the per-workload agent transition matrix online and uses it for survival-based eviction and between-step prefetch. Prelimi-nary results on five real multi-agent workloads show +13 to +37 pp cache hit-rate lift, 12% to 29% lower mean TTFT, and 6% to 14% higher throughput over an unmodified serving stack. 
+
+## CCS Concepts 
+
+• Computer systems organization → Architectures ; •
+
+Computing methodologies → Machine learning .
+
+## Keywords 
+
+LLM serving, KV cache, prefix caching, agentic workloads, predictive prefetch 
+
+## 1 Introduction 
+
+Multi-agent LLM workloads dominate production. A multi-agent LLM system decomposes a single user request into a coordinated trajectory of model calls, for example a supervi-sor that routes work to specialists, a hierarchical organization that recursively breaks down objectives, or a swarm of peers Agent framework 
+
+Serving engine 
+
+KV eviction 
+
+missing 
+
+tier 
+
+Agent framework 
+
+Serving engine 
+
+Agent runtime layer 
+
+policy 
+
+Request 
+
+Scheduling 
+
+Agent 
+
+Fairness 
+
+Batch 
+
+shaping 
+
+> observe
+> score
+> predict
+> act
+
+observe  act 
+
+> KV
+> eviction
+> policy
+> Request
+> Sche-
+> duling
+> Agent
+> Fairness
+> Batch
+> shaping
+
+Figure 1: The seam between agent framework and serv-ing engine. Today (left): cross-cutting policies have no shared home and are patched into one neighbor or the other. Proposed (right): an agent runtime layer hosts these policies on four primitives with agent identity as the shared coordinate. 
+
+that hand off through tool returns. The pattern is prevalent in production. A majority of organizations now run agentic systems in production [ 13 ], and framework adoption nearly doubled year-over-year [ 5 ]. The multi-agent regime is no longer a research curiosity; it is the workload the serving stack has to serve. 
+
+Many cross-cutting policies live between the framework and the engine. Production multi-agent systems sit on a two-tier stack today (Figure 1, left): an agent framework above (AutoGen, LangGraph, MetaGPT, swarm-style peers) that emits LLM API calls under its own dispatch logic, and a serv-ing engine below (vLLM [ 12 ], SGLang [ 36 ]) that prefills KV, batches requests, and returns tokens. A surprising number of production-relevant policy decisions live between them. For example: 
+
+• Deciding which KV blocks recur across sessions and should not be evicted is a question about agent identity, not block hashes. 
+
+• Deciding which incoming requests likely share state and should be batched together is a question about agent dis-patch, not queue order. 
+
+> 1
+> arXiv:2605.27744v1 [cs.AI] 26 May 2026 Zhang et al.
+
+• Deciding which agent class deserves a larger share of capacity is a question about agent fairness, not per-request priority. Table 1 sketches nine such policies, from KV caching and batch shaping to speculative agent execution and fairness. Each is currently treated by a one-off patch into either the framework (a wrapper that hand-codes a workflow graph or a retry decorator) or the engine (a TTL pin, a scheduler heuristic, a flag that biases eviction). The recurring shape is the same in every case: the policy needs agent-level metadata, the policy-relevant events arrive at the engine, and neither neighbor alone holds both. 
+
+The gap is architectural. The framework knows agent iden-tities, roles, and dispatch but never sees an engine event; the engine sees every event but knows nothing about agents. The policies above all need the intersection : events tagged by agent identity, accumulated across sessions, queryable on the engine hot path. That intersection cannot be retrofitted cleanly into either neighbor. The right response is archi-tectural: insert a third tier that owns the intersection and exposes it through a stable interface. 
+
+An agent runtime layer with four primitives. We propose the missing tier as an agent runtime layer (Figure 1, right): a substrate between framework and engine that owns the cross-cutting agent metadata neither neighbor has, exposing four primitives any agent-aware policy plugs into: observe 
+
+(receive events from a neighbor), score (return per-item pri-ority for a neighbor’s ranking decision), predict (return a probabilistic forecast over future agent activity), and act 
+
+(issue an off-critical-path side-effect). Together they form an observe → score → predict → act feedback loop, with agent identity as the shared coordinate across all four. The primi-tives are policy-agnostic; every policy in Table 1 maps onto them (§2.1 formalizes the contract). 
+
+Case study: an agent-aware KV cache. We validate the ab-straction in depth on KV caching, the policy with the largest immediate serving-cost lever. Multi-agent prompts carry a recurring system+tools agent anchor (0.34 to 0.52 of ev-ery first-turn prompt) that reactive prefix caches drop to LRU before the next session arrives. CacheSage closes that gap by learning the per-workload first-order Markov agent transition matrix online and using it for survival-based evic-tion ( score ) and between-step prefetch ( predict +act ), with bounded state ( ≤ 20 KB/workload) and graceful LRU fallback. 
+
+Our contributions are as follows: 
+
+• The agent runtime layer. The third tier the serving stack is missing, with a four-primitive interface that any agent-aware policy plugs into, and nine concrete policies mapped onto it (Table 1). 
+
+• CacheSage : an instantiation for KV caching. The four primitives realized in three components: transition learner, survival-probability scorer, and workload-gated cross-session prefetch. 
+
+• Preliminary evidence the gap matters. On five multi-agent workloads, CacheSage lifts hit rate by +13 to +37 pp, cuts mean TTFT by 12% to 29%, and raises throughput by 6% to 14%. 
+
+## 2 The Agent Runtime Layer 2.1 Architecture and Four Primitives 
+
+The agent runtime layer is a third tier between the framework above and the serving engine below that owns the cross-cutting agent metadata neither neighbor has. The framework keeps emitting LLM API calls; the engine keeps serving them; the runtime makes the agent-level policy decisions both neighbors lack the metadata to make. The runtime’s contract with its neighbors reduces to four generic primitives, each parameterized by the policy hosted on the layer: 
+
+• observe(event) : the runtime is notified of a policy-relevant event from a neighbor (a block touch, a request arrival, a tool return, a tenant deadline). It updates internal state tagged by agent identity , the shared coordinate the layer adds on top. 
+
+• score(item) : the runtime returns a per-item priority a neighbor uses to rank a decision (which block to evict, which request to admit, which speculative branch to com-mit, which tenant to throttle). 
+
+• predict(horizon) : the runtime returns a probabilistic forecast over future agent activity (next agent, next tool, next tenant burst). The forecast’s form is policy-specific; the primitive is not. 
+
+• act(side_effect) : the runtime issues an off-critical-path side-effect to a neighbor (warm a cache, pre-load weights, hedge a speculative call, defer a request). act is the only primitive that mutates neighbor state. Together they form an observe → score → predict → act feed-back loop, with agent identity as the shared coordinate that unifies events, scores, predictions, and actions across poli-cies. 
+
+## 2.2 Policies the Layer Can Host 
+
+KV caching is the policy we validate in depth (§3), but the layer is a substrate for any agent-aware policy in the same seam. Table 1 sketches nine concrete instances grouped into three families and shows how each maps uniformly onto the four primitives. The first row of the memory-and-state group is the case study we develop; the other eight rows are policies currently solved by ad-hoc patches into one neighbor that, we argue, belong on the layer for the same architectural reason. 
+
+> 2A Policy-Driven Runtime Layer for Agentic LLM Serving
+
+We do not claim every cell is a finished design; the con-tribution of the table is that the same four-primitive shape recurs across otherwise unrelated problems, all of which need agent identity and none of which fit cleanly on either neighbor alone. The other eight rows remain open challenges for future work. 
+
+## 2.3 Properties 
+
+Three properties make the layer useful independent of any one policy. Framework-agnostic : it requires only LLM API calls carrying metadata, a contract satisfied by AutoGen, LangGraph, MetaGPT, ReAct, and swarm frameworks. Engine-portable : each hosted policy needs only the engine hooks its primitives use, not engine internals; the KV-cache case study uses exactly two hooks (an observe forward on block touches and a score consult on eviction). Policy-modular :distinct policies share the layer’s observe stream but com-pose against the same four primitives, so adding a new policy does not require new engine surgery. 
+
+## 3 Case Study: Agent-Aware KV Cache 
+
+We instantiate the layer on KV caching, the policy with the largest immediate serving-cost lever (Figure 3). §3.1 gives the three workload observations that motivate the design, and §3.2 through §3.4 realize the four primitives in three components. 
+
+## 3.1 Workload Observations 
+
+We characterize five real multi-agent workloads (MMLU [ 10 ], MT-Bench [ 35 ], GAIA [ 20 ], GSM8K [ 4], HumanEval [ 3]), each running on the same six-agent supervisor framework with Llama-3.1-8B-Instruct [ 9] and AutoGen [ 30 ] Selector-GroupChat dynamic LLM-selected routing. Three observa-tions shape the design. 
+
+Observation 1: a non-trivial cross-session surface, concen-trated at session start. Let 𝜑 = (system + tools + few-shots )/ (total prompt tokens ) be the share of each prompt that forms the agent anchor and recurs identically across sessions. 𝜑 
+
+upper-bounds the surface a cross-session cache can amor-tize; the residual is per-session history no cross-session layer can reuse. Figure 2(a) reports first-turn 𝜑 : the surface is non-trivial on every workload (0.34 to 0.52). The surface does not 
+
+persist within a session. Anchor bytes stay fixed while per-session history grows linearly with turn count, so per-turn 𝜑 
+
+decays monotonically with depth. This exposes two regimes: 
+
+within-session reuse (already captured by reactive block-level prefix caching) and across-session reuse, where the anchor is the recurring substrate but reactive caches retain it only by accident. The latter is where the case study adds value. MMLU          
+
+> MT-Bench
+> GAIA
+> GSM8k
+> HumanEval
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> First-turn  ϕ
+> 0.52
+> 0.34 0.34 0.36 0.34
+> (a) First-turn 𝜑 .MMLU
+> MT-Bench
+> GAIA
+> GSM8k
+> HumanEval
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Entropy reduction  R
+> 0.45 0.45 0.48 0.42 0.40 (b) Entropy Reduction R
+
+Figure 2: Cross-session structure on five multi-agent workloads. (a) First-turn shareable surface 𝜑 . (b) Rela-tive conditional entropy reduction 𝑅 .
+
+Observation 2: the next agent is substantially predictable. 
+
+Let 𝐴 𝑡 be the agent role at step 𝑡 . We compute the relative conditional entropy reduction 𝑅 = 1−𝐻 (𝐴 𝑡 +1 | 𝐴 𝑡 )/ 𝐻 (𝐴 𝑡 +1).
+
+𝑅 = 0 means the next agent is uniformly random given the current one; 𝑅 = 1 means it is fully determined. Figure 2(b) shows 𝑅 ∈ [ 0.40 , 0.48 ] on every workload. Even the lowest-𝑅 
+
+case eliminates 40% of the next-step uncertainty conditional on the current agent, well above what session-level recency alone extracts. A first-order Markov chain over the agent alphabet captures most of the available structure; higher-order or per-prompt models are not required. 
+
+Observation 3: transition probabilities vary across work-loads. If the same framework produced the same transition matrix regardless of task source, that matrix could be de-clared once at deploy time. However, the same six-agent framework, fed different task sources, produces visibly dif-ferent routing patterns, with swings of 27 to 47 pp on in-dividual edges (e.g., Tester →Planner ranges from 0.53 on GSM8K to 1.00 on MT-Bench). A statically declared graph either over-protects under-used edges on one workload or under-protects heavy edges on another, so the transition matrix must be learned online from live dispatch history. 
+
+## 3.2 Transition Learning 
+
+Agent identity. Every block carries a stable agent identity 
+
+𝑎 ∈ A , computed once at first touch as a content hash of the first few block hashes after the chat-template prefix (defaults: 
+
+skip =4, take =4 for Llama-3.1-8B-Instruct). The hash lands in the system + tools region (the agent anchor measured by 
+
+𝜑 ), so two requests sharing that anchor produce the same identity even when their session content differs. Block hashes remain the storage key; agent identity is the prediction key the runtime adds on top. 
+
+Markov estimate. Observe maintains pairwise counts 𝑛 (𝑎 ′, 𝑎 )
+
+over a sliding window; the maximum-likelihood transition is 
+
+b𝑃 (𝑏 | 𝑎 ) = 𝑛 (𝑎, 𝑏 )/ 𝑛 (𝑎 ), computable in 𝑂 (1). The first-order chain is justified by the entropy reduction 𝑅 ∈ [ 0.40 , 0.48 ]
+
+> 3
+
+Zhang et al. 
+
+Table 1: Nine agent-aware policies the runtime layer can host, mapped onto the four primitives. 
+
+Policy observe score predict act 
+
+Memory and state 
+
+KV cache ( this paper ) block touches eviction priority next agent warm next anchor Tool-result memoization tool args / result memo value next tool call prefetch / invalidate 
+
+Compute scheduling 
+
+Batch shaping / admission queue, prefill ratios batch priority agent composition pack/defer/hedge request Disagg. P/D placement per-agent token ratios placement P/D workload mix route by P/D ratio Speculative agent execution transition history branch commit next agent + input issue spec. call Inference adapters/drafters per-agent adapter quality adapter fit agent → adapter set apply adapter/drafter 
+
+Operational policies 
+
+Fairness agent resource usage long-term share per agent agent demand adjust resource share Safety / guardrails agent outputs risk per call likely violator block / rewrite / escalate Failure hedging / retry failure traces retry priority likely failure warm fallback / hedge 
+
+from §3.1. State is 𝑂 (|A| 2) machine words; on our workloads 
+
+|A| stabilizes below 50, giving ≤ 20 KB per workload. 
+
+## 3.3 Survival-Probability Eviction 
+
+Tractable proxy. We want to score each block by the prob-ability its agent will fire within the next 𝐾 steps under b𝑃 .Computing that exactly costs 𝑂 (|A| 3𝐾 ) per agent, which is too expensive on every eviction. We approximate with a hop-count proxy on a thresholded DAG 𝐺 = (A , E) with edge (𝑎, 𝑏 ) ∈ E iff b𝑃 (𝑏 | 𝑎 ) ≥ 𝜏 (𝜏 = 0.01 preserves ≥ 99% 
+
+of observed transitions). A single BFS from 𝑎 0 gives a hop count 𝐸 [𝑎 ] per agent. Define 
+
+˜𝑝 surv (𝑎 ) = 1 − min (𝐸 [𝑎 ], 𝐸 max )/ 𝐸 max ∈ [ 0, 1], (1) monotone in 𝑝 surv and updated only on agent change. 
+
+Block score. For block 𝑏 with agent identity 𝑎 𝑏 and a nor-malized recency residual 𝜌 𝑏 ∈ [ 0, 1] that reuses the engine’s existing recency clock, score (𝑏 ) = 𝑤 pred · ˜𝑝 surv (𝑎 𝑏 ) + 𝜌 𝑏 , 𝑤 pred = 1.0, (2) and the engine evicts the lowest-score block. Predictive lift :imminent agents get near-unit additive protection above re-cency, so their identity blocks survive cross-session pressure. 
+
+Graceful fallback : with no learnable structure, b𝑃 has high marginal entropy, the DAG fragments, every ˜𝑝 surv collapses toward 0, and score (𝑏 ) → 𝜌 𝑏 , exactly the LRU clock. 
+
+## 3.4 Cross-Session Prefetch 
+
+Eviction protects identity blocks that are already cached ;prefetching populates identity blocks that are not. Between scheduler steps, the runtime queries 𝑎 ∗ = arg max 𝑏 b𝑃 (𝑏 |
+
+𝑎 𝑡 ) and issues a warmup : a request carrying 𝑎 ∗’s system prompt, a one-character user message, and a single generated token. The warmup populates 𝑎 ∗’s identity blocks (the high-
+
+𝜑 region of the anchor) without injecting session-specific Agent  CacheSage runtime                   
+
+> Transition Learner
+> (observe) Planner
+> Coder
+> Reviewer
+> . . .
+> framework
+> Transition graph
+> Sliding window
+> ABACBD... ...
+> Update
+> AB
+> D...
+> AB
+> D...
+> Survival -Probability Scorer
+> (score)
+> At
+> BC
+> DE
+> hop 0
+> hop 1
+> hop 2 ... ...
+> Compute
+> Eviction score
+> Cross -Session
+> Prefetch Hook
+> (predict + act)
+> Current: A t
+> Next agent prediction
+> Entropy Reduction
+> Prefetch a*'s anchor
+> a*
+> Serving Engine
+> request
+> ①
+> response
+> ③
+> System Prompt
+> Tool Set
+> . . .
+> Agent Anchor score ⑤score ⑤act ④act ④observe ②observe ②
+> KV cache pools
+> evict
+> prefetch
+> GPU memory
+> (active)
+> GPU memory
+> (active)
+> Host memory
+> (offloaded)
+> Host memory
+> (offloaded)
+> KV cache pools
+> evict
+> prefetch
+> GPU memory
+> (active)
+> Host memory
+> (offloaded)
+
+Figure 3: CacheSage instantiates the runtime layer for KV caching with three components: a transition learner ( observe ), a survival-probability scorer ( score ), and a cross-session prefetch hook ( predict + act ). 
+
+content into the cache. It flows through the engine’s normal serving path, so no kernel or scheduler change is needed. 
+
+## 4 Evaluation 
+
+Setup. Experiments are conducted on NVIDIA H100 80 GB GPU using Llama-3.1-8B-Instruct [ 9 ] as the primary model. four real-task multi-agent workloads from §3.1 (MMLU, MT-Bench, GAIA, GSM8K) on the same six-agent supervisor framework with tools and AutoGen’s SelectorGroupChat [ 30 ], plus a 12-agent Synthetic chain as a high-structure stress case. The synthetic runs at concurrency 1 with a 250-block budget; the four real-task workloads run at concurrency 4 with a 120-block budget, so the cache is genuinely under pres-sure. Baselines: vLLM and Continuum [ 15 ]. 50-task traces 
+
+4A Policy-Driven Runtime Layer for Agentic LLM Serving Synthetic            
+
+> GSM8K
+> MTBench GAIA MMLU
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> Cache hit rate (%)  vLLM Continuum CacheSage
+> (a) GPU KV cache hit rate. Synthetic
+> GSM8K
+> MTBench GAIA MMLU
+> 0
+> 100
+> 200
+> 300
+> 400
+> Per-turn latency (ms)  vLLM Continuum CacheSage (b) Per-turn end-to-end latency. Synthetic
+> GSM8K
+> MTBench GAIA MMLU
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> Throughput (turns/s)  vLLM Continuum CacheSage (c) Throughput (turns/s).
+
+Figure 4: Headline evaluation across five multi-agent workloads, comparing vLLM, Continuum, and CacheSage .(a) Cache hit rate; CacheSage wins 5/5 with +13 to +37 pp lifts. (b) End-to-end per-turn latency; CacheSage drops 6% to 26%. (c) Throughput; CacheSage raises 6% to 14%. 
+
+per workload (948 to 1417 turns). Hit rate is the cached token fraction ( cached_tokens / prompt_tokens ). 
+
+Headline results. Figure 4 reports hit rate, end-to-end la-tency, and throughput. CacheSage wins 5/5 over both base-lines, lifting hit rate by +13 to +37 pp relative to vLLM (the agent anchor is retained across the session-boundary gap that reactive caches miss), cutting end-to-end latency by 6% to 26%, and raising throughput by 6% to 14%. Continuum’s TTL pin reduces hit rate by 9 to 23 pp on three of the four real-task workloads, a known trade-off when the inter-turn timescale is shorter than the pin’s horizon. 
+
+Cost. Hot-path overhead is negligible: Observe runs in 
+
+∼1 𝜇 s mean per block-touch, the BFS-based scorer in single-digit 𝜇 s, and coordinator state stays under 25 KB at 24 agents. A full accounting (memory and latency microbenchmarks, sensitivity to cache budget and concurrency, and behavior with the runtime disabled) is deferred to the extended ver-sion. 
+
+## 5 Related Work 
+
+Point fixes of the same architectural gap. A growing line of work inserts agent-aware policy into one neighbor of the serving stack to address a single row of Table 1; we view each as a point fix of the same architectural gap. For KV caching (row 1), KVFlow [ 22 ] declares an agent step graph via SGLang annotations and scores eviction by step distance; Continuum [ 15 ], Tokencake [ 2 ], and InferCept [ 1]pin or migrate KV around tool calls; LMCache [ 17 ] provides an enterprise-scale KV cache layer with cross-tier storage. For scheduling and placement (rows 4 and 5), Autellix [ 19 ]and Agent.xpu [ 28 ] push agent-aware scheduling into the engine; LAMPS [ 24 ] schedules augmented requests by pre-dicted memory footprint; Parrot [ 16 ] uses developer-supplied Semantic Variables to colocate dependent requests. For specu-lative agent execution (row 6), PASTE [ 26 ] and Sherlock [ 23 ]speculatively execute the predicted next agent in parallel with the current decode. For decode adapters and drafters (row 7), multi-LoRA serving infrastructure swaps adapters at request granularity, and the speculative-decoding literature swaps drafts per workload but rarely per agent. For fairness across agents (row 8), recent work [ 34 ] enforces fair-share allocation across multi-modal and multi-agent applications inside the engine scheduler. Each line of work succeeds at its row, but each requires deploy-time graphs, hand-coded adapter ids, or per-policy engine surgery. The runtime layer learns the structure online and amortizes the same interven-tions across rows on a shared observe stream. 
+
+Multi-agent frameworks. AutoGen [ 30 ], MetaGPT [ 11 ], Re-Act [ 32 ], and OpenAI Swarm [ 21 ] dispatch above the engine; SGLang [ 36 ] sits between as a deploy-time-declared DSL. Each emits agent identity but none observe engine events at the granularity the layer needs. 
+
+KV Cache optimizations. Non-prefix sharing [ 8 , 31 ], cross-LLM reuse [ 18 ], KV-aware routing [ 25 ], sparse-attention and multimodal KV [ 14 , 27 ], KV-cache compression and joint eviction [ 7 , 33 ], and structured generation [ 6 , 29 ] optimize axes orthogonal to ours and compose cleanly with the layer. 
+
+## 6 Conclusion 
+
+Multi-agent LLM workloads expose a class of cross-cutting policies that neither the agent framework nor the serving engine alone can solve cleanly. We have argued that the right response is architectural: insert an agent runtime layer 
+
+between the two tiers, exposing four primitives ( observe ,
+
+score , predict , act ) into which any agent-aware policy plugs, with agent identity as the shared coordinate. The interface, not any specific policy, is the contribution; the case study validates that the gap matters in practice on the one row of Table 1 with the largest immediate serving-cost lever. The other eight rows of Table 1, including tool-result memoization, batch shaping, disaggregated P/D placement, 
+
+> 5
+
+Zhang et al. 
+
+speculative agent execution, decode adapters, fairness, safety, and failure hedging, remain open challenges for future work. 
+
+## References 
+
+[1] Reyna Abhyankar, Zijian He, Vikranth Srivatsa, Hao Zhang, and Yiy-ing Zhang. 2024. Infercept: Efficient intercept support for augmented large language model inference. arXiv preprint arXiv:2402.01869 
+
+(2024). [2] Zhuohang Bian, Feiyang Wu, Teng Ma, and Youwei Zhuo. 2025. Token-cake: A KV-Cache-centric Serving Framework for LLM-based Multi-Agent Applications. arXiv preprint arXiv:2510.18586 (2025). [3] Mark Chen, Jerry Tworek, Heewoo Jun, Qiming Yuan, Henrique Ponde De Oliveira Pinto, Jared Kaplan, Harri Edwards, Yuri Burda, Nicholas Joseph, Greg Brockman, et al . 2021. Evaluating large language models trained on code. arXiv preprint arXiv:2107.03374 (2021). [4] Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Hee-woo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, et al . 2021. Training verifiers to solve math word problems. arXiv preprint arXiv:2110.14168 (2021). [5] Datadog. 2026. State of AI Engineering 2026. Industry report, https: //www.datadoghq.com/state-of-ai-engineering/. [6] Yixin Dong, Charlie F Ruan, Yaxing Cai, Ziyi Xu, Yilong Zhao, Ruihang Lai, and Tianqi Chen. 2025. Xgrammar: Flexible and efficient structured generation engine for large language models. Proceedings of Machine Learning and Systems 7 (2025). [7] Shaoting Feng, Yuhan Liu, Hanchen Li, Xiaokun Chen, Samuel Shen, Kuntai Du, Zhuohan Gu, Rui Zhang, Yuyang Huang, Yihua Cheng, et al . 2025. EVICPRESS: Joint KV-Cache Compression and Eviction for Efficient LLM Serving. arXiv preprint arXiv:2512.14946 (2025). [8] In Gim, Guojun Chen, Seung-seob Lee, Nikhil Sarda, Anurag Khandel-wal, and Lin Zhong. 2024. Prompt cache: Modular attention reuse for low-latency inference. Proceedings of Machine Learning and Systems 6(2024), 325–338. [9] Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, Abhinav Pandey, Abhishek Kadian, Ahmad Al-Dahle, Aiesha Letman, Akhil Mathur, Alan Schelten, Alex Vaughan, et al . 2024. The llama 3 herd of models. arXiv preprint arXiv:2407.21783 (2024). [10] Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou, Mantas Mazeika, Dawn Song, and Jacob Steinhardt. 2020. Measuring massive multitask language understanding. arXiv preprint arXiv:2009.03300 
+
+(2020). [11] Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Jinlin Wang, Ceyao Zhang, Steven Yau, Zijuan Lin, Liyang Zhou, et al . 2024. MetaGPT: Meta programming for a multi-agent collaborative framework. In International Conference on Learning Rep-resentations , Vol. 2024. 23247–23275. [12] Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica. 2023. Efficient memory management for large language model serving with pagedattention. In Proceedings of the 29th symposium on operating systems principles . 611–626. [13] LangChain. 2026. State of Agent Engineering 2026. Industry survey, https://www.langchain.com/state-of-agent-engineering. [14] Wonbeom Lee, Jungi Lee, Junghwan Seo, and Jaewoong Sim. 2024. 
+
+{InfiniGen }: Efficient generative inference of large language models with dynamic {KV } cache management. In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24) . 155–172. [15] Hanchen Li, Runyuan He, Qiuyang Mang, Qizheng Zhang, Huanzhi Mao, Xiaokun Chen, Hangrui Zhou, Alvin Cheung, Joseph Gonza-lez, and Ion Stoica. 2025. Continuum: Efficient and robust multi-turn llm agent scheduling with kv cache time-to-live. arXiv preprint arXiv:2511.02230 (2025). [16] Chaofan Lin, Zhenhua Han, Chengruidong Zhang, Yuqing Yang, Fan Yang, Chen Chen, and Lili Qiu. 2024. Parrot: Efficient serving of 
+
+{LLM-based } applications with semantic variable. In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24) . 929–945. [17] Yuhan Liu, Yihua Cheng, Jiayi Yao, Yuwei An, Xiaokun Chen, Shaot-ing Feng, Yuyang Huang, Samuel Shen, Rui Zhang, Kuntai Du, et al .2025. Lmcache: An efficient KV cache layer for enterprise-scale LLM inference. arXiv preprint arXiv:2510.09665 (2025). [18] Yuhan Liu, Yuyang Huang, Jiayi Yao, Shaoting Feng, Zhuohan Gu, Kuntai Du, Hanchen Li, Yihua Cheng, Junchen Jiang, Shan Lu, et al .2024. DroidSpeak: KV Cache Sharing for Cross-LLM Communication and Multi-LLM Serving. arXiv preprint arXiv:2411.02820 (2024). [19] Michael Luo, Xiaoxiang Shi, Colin Cai, Tianjun Zhang, Justin Wong, Yichuan Wang, Chi Wang, Yanping Huang, Zhifeng Chen, Joseph E Gonzalez, et al . 2025. Autellix: An efficient serving engine for llm agents as general programs. arXiv preprint arXiv:2502.13965 (2025). [20] Grégoire Mialon, Clémentine Fourrier, Thomas Wolf, Yann LeCun, and Thomas Scialom. 2024. Gaia: a benchmark for general ai assistants. In 
+
+International Conference on Learning Representations , Vol. 2024. 9025– 9049. [21] OpenAI. 2024. Swarm: Educational framework exploring ergonomic, lightweight multi-agent orchestration. https://github.com/openai/ swarm. [22] Zaifeng Pan, AJJKUMAR DAHYALAL PATEL, Yipeng Shen, Zhengding Hu, Yue Guan, Wan-Lu Li, Lianhui Qin, Yida Wang, and Yufei Ding. 2026. KVFlow: Efficient prefix caching for accelerating LLM-based multi-agent workflows. Advances in Neural Information Processing Systems 38 (2026), 126246–126265. [23] Yeonju Ro, Haoran Qiu, Íñigo Goiri, Rodrigo Fonseca, Ricardo Bian-chini, Aditya Akella, Zhangyang Wang, Mattan Erez, and Esha Choukse. 2025. Sherlock: Reliable and Efficient Agentic Workflow Execution. arXiv preprint arXiv:2511.00330 (2025). [24] Rana Shahout, Cong Liang, Shiji Xin, Qianru Lao, Yong Cui, Minlan Yu, and Michael Mitzenmacher. 2026. Fast inference for augmented large language models. Advances in Neural Information Processing Systems 38 (2026), 71562–71591. [25] Vikranth Srivatsa, Zijian He, Reyna Abhyankar, Dongming Li, and Yiying Zhang. 2025. Preble: Efficient distributed prompt scheduling for llm serving. In International conference on learning representations ,Vol. 2025. 37057–37082. [26] Yifan Sui, Han Zhao, Rui Ma, Zhiyuan He, Hao Wang, Jianxun Li, and Yuqing Yang. 2026. Act while thinking: Accelerating llm agents via pattern-aware speculative tool execution. arXiv preprint arXiv:2603.18897 (2026). [27] Dezhan Tu, Danylo Vashchilenko, Yuzhe Lu, and Panpan Xu. 2025. VL-cache: Sparsity and modality-aware KV cache compression for vision-language model inference acceleration. In International Conference on Learning Representations , Vol. 2025. 219–239. [28] Xinming Wei, Jiahao Zhang, Haoran Li, Jiayu Chen, Haoning Guan, Rui Qu, Maoliang Li, Xiang Chen, and Guojie Luo. 2025. Agent. xpu: Efficient scheduling of agentic llm workloads on heterogeneous soc. 
+
+arXiv preprint arXiv:2506.24045 (2025). [29] Brandon T Willard and Rémi Louf. 2023. Efficient guided generation for large language models. arXiv preprint arXiv:2307.09702 (2023). [30] Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu, Li Jiang, Xiaoyun Zhang, Shaokun Zhang, Jiale Liu, et al . 2024. Autogen: Enabling next-gen LLM applications via multi-agent conver-sations. In First conference on language modeling .[31] Jiayi Yao, Hanchen Li, Yuhan Liu, Siddhant Ray, Yihua Cheng, Qizheng Zhang, Kuntai Du, Shan Lu, and Junchen Jiang. 2025. Cacheblend: 6A Policy-Driven Runtime Layer for Agentic LLM Serving 
+
+Fast large language model serving for rag with cached knowledge fusion. In Proceedings of the twentieth European conference on computer systems . 94–109. [32] Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao. 2022. React: Synergizing reasoning and acting in language models. arXiv preprint arXiv:2210.03629 (2022). [33] Hancheng Ye, Zhengqi Gao, Mingyuan Ma, Qinsi Wang, Yuzhe Fu, Ming-Yu Chung, Yueqian Lin, Zhijian Liu, Jianyi Zhang, Danyang Zhuo, et al . 2026. Kvcomm: Online cross-context kv-cache communi-cation for efficient llm-based multi-agent systems. Advances in Neural Information Processing Systems 38 (2026), 17882–17928. [34] Rui Zhang and Liting Hu. 2025. Enabling Fairness Across Multi-modal and Multi-agent Applications. In 2025 IEEE International Conference on Edge Computing and Communications (EDGE) . IEEE, 90–92. [35] Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhang-hao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric Xing, et al. 2023. Judging llm-as-a-judge with mt-bench and chatbot arena. 
+
+Advances in neural information processing systems 36 (2023), 46595– 46623. [36] Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Chuyue Sun, Jeff Huang, Cody H Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E Gonzalez, et al . 2024. Sglang: Efficient execution of structured lan-guage model programs. Advances in neural information processing systems 37 (2024), 62557–62583. 7

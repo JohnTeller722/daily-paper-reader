@@ -1,0 +1,1040 @@
+Title: Rubric-Guided Process Reward for Stepwise Model Routing
+
+URL Source: https://arxiv.org/pdf/2605.29310v1
+
+Published Time: Fri, 29 May 2026 00:38:17 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Rubric-Guided Process Reward for Stepwise Model Routing 
+
+Shenghao Ye 1* , Yu Guo 1* , Zhengheng Li 2* , Shuangwu Chen 1† , Jian Yang 11University of Science and Technology of China 2 Southeast University 
+
+> 3
+
+Institute of Artificial Intelligence, Hefei Comprehensive National Science Center 
+
+{ssh0321y, yukariguo}@mail.ustc.edu.cn {chensw, jianyang}@ustc.edu.cn 
+
+Abstract 
+
+Stepwise model routing improves the efficiency of Large Reasoning Models (LRMs) by assign-ing each reasoning step to a suitable model. Re-cent methods formulate routing as a sequential decision process and train the router with re-inforcement learning. However, although they model routing as a process, they still super-vise the router with outcome rewards. Such rewards only reflect final answer correctness and fail to evaluate intermediate routing de-cisions, which can weaken performance and generalization. To address this gap, we propose RoRo, a rubric-guided process reward frame-work for stepwise model routing. RoRo first collects diverse routing trajectories and con-structs preference pairs based on outcome, cost, and process quality. It then trains a Rubricor to generate a query-specific evaluation rubric and a Judge to score routing trajectories under this rubric through alternating optimization. The resulting process rewards are combined with outcome rewards to optimize the routing pol-icy via GRPO. Experiments on five reasoning benchmarks under both same-family and cross-family settings show that RoRo consistently outperforms strong baselines and achieves bet-ter accuracy and cost trade-offs. 
+
+1 Introduction 
+
+Large Reasoning Models (LRMs) (Yang et al., 2025; Guo et al., 2025) have shown strong perfor-mance on complex reasoning tasks, such as mathe-matical reasoning, logical inference, and multi-hop question answering (Zhao et al., 2024; Newman et al., 2024). Their success often relies on longer and more explicit reasoning trajectories, which help models break down complex reasoning into simpler intermediate steps. However, this ability comes with a high inference cost. As the reasoning chain becomes longer, both latency and computational 
+
+> *Equal contribution
+> †Corresponding authors
+
+overhead increase, making LRMs hard to deploy in latency-sensitive and resource-limited scenarios (Snell et al., 2025; Muennighoff et al., 2025). To address this tension, works (Shi et al., 2025; Pan et al., 2025) have explored stepwise model routing, which selects a suitable model for each intermediate reasoning step. Their core idea is that different steps in the same reasoning trajectory can vary substantially in difficulty (Ong et al., 2025). In practice, only a few critical steps require the stronger model, while many simpler steps can be handled by the smaller model (Wang et al., 2025). Early methods (Zeng et al., 2026; Lee et al., 2026) follow this idea by estimating the difficulty of each step independently and using local uncertainty sig-nals to decide when to call the large model. Despite their promising performance, recent studies (Zhang et al., 2026; Kapoor et al., 2026) further argue that routing should not be viewed as an isolated decision at each step, but as a process over the full reasoning trajectory. From this per-spective, the decision to invoke the LRM depends not only on the local difficulty of the current step, but also on the prefix state, such as previous model choices. Following this view, TRIM (Kapoor et al., 2026) formulates routing as a sequential decision process and trains the router with reinforcement learning. It mainly uses final answer correctness as the outcome-level reward. However, these methods still rely on outcome-level supervision, even though they model routing as a process. Existing studies in reward modeling (Wang et al., 2026; Uesato et al., 2023) have shown that outcome accuracy alone is insufficient for process modeling. Relying only on final correctness is prone to deceptive alignment, where the model achieves high outcome accuracy while learning misaligned intermediate behaviors. This can weaken both performance and general-ization, as shown in Figures 1 and 2. Therefore, stepwise model routing needs explicit process-level rewards to guide router optimization.     
+
+> arXiv:2605.29310v1 [cs.AI] 28 May 2026 0400 800 1200 1600
+> Router Optimization Steps
+> 76
+> 77
+> 78
+> 79
+> 80
+> Budgeted Accuracy (%)  Outcome+Process
+> Outcome-only
+
+Figure 1: Budgeted accuracy during router optimization on MATH-500 over training. Budgeted accuracy is measured at 60% of the LRM-only FLOPs. 
+
+However, routing trajectories are difficult to ver-ify. There are no gold labels that directly indicate whether each routing decision is good or bad, mak-ing reliable process rewards hard to obtain. Recent works (Sheng et al., 2026; Gunjal et al., 2026) use rubric to evaluate chain-of-thought reasoning and turn these evaluations into process rewards. This idea naturally motivates our study, since both chain-of-thought reasoning and stepwise model routing require process-level evaluation. As shown in Fig-ures 1 and 2, our preliminary study shows that even simple rubric-based rewards raise the performance ceiling and bring consistent gains across datasets. These results suggest that rubrics can provide use-ful process supervision for learning better routers. Building on these findings, we propose RoRo , a 
+
+rubric-guided pr ocess reward framework for step-wise model ro uting. RoRo first collects diverse routing trajectories and constructs preference pairs based on outcome, cost, and process quality. It then trains a Rubricor and Judge alternately to learn process-level evaluation for routing. During router optimization, the Rubricor and Judge are frozen. For each query, the Rubricor generates a query-specific rubric, and the Judge scores routing trajec-tories under this rubric to provide process rewards, which are used to optimize the router with GRPO. In this way, RoRo provides explicit process super-vision for learning better routing policies. 
+
+Our Contributions . (1) New Perspective . We identify a supervision gap in stepwise model rout-ing, where existing methods model routing as a pro-cess but still rely on outcome-only rewards, mak-ing them prone to deceptive alignment and limit-ing performance. (2) Novel Framework . We pro-pose RoRo, a rubric-guided process reward frame-work that provides process rewards for stepwise routing policy learning. (3) SOTA Performance .GPQA OmniMath MATH-500 Avg. 
+
+> Datasets
+> 35
+> 45
+> 55
+> 65
+> 75
+> 85
+> Budgeted Accuracy (%)
+> 39.7
+> 56.3
+> 76.1
+> 57.4
+> 47.0
+> 60.0
+> 79.8
+> 62.3
+> 47.9
+> 61.7
+> 81.3
+> 63.6
+> Random
+> Outcome-only
+> Outcome+Process
+
+Figure 2: Budgeted accuracy across MATH-500, Omn-iMath, and GPQA. Budgeted accuracy is measured at 60% of the LRM-only FLOPs. 
+
+Experiments on multiple benchmarks show that RoRo consistently outperforms strong baselines and achieves better performance-cost trade-offs. 
+
+2 Preliminary 
+
+Stepwise Model Routing. We formulate step-wise model routing as a sequential decision pro-cess. Given a query q, a multi-step reasoning task is solved through a sequence of steps s1, . . . , s n.We consider a large reasoning model (LRM) pθM ,a small reasoning model (SRM) pθm . At each step i, the SRM first drafts a candidate step ˆsi.The routing policy πθ then chooses an action ai ∈{continue , regenerate }. If ai = continue , the draft is accepted as si = ˆ si. If ai = regenerate ,the LRM regenerates the step with higher reliabil-ity and higher cost. We define a routing trajectory 
+
+as τ = ( s1: n, a 1: n), which contains the reasoning steps s1: n and routing actions a1: n. In this work, we split reasoning traces into steps using the newline delimiter “ \n\n ” (Lee et al., 2026). The routing policy πθ takes the candidate step ˆsi and a prefix summary as input. The prefix summary contains the query q, previous per-step routing actions, per-step costs, and per-step uncertainty signals of pre-vious steps. We use average token entropy as the default uncertainty signal (Zeng et al., 2026). 
+
+Rubric-Based Process Reward. Rubric-based reward modeling (Liu et al., 2025; Gunjal et al., 2026) evaluates non-verifiable processes with ex-plicit criteria. A rubric r = {(ci, w i)}|r| 
+
+> i=1
+
+con-tains natural-language criteria. Each criterion ci
+
+describes one aspect, and wi ∈ [0 , 1] denotes its weight. In our setting, a rubric evaluates the quality of routing trajectories. Given a query q and a tra-jectory set Tq = {τ (j)}Nj=1 , a rubric generator Gψ
+
+produces a query-specific rubric rq = Gψ(q, Tq).Training Pipeline of RoRo                                                       
+
+> Sec3.1 Preference Data Construction
+> Query q
+> SSRM -only
+> LRM -only
+> Random
+> Outcome -only
+> ...
+> L
+> SSSS...
+> ... LLLL
+> ... LLSSS
+> ... LLSSL
+> ...
+> SRM step LRM step
+> Collect trajectory pool 𝓣 !from six routing policies
+> 𝒟 !={𝜏 ",𝜏 #}
+> Preference pairs
+> Outcome Cost Process
+> Three Preference Rules
+> Sec3.2 Rubric -Guided Process Reward
+> Use seed rubric to warm up the Judge 𝐽 $
+> Construct pairs 𝒟 !using three rules
+> Seed Rubric
+> Judge 𝐽 $
+> warm -start
+> Rubricor 𝐺 %
+> Judge 𝐽 $
+> rubric
+> 𝜏 ">𝜏 #
+> 𝜏 #
+> Preference
+> Prediction
+> Alternating RL
+> ...
+> 𝜏 "
+> ...
+> Input
+> Output
+> Learn to distinguish good
+> routing trajectories from poor ones
+> Sec3.3 Router Optimization
+> 𝑅 total =𝜷 𝑹 process −𝝀𝑪 +𝑹 outcome
+> LLSSL... Answer
+> routing trajectory 𝜏
+> process outcome
+> rubric
+> cost
+> GRPO
+> Policy update Router 𝜋 &
+> Freeze 𝐺 %and 𝐽 $to train the router
+> Outcome
+> accuracy
+> Question Q:
+> What is the total GDP (nominal) of all coun -
+> tries with a UN budget greater than 2%?
+
+Figure 3: Overview of the RoRo pipeline. Stage 1 constructs route preference data from routing policies. Stage 2 trains the Rubricor and Judge via alternating optimization with validation gating. Stage 3 freezes both components and optimizes the routing policy with GRPO; the Rubricor generates query-specific rubrics. 
+
+A judge Jϕ scores each trajectory τ ∈ Tq un-der this rubric and produces a process reward 
+
+Rproc = Jϕ(q, τ, r q). This reward captures rout-ing quality beyond final-answer correctness. 
+
+3 RoRo 
+
+We present RoRo, a rubric-guided pr ocess reward framework for stepwise model ro uting. The over-all training pipeline consists of three stages, as shown in Figure 3. First, we collect routing tra-jectories from diverse policies and construct pref-erence pairs based on outcome, cost, and process quality (Sec. 3.1). Second, we train a Rubricor Gψ
+
+and a Judge Jϕ through alternating optimization (Sec. 3.2). For each query, Gψ generates a query-specific rubric, and Jϕ scores routing trajectories under this rubric. Third, we freeze both compo-nents and optimize the routing policy with GRPO, using the process rewards produced by the trained 
+
+Gψ and Jϕ during policy learning (Sec. 3.3). 
+
+3.1 Route Preference Data Construction Trajectory Collection. For each training query 
+
+q, we collect routing trajectories from six poli-cies to ensure diversity. (1) SRM-only , which as-signs every step to the small model; (2) LRM-only ,which assigns every step to the large model; (3) 
+
+Random routing , which assigns each step to ei-ther model with a random probability; (4) Entropy-based routing (Zeng et al., 2026), which routes to the LRM when step entropy exceeds a threshold; (5) Confidence-based routing (Lee et al., 2026), which routes to the LRM when model confidence is low; and (6) Outcome-only router , a policy trained with only outcome reward and cost penalty. The first five policies are training-free. Together, these policies span diverse routing behaviors and cost-performance trade-offs. We denote the collected trajectory pool for query q as Tq = {τ (j)}Nq
+
+> j=1
+
+.
+
+Preference Pair Construction. From the tra-jectory pool Tq, we construct preference pairs 
+
+(τ +, τ −), where τ + ≻ τ − indicates that τ + is preferred to τ −. We define preferences using three rules. (1) Outcome preference favors the trajectory with a correct final answer. (2) Cost preference 
+
+favors the trajectory with lower LRM usage when both answers are correct. (3) Process preference fa-vors the trajectory with better routing quality when outcome and cost are similar. The first two cri-teria are computed from final answers and token counts. For process preference, we use the seed rubric described in Sec. 3.2 to score each trajectory and select the one with the higher rubric score. We denote preference set for query q as Dq.
+
+3.2 Rubric-Guided Process Reward Modeling 
+
+Since the routing process has no gold labels, we cannot directly supervise each routing decision (Guha et al., 2024). To address this, we train a Rubricor Gψ and a Judge Jϕ to learn what makes a routing trajectory good. For each query, Gψ gener-ates a rubric from the trajectory pool, and Jϕ scores each trajectory under this rubric. 
+
+Seed Rubric. We manually design a seed rubric 
+
+rseed that captures basic routing quality criteria, as detailed in Appendix A.3. The seed rubric contains multiple criteria with uniform weights. Each crite-rion maps trajectory features to a normalized score in [0 , 1] . It serves two roles. First, it conditions the Judge during initialization. Second, it provides initial process preferences for constructing Dq.
+
+Judge Warm-Start. We first warm up the Judge using the seed rubric. For each query q and pref-erence pair (τ +, τ −) ∈ D q, we train Jϕ with the Bradley-Terry objective 
+
+LJ = − log σ Jϕ(q, τ +, r seed )
+
+− Jϕ(q, τ −, r seed ), (1) where Jϕ(q, τ, r ) denotes the scalar score assigned by the Judge to trajectory τ under rubric r for query 
+
+q, and σ is the sigmoid function. Here, τ + and τ −
+
+denote the preferred and dispreferred trajectories. This stage gives the Judge a basic ability to rank routing trajectories under a rubric. The Judge is further improved during alternating optimization. 
+
+Alternating Optimization. After warm-start, we refine the Rubricor and the Judge over multiple rounds, indexed by t.
+
+Phase 1: Update Rubricor. We freeze J(t) 
+
+> ϕ
+
+and optimize Gψ. For each query q, the Rubricor takes the trajectory pool Tq as input and samples M can-didate rubrics {rq,m }Mm=1 . Each candidate rubric 
+
+rq,m = {(ci, w i)} contains criteria with weights. Before updating the Rubricor, we validate the criteria in each candidate rubric on a held out set of routing rollouts. For each criterion ci, we compute its partial correlation with route preference after controlling for outcome and cost. A criterion is retained only if (1) the partial correlation is sta-tistically significant, (2) its score variance across trajectories exceeds a minimum threshold, and (3) the mutual information between its score and the outcome label stays below a leakage threshold. The retained criteria and their weights form a validated candidate rubric ˜rq,m . This filtering procedure fol-lows RLCER (Sheng et al., 2026), adapted for rout-ing where outcome leakage should be avoided. We provide full details of the validation gate in Ap-pendix B. Each validated candidate rubric receives a reward based on its average preference margin under the frozen Judge: 
+
+ρq,m = log σ
+
+ ¯∆J(t)
+
+> q,m
+
+
+
+,
+
+where ¯∆J(t) 
+
+> q,m
+
+is the mean of J(t) 
+
+> ϕ
+
+(q, τ +, ˜rq,m ) −
+
+J(t) 
+
+> ϕ
+
+(q, τ −, ˜rq,m ) over all preference pairs 
+
+(τ +, τ −) ∈ D q. A larger reward indicates that the generated rubric helps the Judge better separate preferred trajectories from dispreferred ones. We then treat ρq,m as the scalar reward for the sampled rubric rq,m and update the Rubricor with policy-gradient optimization: 
+
+∇ψJG = Eq,m [ρq,m ∇ψ log Gψ(rq,m | q, Tq)] .
+
+Thus, the Rubricor learns to generate rubrics under which the Judge assigns higher scores to preferred trajectories than to dispreferred ones. 
+
+Phase 2: Update Judge. We freeze the updated Rubricor and optimize Jϕ. For each query q, the Rubricor generates a shared rubric from the trajec-tory pool. The same validation step is applied to obtain a validated rubric ˜r(t) 
+
+> q
+
+. The Judge is then trained on all pairs within that query group 
+
+L(t) 
+
+> J
+
+= − X
+
+> q
+
+X  
+
+> (τ+,τ −)∈D q
+
+log σ Jϕ(q, τ +, ˜r(t) 
+
+> q
+
+)
+
+− Jϕ(q, τ −, ˜r(t) 
+
+> q
+
+).
+
+(2) Through this alternating process, the Rubricor learns to generate valid criteria for routing evalua-tion, while the Judge learns to score routing trajec-tories under these criteria. Together, they produce reliable process rewards for router training. 
+
+Process Reward Computation. During router training, we freeze the Rubricor and the Judge. Given a query q and its sampled GRPO rollout group Tq = {τ (k)}Kk=1 , the Rubricor first generates a candidate rubric 
+
+rq = Gψ(q, Tq). (3) We then apply the validation gate to rq. If rq fails the validation gate, the rollout group is discarded. Otherwise, the validated rubric ˜rq is used to score each trajectory 
+
+R(k)process = Jϕ(q, τ (k), ˜rq). (4) Since all trajectories in the same rollout group share 
+
+˜rq, their process rewards are directly comparable. 
+
+3.3 Process-Aware Router Optimization 
+
+With Gψ and Jϕ frozen, we optimize the routing policy πθ using GRPO (Shao et al., 2024). 
+
+Training Objective. For each query q, the router samples a group of K routing trajectories 
+
+{τ (k)}Kk=1 . Following the process reward compu-tation above, the Rubricor generates a validated rubric ˜rq for this group, and the Judge assigns a process reward to each trajectory. Each trajectory receives the combined reward 
+
+R(k)total = R(k)outcome − λC (k) + βR (k)process , (5) where R(k)outcome ∈ { 0, 1} indicates answer cor-rectness, C(k) counts LRM generation tokens, and 
+
+R(k)process is the process reward from the Judge. λ
+
+and β control the weights of cost and quality. Advantage Estimation. GRPO computes advan-tages by normalizing rewards within each rollout group 
+
+A(k) = R(k)total − μK
+
+σK
+
+, (6) where μK and σK are the group reward mean and standard deviation. This removes the separate value model. Each decision in trajectory τ (k) shares the same trajectory-level advantage A(k). We then up-date the router with the GRPO objective using A(k)
+
+as the trajectory-level advantage. 
+
+3.4 Overall Inference Pipeline 
+
+Given a query q, RoRo generates an answer through iterative routing. At each step, the SRM drafts a candidate step, and the router decides whether to accept it or invoke the LRM. (1) Initial draft . The SRM pθm generates the first candidate step ˆs1.(2) Routing decision . The router πθ takes the candidate step ˆsi and a compact prefix summary as input. The summary records the query q, pre-vious actions, per-step costs, and the average to-ken entropy of each selected step, where the en-tropy comes from the model that produced that step. Based on this input, the router selects an action ai ∈ { continue , regenerate }.(3) Step update . If ai = continue , the can-didate step is accepted as si = ˆsi. If ai =
+
+regenerate , the LRM pθM regenerates this step, and the regenerated step is used as si.(4) Iterative generation . After obtaining si,RoRo appends it to the current reasoning trace. The SRM then drafts the next candidate step ˆsi+1 ,and the same routing process is repeated. (5) Answer completion . The process stops when the model produces a complete final answer or reaches the predefined maximum step limit. 
+
+4 Experiments 
+
+We present a comprehensive evaluation of RoRo. We first describe the experimental setup (Sec. 4.1). We then organize our experiments around four key research questions. Q1 : Does RoRo consis-tently outperform existing stepwise routing meth-ods? (Sec. 4.2) Q2 : How does each component contribute to RoRo’s performance? (Sec. 4.3) Q3 :Does RoRo provide better cost-effectiveness un-der different inference budgets? (Sec. 4.4) Q4 : Is RoRo sensitive to problem difficulty and reliable across uncertainty signal choices? (Sec. 4.5) 
+
+4.1 Experimental Setup Models and Configurations. We use Qwen3-1.7B (Yang et al., 2025) as the SRM and evalu-ate two LRMs: Qwen3-14B (Yang et al., 2025) and DeepSeek-R1-Distill-Qwen-14B (Guo et al., 2025). This setup allows us to study both same-family and cross-family collaboration. All models run in thinking mode for multi-step reasoning. The routing policy is a 2-layer MLP with 128 hidden units, following TRIM (Kapoor et al., 2026). For the Rubricor and Judge, we both use Qwen3-8B (Yang et al., 2025) as the backbone model. The router, Rubricor, and Judge are all trained on the MATH training set (Hendrycks et al., 2021). 
+
+Benchmarks. We evaluate on five benchmarks spanning domains and difficulty levels. MATH-500 (Lightman et al., 2023), AIME 2025 (Mathemati-cal Association of America, 2025), and OmniMath (Gao et al., 2025) serve as in-domain mathemati-cal reasoning benchmarks. To test cross-domain generalization, we include GSM8K (Cobbe et al., 2021) and GPQA (Rein et al., 2024). GSM8K contains grade-school math problems that are sim-pler than the training data, while GPQA covers graduate-level science questions that require rea-soning beyond mathematical domain. 
+
+Baselines. We compare RoRo against standalone models (SRM-only and LRM-only), Random rout-ing, and six representative stepwise routing meth-ods, including RSD (Liao et al., 2025), SpecCoT (Shi et al., 2025), SpecReason (Pan et al., 2025), STEER (Lee et al., 2026), GlimpRouter (Zeng et al., 2026), and TRIM (Kapoor et al., 2026). 
+
+Evaluation Metric. Following prior work (Liao et al., 2025; Sardana et al., 2024), we estimate infer-ence cost using the standard Transformer FLOPs approximation of 2N per generated token for a model with N parameters. We report Budgeted Accuracy (BA) at 20%, 40%, and 60% of LRM-only FLOPs, denoted as BA@20, BA@40, and BA@60. For each method, we sweep the routing threshold with a step size of 0.05 and report the highest accuracy within each budget. 
+
+4.2 Main Results 
+
+Table 1 presents the main results on five bench-marks under both same-family and cross-family settings. Overall, RoRo achieves the highest aver-age BA across all budget levels in both settings. Method In-domain Out-of-domain Avg. MATH-500 AIME 2025 OmniMath GSM8K GPQA Average                                                                                                                                                                                                                                                                                                                                                  
+
+> @20 @40 @60 @20 @40 @60 @20 @40 @60 @20 @40 @60 @20 @40 @60 @20 @40 @60
+> Qwen3-1.7B / Qwen3-14B (Same-family)
+> SRM-only 68.6 32.4 51.5 87.3 32.8 –––LRM-only 86.2 66.6 63.4 97.0 52.3 –––Random 70.4 74.2 76.1 35.4 43.1 50.8 52.7 55.0 56.3 88.3 90.3 92.3 33.4 36.5 39.7 56.0 59.8 63.4 RSD 72.8 75.8 79.2 36.9 45.8 53.7 54.7 57.6 59.8 89.5 93.5 95.3 35.7 41.6 46.2 57.9 62.9 66.8 SpecCoT 73.4 77.8 78.8 37.3 44.9 59.4 52.2 56.4 58.3 89.8 91.5 93.7 34.2 38.1 42.5 57.4 61.7 66.5 SpecReason 73.9 76.9 79.4 37.6 45.5 56.2 57.0 58.2 60.1 90.3 92.4 94.2 34.6 39.0 43.3 58.7 62.4 66.6 STEER 74.3 77.4 79.9 37.1 45.9 57.5 54.1 57.3 62.5 91.2 93.6 95.0 35.1 40.5 44.8 58.4 62.9 67.3 GlimpRouter 76.0 78.0 80.1 38.2 47.6 58.8 55.2 57.5 60.3 92.3 94.2 95.4 35.8 42.0 46.5 59.5 63.9 68.2 TRIM 75.1 77.5 79.8 34.8 45.3 60.3 55.9 57.2 60.0 94.1 95.5 95.8 36.4 43.6 47.0 59.3 63.8 68.6
+> RoRo (Ours) 75.5 79.8 81.9 40.6 47.0 60.5 56.5 59.9 62.8 95.2 96.1 96.5 37.2 44.6 48.6 61.0 65.5 70.0 Qwen3-1.7B / DeepSeek-R1-Distill-Qwen-14B (Cross-family)
+> SRM-only 68.6 32.4 51.5 87.3 32.8 –––LRM-only 82.6 65.1 62.7 94.8 48.6 –––Random 69.8 73.5 75.4 34.6 42.0 49.5 52.0 54.3 56.6 87.9 89.8 91.6 30.2 33.8 37.1 54.9 58.7 62.2 RSD 71.5 74.3 77.8 36.0 44.3 52.2 53.4 56.1 58.5 88.7 91.8 93.9 32.4 37.6 42.3 56.4 60.8 64.9 SpecCoT 72.1 75.8 78.0 36.4 43.5 56.8 51.6 55.4 57.2 89.2 91.2 93.5 31.5 36.0 41.2 56.2 60.4 65.3 SpecReason 72.6 75.2 78.4 37.0 44.6 53.8 52.8 55.7 58.0 89.5 91.9 93.5 35.3 37.0 41.6 57.4 60.9 65.1 STEER 73.1 75.8 78.8 36.5 44.2 55.9 53.2 56.2 58.6 90.1 92.3 93.8 32.6 38.0 42.5 57.1 61.3 65.9 GlimpRouter 73.4 78.8 79.2 39.6 45.0 57.0 54.0 56.6 59.0 90.9 92.7 93.8 33.0 39.2 43.2 58.2 62.5 66.4 TRIM 73.8 76.2 78.5 34.0 44.0 58.2 54.6 56.3 58.8 91.6 93.1 94.0 33.4 40.3 44.0 57.5 62.0 66.7
+> RoRo (Ours) 74.2 78.2 80.6 38.9 45.7 59.0 55.3 58.5 61.1 92.4 93.6 94.2 34.7 41.8 46.1 59.1 63.6 68.2
+
+Table 1: Main results on five benchmarks under same-family and cross-family settings. We report Budgeted Accuracy (BA) at 20%, 40%, and 60% of LRM-only FLOPs, denoted as @20, @40, and @60. Higher is better. MATH-500, AIME 2025, and OmniMath are in-domain math reasoning benchmarks. GSM8K and GPQA are out-of-domain benchmarks for testing generalization. The best result is bold and the second best is underlined.                                             
+
+> Variant MATH-500 ▽OmniMath ▽
+> RoRo (Qwen3) 79.3 –59.9 –w/o process reward 77.1 (-2.2) 56.5 (-3.4) w/o Learned Rubricor 77.8 (-1.5) 58.4 (-1.5) w/o Learned Judge 78.2 (-1.1) 58.7 (-1.2) w/o validation 78.5 (-0.8) 58.1 (-1.8)
+> RoRo (DeepSeek-R1) 78.0 –58.6 –w/o process reward 75.5 (-2.5) 55.2 (-3.4) w/o Learned Rubricor 76.4 (-1.6) 57.0 (-1.6) w/o Learned Judge 76.8 (-1.2) 57.3 (-1.3) w/o validation 77.2 (-0.8) 56.8 (-1.8)
+
+Table 2: Ablation results of RoRo. We report average BA across @20, @40, and @60. 
+
+Same-Family Analysis. Under the same-family setting (Qwen3-1.7B / Qwen3-14B), RoRo ranks first in 12 of 15 settings and second in the remain-ing 3, where GlimpRouter or SpecReason occasion-ally leads on specific benchmarks at tight budgets. Notably, RoRo achieves the best average BA at all three budget levels. Compared with TRIM, the strongest RL-based baseline using outcome-only reward, RoRo improves average BA@20 by 1.9 points, confirming that rubric-guided process re-ward provides meaningful additional supervision beyond outcome and cost. On the out-of-domain benchmarks GSM8K and GPQA, RoRo outper-forms all baselines despite being trained exclu-sively on MATH, suggesting that the rubric-guided routing criteria capture general routing principles that transfer across domains and difficulty levels. 
+
+Cross-Family Analysis. Under the cross-family setting (Qwen3-1.7B / DeepSeek-R1-Distill-Qwen-14B), RoRo again achieves the highest average BA and ranks first in 12 of 15 settings. GlimpRouter leads on AIME@20 and MATH@40, and SpecRea-son on GPQA@20, but RoRo maintains a clear average advantage. This result verifies that the benefit of RoRo is not limited to a specific model family but generalizes to cross-family collabora-tion. Another notable advantage of RoRo is that it introduces no extra token generation during rout-ing. Unlike RSD and SpecReason that require ad-ditional model calls during inference, RoRo uses only the lightweight MLP router after training. 
+
+4.3 Ablation Study 
+
+Table 2 reports ablation results on MATH-500 and OmniMath. The full RoRo consistently achieves the best performance across all budget levels and both benchmarks. Removing the process reward entirely ( w/o process reward ) causes the largest drop, reducing the system to outcome-only train-ing similar to TRIM. This confirms that process reward is the most critical contribution of RoRo. Replacing the learned Rubricor with the fixed seed 4 8 12 16 20      
+
+> TFLOPs per query
+> 67
+> 71
+> 75
+> 79
+> 83
+> 87
+> Accuracy (%)
+> MATH-500
+> 45 140 235 330 425
+> TFLOPs per query
+> 50
+> 53
+> 56
+> 59
+> 62
+> 65 OmniMath
+> RoRo
+> TRIM
+> Random Routing
+> SRM-Only
+> LRM-Only
+
+Figure 4: Accuracy-FLOPs trade-off curves under same-family and cross-family settings. 
+
+rubric ( w/o Learned Rubricor ) also degrades perfor-mance, showing that the Rubricor discovers rubric dimensions beyond the initial human design. Sim-ilarly, removing the learned Judge ( w/o Learned Judge ) and using raw rubric scores hurts accuracy, indicating that the Judge produces more calibrated process rewards than direct scoring. Finally, skip-ping rubric validation ( w/o validation ) also leads to a clear drop. This suggests that some gener-ated criteria are noisy or redundant, and statistical validation is necessary to retain only genuinely pre-dictive ones. Overall, all components contribute to RoRo, with the process reward itself providing the largest single improvement. 
+
+4.4 Cost-Effectiveness Accuracy–Cost Frontier. Figure 4 shows the accuracy-FLOPs trade-off curves on MATH-500 and OmniMath under both same-family and cross-family settings. Each curve is obtained by sweep-ing the routing threshold. RoRo achieves a con-sistently better frontier than all baselines across the full FLOPs range. The advantage is especially clear in the low-budget region, where the router must make precise escalation decisions. In this region, outcome-only methods struggle because sparse reward provides limited guidance for learn-ing effective escalation timing. With rubric-guided process reward, the router receives direct feedback on routing quality, which helps it learn more effec-tive budget allocation under tight constraints. 
+
+Latency and Throughput. Table 3 reports RoRo’s end-to-end latency under budget settings. With Qwen3-14B as the LRM, RoRo reduces la-tency from 104.095s to 41.375s at BA@20, yield-ing a 2.516 × speedup over LRM-only baseline. With Qwen3-32B as the LRM, baseline latency increases to 156.143s due to larger model size, and RoRo achieves larger speedups across budgets. At BA@20, speedup reaches 2.765 ×, and even at 0.2 0.4 0.6 0.8 1.0        
+
+> Relative Step Position
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> LRM Usage Rate
+> Qwen3-Instruct
+> 0.2 0.4 0.6 0.8 1.0
+> Relative Step Position
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> DeepSeek-R1
+> Easy Middle Hard Extra
+
+Figure 5: LRM usage rate across OmniMath difficulty levels under same-family and cross-family settings. 
+
+BA@60 the speedup ( 1.456 ×) remains higher than the 14B counterpart ( 1.315 ×). This is expected be-cause the model size gap between SRM and LRM amplifies latency savings from routing to SRM. These results confirm that FLOPs savings translate into wall-clock speedups and that the benefit grows with model size disparity. 
+
+4.5 Further Analysis Difficulty Sensitivity. We examine whether RoRo is sensitive to problem difficulty. OmniMath provides human-annotated difficulty levels rang-ing from 1 to 10 for each problem. We partition these into four groups: easy (1–3), medium (4–5), 
+
+hard (6–7), and extra hard (8–10), and compute the LRM usage rate of each method within each group. Figure 5 shows the results under both same-family and cross-family settings. Across both settings, RoRo shows a clearer separation across difficulty levels compared with TRIM. It uses the LRM more frequently on hard and extra hard problems and less on easy ones, while TRIM shows a flatter dis-tribution. This indicates that rubric-based process reward helps the router develop a stronger sense of when escalation is truly needed, rather than dis-tributing LRM usage uniformly. 
+
+Uncertainty Signal Sensitivity. Since the rout-ing policy relies on uncertainty-derived features, we study whether RoRo is sensitive to the choice of uncertainty signal. We replace the default average token entropy with three alternatives and evaluate the resulting routers on MATH-500 and OmniMath. The alternatives include Avg. Confidence (average maximum token probability per step), Avg. NLL (average negative log probability of generated to-kens), and First-3 Token Entropy (average entropy over the first three tokens per step). Table 4 re-ports the results at three budget levels. Among all signals, average entropy achieves the best over-all performance, suggesting that full-step entropy Model Configuration BA Latency (s/query) Speedup Qwen3-14B – 104.095 1.000 ×                     
+
+> RoRo (1.7B + 14B) @20 41.375 2.516 ×
+> RoRo (1.7B + 14B) @40 60.121 1.731 ×
+> RoRo (1.7B + 14B) @60 79.135 1.315 ×
+> Qwen3-32B –156.143 1.000 ×
+> RoRo (1.7B + 32B) @20 56.473 2.765 ×
+> RoRo (1.7B + 32B) @40 78.854 1.980 ×
+> RoRo (1.7B + 32B) @60 107.259 1.456 ×
+
+Table 3: End-to-end latency comparison of RoRo. The SRM is Qwen3-1.7B. Speedup is computed relative to the corresponding LRM-only baseline. 
+
+provides a more comprehensive measure of step-level uncertainty. Avg. NLL yields close results, while Avg. Confidence shows a slightly larger gap. First-3 Token Entropy shows the largest drop, likely because the first few tokens carry limited informa-tion about overall step difficulty. Nevertheless, all four signals produce competitive results with only minor fluctuations, confirming that RoRo is not tightly coupled to any specific uncertainty signal. 
+
+5 Related Work 
+
+Stepwise Model Routing. As large reasoning models increasingly rely on long chain-of-thought trajectories, reducing inference cost without sacri-ficing reasoning quality has become an important direction. Recent work studies stepwise model routing, where small and large models are dynami-cally coordinated at the level of intermediate rea-soning steps rather than whole queries. Specu-lative reasoning methods, such as SpecCoT (Shi et al., 2025) and SpecReason (Pan et al., 2025), ac-celerate reasoning by letting smaller models draft intermediate steps and using stronger models for verification, correction, or fallback. Other meth-ods introduce explicit routing signals, including process reward models in RSD (Liao et al., 2025), confidence-based routing in STEER (Lee et al., 2026), and entropy-based difficulty estimation in GlimpRouter (Zeng et al., 2026). More recently, TRIM (Kapoor et al., 2026) formulates stepwise routing as a sequential decision problem under accuracy-cost trade-offs, selectively routing crit-ical steps to larger models to prevent cascading failures. However, existing methods mainly rely on local uncertainty, step-level verification, or final outcome-cost trade-offs, leaving the process quality of the routing trajectory itself underexplored. 
+
+Rubric-Based RL. Rubrics have recently emerged as structured and interpretable super-vision for reward modeling and reinforcement                                
+
+> Uncertainty Signal MATH-500 OmniMath
+> @20 @40 @60 @20 @40 @60 Avg. Entropy 75.5 79.8 81.9 56.5 59.9 62.8
+> Avg. Confidence 74.9 79.0 81.2 56.5 59.7 62.9 Avg. NLL 75.2 79.5 81.6 56.2 59.6 62.5 First-3 Token Entropy 75.3 79.3 81.4 56.3 58.9 62.6
+
+Table 4: Uncertainty signal sensitivity analysis on MATH-500 and OmniMath. Avg. Entropy (highlighted) is the default signal used in all other experiments. 
+
+learning. Unlike scalar rewards or pairwise preferences, rubrics decompose evaluation into explicit criteria, making them suitable for tasks where correctness is hard to verify. OpenRubrics (Liu et al., 2025) constructs large-scale synthetic rubrics for rubric generation and rubric-based reward modeling, while Rubrics as Rewards (Gunjal et al., 2026) uses instance-specific rubric feedback as on-policy reward signals beyond strictly verifiable domains. Recent methods further explore rubrics as dynamic guidance for policy optimization. RuscaRL (Zhou et al., 2025) uses checklist-style rubrics as both rollout scaffolds and reward references, RLCER (Sheng et al., 2026) introduces self-evolving rubrics to provide process supervision for chain-of-thought reasoning, and OpenRS (Jia et al., 2026) develops adaptive pairwise rubrics for fine-grained reward supervision. Inspired by these works, we argue that stepwise model routing also requires explicit process-level rubrics to evaluate whether a routing trajectory escalates at appropriate steps, avoids unstable switching, prevents error propagation, and uses computation efficiently. 
+
+6 Conclusion 
+
+In this paper, we study process rewards for stepwise model routing. Existing methods model routing as a sequential process, but still optimize routers mainly with outcome-level rewards. They provide little guidance on whether intermediate routing de-cisions are well made. To address this gap, we pro-pose RoRo, a rubric-guided process reward frame-work for router training. RoRo trains a Rubricor and a Judge to generate query-specific rubrics and produce reliable process rewards through alternat-ing optimization and statistical validation. Exper-iments on five reasoning benchmarks show that RoRo consistently achieves better accuracy and cost trade-offs than strong baselines under both same-family and cross-family settings. These re-sults show that process-level supervision is impor-tant for learning effective routing policies. Limitations 
+
+RoRo relies on uncertainty signals to extract state features for the routing policy. Although our ex-periments show that performance is robust across different uncertainty signal choices, the framework assumes the availability of token-level probabil-ity distributions from the SRM, which may not be accessible through all inference APIs. Further-more, the rubric generation and validation stages introduce training-time cost. While this cost is amortized over many queries and does not affect in-ference, it may limit applicability in settings where training resources are constrained. Finally, our ex-periments focus on mathematical reasoning bench-marks. Extending RoRo to broader reasoning do-mains such as code generation and scientific ques-tion answering remains an open direction for future work. 
+
+Ethics Statement 
+
+Our work aims to improve the efficiency and re-liability of multi-step reasoning through stepwise model routing. However, like any system built on LLMs, the routing framework may still produce incorrect intermediate reasoning steps or factually incorrect final answers. We therefore encourage users to exercise caution and verify critical outputs when deploying such systems in real-world scenar-ios. Furthermore, our research builds upon open-source models and frameworks, including Qwen3, DeepSeek-R1-Distill, PyTorch, and Hugging Face. We strictly follow their respective licenses and us-age policies, and acknowledge their important con-tributions to the research community. 
+
+References 
+
+Karl Cobbe, Vineet Kosaraju, Mohammad Bavarian, Mark Chen, Heewoo Jun, Lukasz Kaiser, Matthias Plappert, Jerry Tworek, Jacob Hilton, Reiichiro Nakano, and 1 others. 2021. Training verifiers to solve math word problems. arXiv preprint arXiv:2110.14168 .Bofei Gao, Feifan Song, Zhe Yang, Zefan Cai, Yibo Miao, Qingxiu Dong, Lei Li, Chenghao Ma, Liang Chen, Runxin Xu, Zhengyang Tang, Benyou Wang, Daoguang Zan, Shanghaoran Quan, Ge Zhang, Lei Sha, Yichang Zhang, Xuancheng Ren, Tianyu Liu, and Baobao Chang. 2025. Omni-MATH: A univer-sal olympiad level mathematic benchmark for large language models. In The Thirteenth International Conference on Learning Representations .Neel Guha, Mayee F. Chen, Trevor Chow, Ishan S. Khare, and Christopher Ré. 2024. Smoothie: La-bel free language model routing. In Advances in Neural Information Processing Systems .Anisha Gunjal, Anthony Wang, Elaine Lau, Vaskar Nath, Yunzhong He, Bing Liu, and Sean M. Hendryx. 2026. Rubrics as rewards: Reinforcement learning beyond verifiable domains. In International Confer-ence on Learning Representations .Daya Guo, Dejian Yang, Haowei Zhang, Junxiao Song, Peiyi Wang, Qihao Zhu, Runxin Xu, Ruoyu Zhang, Shirong Ma, Xiao Bi, and 1 others. 2025. Deepseek-r1: Incentivizing reasoning capability in llms via reinforcement learning. arXiv preprint arXiv:2501.12948 .Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul Arora, Steven Basart, Eric Tang, Dawn Song, and Ja-cob Steinhardt. 2021. Measuring mathematical prob-lem solving with the MATH dataset. arXiv preprint arXiv:2103.03874 .Ruipeng Jia, Yunyi Yang, Yuxin Wu, Yongbo Gai, Siyuan Tao, Mengyu Zhou, Jianhe Lin, Xiaoxi Jiang, and Guanjun Jiang. 2026. Open rubric system: Scal-ing reinforcement learning with pairwise adaptive rubric. arXiv preprint arXiv:2602.14069 .Vansh Kapoor, Aman Gupta, Hao Chen, Anurag Beni-wal, Jing Huang, and Aviral Kumar. 2026. TRIM: Hybrid inference via targeted stepwise routing in multi-step reasoning tasks. In International Confer-ence on Learning Representations .Alexander Kraskov, Harald Stögbauer, and Peter Grass-berger. 2004. Estimating mutual information. Physi-cal Review E—Statistical, Nonlinear, and Soft Matter Physics , 69(6):066138. Sangmook Lee, Dohyung Kim, Hyukhun Koh, Nakyeong Yang, and Kyomin Jung. 2026. Confidence-guided stepwise model routing for cost-efficient reasoning. In Proceedings of the AAAI Conference on Artificial Intelligence .Baohao Liao, Yuhui Xu, Hanze Dong, Junnan Li, Christof Monz, Silvio Savarese, Doyen Sahoo, and Caiming Xiong. 2025. Reward-guided speculative decoding for efficient LLM reasoning. In Forty-second International Conference on Machine Learn-ing .Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Bowen Baker, Teddy Lee, Jan Leike, John Schulman, Ilya Sutskever, and Karl Cobbe. 2023. Let’s verify step by step. arXiv preprint arXiv:2305.20050 .Tianci Liu, Ran Xu, Tony Yu, Ilgee Hong, Carl Yang, Tuo Zhao, and Haoyu Wang. 2025. Openrubrics: Towards scalable synthetic rubric generation for re-ward modeling and LLM alignment. arXiv preprint arXiv:2510.07743 .Qianli Ma, Haotian Zhou, Tingkai Liu, Jianbo Yuan, Pengfei Liu, Yang You, and Hongxia Yang. 2023. Let’s reward step by step: Step-level reward model as the navigators for reasoning. Preprint ,arXiv:2310.10080. Mathematical Association of America. 2025. Aime 2025 dataset. https://huggingface.co/ datasets/MathArena/aime_2025 . Released through MathArena on Hugging Face. Niklas Muennighoff, Zitong Yang, Weijia Shi, Xi-ang Lisa Li, Li Fei-Fei, Hannaneh Hajishirzi, Luke Zettlemoyer, Percy Liang, Emmanuel Candès, and Tatsunori Hashimoto. 2025. s1: Simple test-time scaling. In Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing .Benjamin Newman, Yoonjoo Lee, Aakanksha Naik, Pao Siangliulue, Raymond Fok, Juho Kim, Daniel S Weld, Joseph Chee Chang, and Kyle Lo. 2024. Arxivdi-gestables: Synthesizing scientific literature into ta-bles using language models. In Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing , pages 9612–9631. Isaac Ong, Amjad Almahairi, Vincent Wu, Wei-Lin Chiang, Tianhao Wu, Joseph E. Gonzalez, M. Waleed Kadous, and Ion Stoica. 2025. Routellm: Learning to route llms with preference data. In International Conference on Learning Representations .Rui Pan, Yinwei Dai, Zhihao Zhang, Gabriele Oliaro, Zhihao Jia, and Ravi Netravali. 2025. Specreason: Fast and accurate inference-time compute via spec-ulative reasoning. In NeurIPS 2025 Workshop on Efficient Reasoning . Spotlight. Salman Rahman, Sruthi Gorantla, Arpit Gupta, Swastik Roy, Nanyun Peng, and Yang Liu. 2025. Spark: Stepwise process-aware rewards for reference-free reinforcement learning. arXiv preprint arXiv:2512.03244 .David Rein, Betty Li Hou, Asa Cooper Stickland, Jack-son Petty, Richard Yuanzhe Pang, Julien Dirani, Ju-lian Michael, and Samuel R. Bowman. 2024. GPQA: A graduate-level google-proof Q&A benchmark. In 
+
+First Conference on Language Modeling .Nikhil Sardana, Jacob Portes, Sasha Doubov, and Jonathan Frankle. 2024. Beyond chinchilla-optimal: Accounting for inference in language model scaling laws. In International Conference on Machine Learn-ing , pages 43445–43460. PMLR. Amrith Setlur, Chirag Nagpal, Adam Fisch, Xinyang Geng, Jacob Eisenstein, Rishabh Agarwal, Alekh Agarwal, Jonathan Berant, and Aviral Kumar. 2024. Rewarding progress: Scaling automated process veri-fiers for llm reasoning. Preprint , arXiv:2410.08146. Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. 2024. Deepseekmath: Pushing the limits of mathemati-cal reasoning in open language models. Preprint ,arXiv:2402.03300. Leheng Sheng, Wenchang Ma, Ruixin Hong, Xi-ang Wang, An Zhang, and Tat-Seng Chua. 2026. Reinforcing chain-of-thought reasoning with self-evolving rubrics. arXiv preprint arXiv:2602.10885 .Junhan Shi, Yijia Zhu, Zhenning Shi, Dan Zhao, Qing Li, and Yong Jiang. 2025. Speccot: Accelerating chain-of-thought reasoning through speculative ex-ploration. Findings of the Association for Computa-tional Linguistics: EMNLP , 2025:24405–24415. Charlie Snell, Jaehoon Lee, Kelvin Xu, and Aviral Ku-mar. 2025. Scaling LLM test-time compute optimally can be more effective than scaling model parameters. In International Conference on Learning Representa-tions .Jonathan Uesato, Nate Kushman, Ramana Kumar, H. Francis Song, Noah Yamamoto Siegel, Lisa Wang, Antonia Creswell, Geoffrey Irving, and Irina Higgins. 2023. Solving math word problems with process-based and outcome-based feedback. Binghai Wang, Yantao Liu, Yuxuan Liu, Tianyi Tang, Shenzhi Wang, Chang Gao, Chujie Zheng, Yichang Zhang, Le Yu, Shixuan Liu, Tao Gui, Qi Zhang, Xu-anjing Huang, Bowen Yu, Fei Huang, and Junyang Lin. 2026. Outcome accuracy is not enough: Align-ing the reasoning process of reward models. Preprint ,arXiv:2602.04649. Xinyuan Wang, Yanchi Liu, Wei Cheng, Xujiang Zhao, Zhengzhang Chen, Wenchao Yu, Yanjie Fu, and Haifeng Chen. 2025. Mixllm: Dynamic routing in mixed large language models. In Proceedings of the 2025 Conference of the Nations of the Americas Chapter of the Association for Computational Lin-guistics: Human Language Technologies (Volume 1: Long Papers) , pages 10912–10922. Weichu Xie, Haozhe Zhao, Wenpu Liu, Yongfu Zhu, Liang Chen, Minghao Ye, Zirong Chen, Yuqi Xu, Shuai Dong, Ziyue Wang, and 1 others. 2026. Step-wise rubric rewards for llm reasoning. arXiv preprint arXiv:2605.17291 .An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chang Gao, Chengen Huang, Chenxu Lv, and 1 others. 2025. Qwen3 technical report. arXiv preprint arXiv:2505.09388 .Wenhao Zeng, Xuteng Zhang, Yuling Shi, Chao Hu, Yuting Chen, Beijun Shen, and Xiaodong Gu. 2026. Glimprouter: Efficient collaborative inference by glimpsing one token of thoughts. arXiv preprint arXiv:2601.05110 .Haozhen Zhang, Tao Feng, and Jiaxuan You. 2026. Router-r1: Teaching llms multi-round routing and aggregation via reinforcement learning. Advances in Neural Information Processing Systems , 38:141233– 141265. Yilun Zhao, Yitao Long, Hongjun Liu, Ryo Kamoi, Linyong Nan, Lyuhao Chen, Yixin Liu, Xiangru Tang, Rui Zhang, and Arman Cohan. 2024. Docmath-eval: Evaluating math reasoning capabilities of llms in understanding long and specialized documents. In 
+
+Proceedings of the 62nd Annual Meeting of the As-sociation for Computational Linguistics (Volume 1: Long Papers) , pages 16103–16120. Yang Zhou, Sunzhu Li, Shunyu Liu, Wenkai Fang, Kongcheng Zhang, Jiale Zhao, Jingwen Yang, Yihe Zhou, Jianwei Lv, Tongya Zheng, Hengtong Lu, Chen Wei, Xie Yan, and Mingli Song. 2025. Break-ing the exploration bottleneck: Rubric-scaffolded reinforcement learning for general LLM reasoning. 
+
+arXiv preprint arXiv:2508.16949 .
+
+A Additional Experimental Setups 
+
+A.1 Model Configurations 
+
+Table 5 summarizes the key model and training configurations used in our experiments.                   
+
+> Component Configuration
+> SRM Qwen3-1.7B LRM (same-family) Qwen3-14B LRM (cross-family) DeepSeek-R1-Distill-Qwen-14B Rubricor backbone Qwen3-8B Judge backbone Qwen3-8B Router architecture 2-layer MLP, 128 hidden units Router input dim 5Training data MATH training set GRPO rollout group K8Cost weight λ0.001 Process reward weight β0.5 Temperature 0.7 Max generation length 16,384 tokens Top-p0.95
+
+Table 5: Model and training configurations for RoRo. 
+
+We use Qwen3-1.7B (Yang et al., 2025) as the SRM. For the LRM, we consider Qwen3-14B (Yang et al., 2025) for same-family collaboration and DeepSeek-R1-Distill-Qwen-14B (Guo et al., 2025) for cross-family collaboration. The routing policy is a 2-layer MLP with 128 hidden units, following TRIM (Kapoor et al., 2026). It takes a 5-dimensional state vector as input, including three uncertainty-derived features (the current-step uncertainty, the minimum and average uncertainty over the prefix), the step token count normalized by a fixed constant, and the step index normalized by the maximum step limit. By default, we use average token entropy as the uncertainty signal. For the Rubricor and the Judge, we use Qwen3-8B (Yang et al., 2025) as the backbone. Both are trained through alternating optimization on the MATH training set and frozen during router train-ing and inference. The cost weight λ = 0 .001 
+
+controls the penalty for LRM token usage, and the process reward weight β = 0 .5 balances pro-cess supervision against outcome reward. We set 
+
+λ based on the typical LRM token count range so that the cost term is on a comparable scale with the binary outcome reward. We set β by grid search over {0.1, 0.3, 0.5, 0.7, 1.0} on a held-out valida-tion split of MATH and select 0.5 as it yields the best accuracy-cost trade-off. For all methods, we use the same decoding configuration for fair com-parison. All reported results are averaged over three independent runs. 
+
+A.2 Dataset Details MATH-500 (Lightman et al., 2023). MATH-500 is a curated subset of 500 problems sampled from the MATH benchmark (Hendrycks et al., 2021), covering seven mathematical subjects in-cluding algebra, number theory, geometry, and combinatorics. The problems span five difficulty levels, with Level 5 requiring multi-step reason-ing and creative problem solving. MATH-500 is widely adopted for evaluating reasoning capabili-ties of LLMs. 
+
+AIME 2025 (Mathematical Association of Amer-ica, 2025). AIME 2025 contains 30 competition-level problems from the 2025 American Invita-tional Mathematics Examination. Each problem requires integer answers between 0 and 999. AIME problems are significantly more challenging than typical benchmarks and demand advanced math-ematical reasoning, including complex algebraic manipulation, number theory, and geometric rea-soning. 
+
+OmniMath (Gao et al., 2025). OmniMath is a large-scale benchmark of 4,428 competition-level mathematics problems sourced from international olympiads and national contests. Each problem is annotated with a human difficulty rating from 1 to 10. The benchmark spans a wide range of math-ematical topics and requires advanced problem-solving strategies. We use the subset with difficulty levels 1–10 for our evaluation. 
+
+GSM8K (Cobbe et al., 2021). GSM8K is a benchmark of 8,792 grade-school math word prob-lems that require multi-step arithmetic reasoning. Although the individual reasoning steps are sim-ple, the problems require 2–8 steps of basic arith-metic operations. We use GSM8K as an out-of-Seed Criterion Criterion Purpose Seed 1 
+
+> The route should switch to the LRM near the first SRM step that is likely to cause, or has just caused, a critical reasoning error, based on both the step content and its difficulty signals. This criterion evaluates whether the router can per-form timely LRM intervention near the first SRM failure point by jointly considering the reasoning content, step-level difficulty signals, and routing actions.
+> Seed 2
+> The route should use the LRM to repair wrong, un-stable, or misleading intermediate states produced by the SRM, and the later trajectory should reflect this recovery. This criterion evaluates whether LRM intervention actually recovers the reasoning trajectory after SRM errors, rather than merely increasing model cost without improving the reasoning state.
+> Seed 3
+> The route should allocate LRM calls only to steps where the expected reasoning benefit justifies the additional cost, while keeping easy or low-risk steps on the SRM. This criterion evaluates whether the router uses LRM computation selectively, based on step dif-ficulty, step importance, routing actions, and the actual cost of each model call.
+
+Table 6: The seed rubric used by RoRo. The rubric consists of three routing-specific criteria that evaluate the quality of a complete routing trajectory from step content, step-level difficulty signals, routing actions, and model-call costs. 
+
+domain benchmark to test whether routers trained on MATH generalize to simpler problem distribu-tions. 
+
+GPQA (Rein et al., 2024). GPQA (Graduate-level Google-Proof QA) is a benchmark of 448 challenging multiple-choice questions in biology, physics, and chemistry. The questions are designed by domain experts to be answerable by experts but difficult for non-experts, even with access to search engines. We use GPQA as an out-of-domain benchmark to evaluate whether routing strategies generalize from mathematical reasoning to scien-tific reasoning. 
+
+A.3 Seed Rubric 
+
+The seed rubric provides the initial process-level su-pervision for training the Judge. It consists of three manually designed criteria, each targeting a distinct aspect of routing quality. Table 6 summarizes all three criteria along with their purposes. 
+
+Seed 1 focuses on timely escalation. A good routing trajectory should switch to the LRM near the first SRM step that is likely to produce a critical reasoning error. This criterion jointly considers the step content, step-level difficulty signals, and the routing action to evaluate whether the escalation happens at an appropriate point. 
+
+Seed 2 focuses on effective recovery. Simply invoking the LRM is not sufficient if the routing trajectory does not improve afterward. This crite-rion evaluates whether the LRM intervention ac-tually repairs erroneous or unstable intermediate states produced by the SRM, and whether the later trajectory reflects this recovery. 
+
+Seed 3 focuses on cost efficiency. The router should allocate LRM calls only to steps where the expected reasoning benefit justifies the additional cost. Easy or low-risk steps should remain on the SRM. This criterion evaluates whether the routing trajectory uses computation selectively based on step difficulty and importance. Together, these three criteria capture the key trade-offs in stepwise model routing. They serve two roles in RoRo. First, they provide initial pro-cess preferences for constructing the preference dataset Dq. Second, they condition the Judge dur-ing warm-start training. After alternating optimiza-tion, the learned Rubricor generates query-specific criteria that go beyond the seed rubric and adapt to different problem types. 
+
+B Additional Implementation Details 
+
+B.1 Validation Gate Details 
+
+This section provides full details of the validation gate used in rubric filtering (Sec. 3.2). The valida-tion gate filters generated rubric criteria to retain only those that are genuinely predictive of routing quality, while avoiding outcome leakage and redun-dancy. For each criterion ci in a candidate rubric, we compute its score on a held-out set of routing rollouts and apply three statistical tests. A criterion must pass all three tests to be retained. 
+
+Held-Out Rollout Set. We reserve 200 queries from the MATH training set as a held-out validation split. For each query, we collect routing rollouts from the same six policies described in Sec. 3.1, yielding approximately 1,200 rollouts in total. Each rollout is annotated with its final-answer correct-ness, LRM token usage, and per-step routing ac-tions. This set is fixed throughout training and is used only for criterion validation. 
+
+Criterion Scoring. Given a criterion ci and a roll-out τ , we prompt the Judge backbone (Qwen3-8B) Case Source Method LRM Calls LRM Tokens TFLOPs Correct                               
+
+> Case 1 omnimath_01261
+> SRM-only 0 / 30 0–✗
+> TRIM 24 / 30 10,223 346.57 ✗
+> RoRo 13 / 30 5,777 222.09 ✓
+> Case 2 omnimath_01924
+> SRM-only 0 / 30 0–✗
+> TRIM 21 / 30 4,824 141.81 ✗
+> RoRo 10 / 30 2,244 71.37 ✓
+> Table 7: Routing statistics and outcomes for two OmniMath problems. TRIM invokes the LRM on most steps but still produces wrong answers on both problems. RoRo uses significantly fewer LRM calls and lower FLOPs while reaching the correct answer. ✓and ✗denote correct and incorrect answers.
+
+to assign a score vi(τ ) ∈ [0 , 1] indicating how well the routing trajectory satisfies the criterion. To re-duce variance, we average over two independent Judge calls per rollout. The Judge prompt con-tains the query, the full routing trajectory, and the criterion text. 
+
+Test 1: Partial Correlation Significance. We compute the partial correlation between the crite-rion score vi and the route preference label (pre-ferred vs. dispreferred), controlling for outcome correctness and normalized cost. We use the stan-dard partial Pearson correlation with a two-sided 
+
+t-test. A criterion is retained only if p < 0.05 after Holm-Bonferroni correction for multiple testing across all criteria in the candidate rubric. 
+
+Test 2: Score Variance. We require that the stan-dard deviation of criterion scores across rollouts exceeds σmin = 0 .05 . Criteria with near-constant scores across trajectories carry no discriminative information and are removed. 
+
+Test 3: Outcome Leakage. We compute the mu-tual information MI (vi; y) between the criterion score and the binary outcome label y ∈ { 0, 1}.A criterion is removed if MI (vi; y) > 0.1 nats. This threshold ensures that retained criteria capture routing process quality rather than simply reflect-ing whether the final answer is correct. We esti-mate mutual information using the KSG estimator (Kraskov et al., 2004) with k = 5 neighbors. 
+
+Multiple Testing Correction. When a candidate rubric contains |r| criteria, Test 1 involves |r| si-multaneous hypothesis tests. We apply Holm-Bonferroni correction to control the family-wise er-ror rate at α = 0 .05 . Criteria that fail the corrected significance threshold are removed regardless of their variance or leakage properties. 
+
+Rubric Discard Policy. If fewer than two criteria pass all three tests, the entire candidate rubric is discarded. During Rubricor training, a discarded rubric receives zero reward. During router training, if the generated rubric for a GRPO rollout group fails validation, the entire rollout group is excluded from that training step. In our experiments, the discard rate is approximately 12% during Rubricor training and drops below 5% by the final alternat-ing round, indicating that the Rubricor learns to generate valid criteria over time. 
+
+B.2 Prompt 
+
+Table 8 shows the prompt template used by the Rubricor to generate routing-quality criteria. Ta-ble 9 shows the prompt template used by the Judge to score a routing trajectory under a given rubric. 
+
+C Additional Related Work 
+
+Process Reward Modeling. Process reward mod-eling provides dense supervision for multi-step reasoning beyond final-answer correctness. Ex-isting studies propose step-level reward models that provide intermediate navigation signals for reasoning chains (Ma et al., 2023), scale automated process verifiers to provide dense verification for each reasoning step (Setlur et al., 2024), and intro-duce stepwise process-aware rewards that do not rely on reference answers, enabling broader appli-cability to tasks without gold intermediate labels (Rahman et al., 2025). More recently, rubric-based rewards with stepwise attribution have been stud-ied for credit assignment in LLM reasoning (Xie et al., 2026). These works demonstrate the value of dense process-level supervision for reasoning tasks. Our work extends this line of research to routing trajectories, where process quality is even harder to define and verify due to the absence of gold routing labels. Prompt of Rubricor 
+
+### System: You are the Rubricor in a stepwise model routing system for reasoning. A weak reasoning model (SRM) proposes each reasoning step. A router either accepts the SRM step or replaces it with a strong reasoning model step. The goal is to preserve reasoning quality while avoiding unnecessary LRM calls. You will be given one problem and a pool of routing trajectories for that problem. Each trajectory contains the selected reasoning steps and the model used at each step. ### Input: [Question]: {question} [Trajectory 1]: {trajectory_1} [Trajectory 2]: {trajectory_2} ... [Trajectory N]: {trajectory_N} The input does not provide final correctness labels or preference labels. Do not assume that any trajectory is preferred. ### Task: Generate 3–5 general routing-quality criteria for evaluating routing trajectories under this question. Each criterion must satisfy all requirements: 1. It evaluates the routing process rather than final answer correctness. 2. It is label-agnostic: it must not refer to trajectory IDs, final correctness, reference answers, or which trajectory is preferred. 3. It should be applicable beyond this specific problem, while still being relevant to the routing challenges shown in the trajectory pool. 4. It should capture whether the route prevents, repairs, or verifies high-impact reasoning errors. 5. It must not collapse into trivial heuristics such as "always use LRM in later steps", "always minimize LRM calls", "always avoid switching", or "use LRM whenever the solution is long". ### Possible Aspects: Possible aspects include, but are not limited to: intervention before error propagation; timeliness of escalation under uncertainty; avoiding LRM calls on routine or already reliable steps; recovery after contradiction or uncertainty. ### Output Format: Return only a JSON object: {"rubrics": [{"criterion": "one sentence describing what the route should do or should not do", "score": 0.8, "weight": 0.25}]} Each weight must be a number in [0,1]. 
+
+Table 8: Prompt template for the Rubricor. 
+
+D Case Study 
+
+To provide a more concrete understanding of how RoRo improves routing quality, we present two rep-resentative case studies from OmniMath. In both cases, the SRM-only baseline produces incorrect answers, TRIM assigns most steps to the LRM but still fails, while RoRo selects fewer LRM steps and reaches the correct answer with lower cost. Table 7 summarizes the routing statistics and outcomes for both cases. 
+
+Case 1 (omnimath_01261). This problem asks for the number of ways to select squares on an 8×8
+
+chessboard under row, column, and monotonicity constraints (gold answer: 12,869). As shown in Figures 6 and 7, TRIM routes 24 out of 30 steps to the LRM. Despite this heavy usage, TRIM fails to allocate the LRM to the early critical steps where the SRM makes a wrong combinatorial formulation. The error propagates through the rest of the trajec-tory and leads to an incorrect answer (1,441,728). In contrast, RoRo concentrates LRM calls on the first 9 steps, where the problem formulation and mathematical setup are most critical. After the reasoning direction is established correctly, RoRo switches back to the SRM for the remaining com-putation. This results in a correct answer with only 13 LRM calls and 36% fewer FLOPs than TRIM. 
+
+Case 2 (omnimath_01924). This problem in-volves computing the probability of crossing a river by throwing a stone uniformly at random (gold an-swer: 13 ). Figures 8 and 9 illustrate the routing trajectories. TRIM again assigns most steps (21 out of 30) to the LRM, but the LRM is invoked too late. The SRM has already committed to an incor-rect probability setup in the early steps, and later LRM calls cannot recover from this error. RoRo, on the other hand, invokes the LRM at an earlier stage to correctly set up the integral formulation, and then returns to the SRM once the reasoning is on the right track. With only 10 LRM calls, RoRo reaches the correct answer while using roughly half the FLOPs. Prompt of Judge 
+
+### System: You are the Judge in a stepwise model routing system for reasoning. A weak reasoning model (SRM) proposes each reasoning step. A router either accepts the SRM step or replaces it with a strong reasoning model step (LRM). The goal is to preserve reasoning quality while avoiding unnecessary LRM calls. You will be given one problem, one routing trajectory, and a rubric generated by the Rubricor. Your task is to decide whether the trajectory satisfies each rubric criterion, and then compute a weighted process score. ### Input: [Question]: {question} [Routing Trajectory]: {trajectory} [Rubric]: {rubric_json} The trajectory contains the selected reasoning steps and the model used at each step. It may include a final answer in the text, but you must not judge whether the final answer is correct. You should evaluate only the routing process. ### Task: For each rubric criterion: 1. Decide whether the trajectory satisfies the criterion. 2. Set "satisfied" to true if the routing behavior clearly satisfies the criterion. 3. Set "satisfied" to false if the routing behavior clearly violates the criterion or lacks evidence for satisfying it. 4. Use the criterion and score_guidance to make the decision. Compute the final process score as: final_score = sum of weight * score * indicator where indicator = 1 if satisfied is true and 0 otherwise. ### Output Format: Return only a valid JSON object: {"criterion_judgments": [{"criterion": "the original criterion text", "score": 0.5, "satisfied": true} ...], "final_score": 0.0} 
+
+Table 9: Prompt template for the Judge. 
+
+These two cases illustrate a key advantage of RoRo over TRIM. TRIM tends to distribute LRM calls uniformly or toward the later steps, missing early critical steps where SRM errors are most con-sequential. RoRo, guided by rubric-based process rewards, learns to place LRM calls at the steps where escalation brings the most benefit, leading to both higher accuracy and lower cost. Case Study on RoRo (1) omnimath_01261 
+
+TRIM Fail 
+
+[Step 1] 
+
+Okay, so I need to figure out the number of ways to select a 
+
+positive number of squares on an 8x8 chessboard such that two 
+
+conditions are met: first, no two squares are in the same row or 
+
+column, and second, no chosen square lies to the left of and 
+
+below another chosen square. Hmm, let me break this down. 
+
+But wait, the problem says "a positive number of squares", so 
+
+k can be from 1 to 8. But the second condition is that no 
+
+chosen square lies to the left of and below another chosen 
+
+square. So, if we have two squares, say (i, j) and (k, l), then if i 
+
+\textless{} k and j \textless{} l, then (i, j) is to the left and below 
+
+(k, l). But the problem says that no chosen square lies to the 
+
+left of and below another chosen square. So, in other words, 
+
+for any two chosen squares, if one is to the left and below the 
+
+other, that's not allowed. So, this is equivalent to saying that 
+
+the selected squares form an increasing sequence in both 
+
+rows and columns. Wait, no. Let me think. 
+
+It's equivalent to choosing a permutation of the columns for 
+
+the rows. But if we want the columns to be increasing, then 
+
+the permutation must be the identity permutation. Wait, no. 
+
+Wait, if you have k rows and k columns, and you want to 
+
+arrange them so that the columns are increasing, then you 
+
+have to choose a permutation of the columns such that when 
+
+you sort the rows, the columns are increasing. Therefore, for 
+
+each selection of k rows and k columns, there is exactly one 
+
+way to arrange them so that the columns are increasing. 
+
+Therefore, the number of such subsets is C(n, k) * C(n, k) * 1. 
+
+Therefore, for n=3, k=2, it's C(3,2)\textasciicircum{}2 = 9. But 
+
+in reality, the number of 2-square subsets with no two in 
+
+same row or column is 6. Therefore, this is a contradiction. 
+
+SRM 
+
+[Step 4] SRM fails to detect the error. 
+
+[Step 30] LRM 
+
+[Step 2] 
+
+First, the problem mentions selecting a positive number of 
+
+squares. So, we can't have zero squares. But the question is 
+
+about how many ways there are to do this with the given 
+
+constraints. Let me think about the constraints again. 
+
+SRM 
+
+The first constraint is that no two squares share the same row 
+
+or column. That sounds like a permutation problem. If we 
+
+think of selecting squares such that each is in a unique row 
+
+and column, that's equivalent to choosing a permutation of the 
+
+columns for each row. Wait, but since it's an 8x8 chessboard, 
+
+selecting a set of squares with no two in the same row or 
+
+column is equivalent to choosing a subset of squares that 
+
+form a permutation matrix. For example, if we choose k 
+
+squares, they form a k x k permutation matrix, right? But 
+
+actually, no, a permutation matrix has exactly one square per 
+
+row and column. So if we have k squares, they must form a 
+
+permutation of size k. So the number of ways to choose k 
+
+non-attacking rooks on an 8x8 chessboard is 8! / (8 - k)!. 
+
+[Step 3] SRM critical step is instead routed to the SRM 
+
+Still SRM 
+
+[Step 5] 
+
+.................................... 
+
+LRM 
+
+.................................... 
+
+.................................... Figure 6: Routing trajectory of TRIM on Case 1 (omnimath_01261 ). TRIM routes 24 out of 30 steps to the LRM but misses the early critical steps, leading to an incorrect answer. Timely invokes the LRM to correct the error. 
+
+Case Study on RoRo (1) omnimath_01261 
+
+RoRo (Ours) 
+
+[Step 1] 
+
+Okay, so I need to figure out the number of ways to select a 
+
+positive number of squares on an 8x8 chessboard such that two 
+
+conditions are met: first, no two squares are in the same row or 
+
+column, and second, no chosen square lies to the left of and 
+
+below another chosen square. Hmm, let me break this down. 
+
+Wait, actually, no . Let me think again. If you have to choose k 
+
+squares with no two in the same row or column, you can think 
+
+of it as choosing k rows and k columns, and then arranging 
+
+the squares in a way that each row and column has exactly 
+
+one square. So that would be (8 choose k) * (8 choose k) * k! ? 
+
+Therefore, returning to the original problem, which is an 8x8 
+
+chessboard. The number of ways is C(16, 8) - 1. However, 
+
+the problem says "a positive number of squares", so we 
+
+subtract 1 for the empty set. However, let me check once 
+
+more. The reasoning was that selecting a set of positions 
+
+with distinct rows and columns, such that when sorted by 
+
+row, the columns are increasing. Which is equivalent to 
+
+choosing a subset of columns of size k and a subset of rows 
+
+of size k, and then matching them in order. Therefore, the 
+
+number is C(8, k)\textasciicircum{}2 for each k, and the total 
+
+is sum\_\{k=0\}\textasciicircum{}8 C(8, k)\textasciicircum{}2 -
+
+1 = C(16, 8) - 1. Therefore, the answer should be 12870 - 1 
+
+= 12869? Wait, C(16, 8) is 12870. Therefore, the answer is 
+
+12870 - 1 = 12869. 
+
+SRM 
+
+[Step 30] LRM 
+
+[Step 2] 
+
+First, the problem mentions selecting a positive number of 
+
+squares. So, we can't have zero squares. But the question is 
+
+about how many ways there are to do this with the given 
+
+constraints. Let me think about the constraints again. 
+
+SRM 
+
+The first constraint is that no two squares share the same row 
+
+or column. That sounds like a permutation problem. If we 
+
+think of selecting squares such that each is in a unique row 
+
+and column, that's equivalent to choosing a permutation of the 
+
+columns for each row. Wait, but since it's an 8x8 chessboard, 
+
+selecting a set of squares with no two in the same row or 
+
+column is equivalent to choosing a subset of squares that 
+
+form a permutation matrix. For example, if we choose k 
+
+squares, they form a k x k permutation matrix, right? But 
+
+actually, no, a permutation matrix has exactly one square per 
+
+row and column. So if we have k squares, they must form a 
+
+permutation of size k. So the number of ways to choose k 
+
+non-attacking rooks on an 8x8 chessboard is 8! / (8 - k)!. 
+
+[Step 3] SRM The model is likely to err. 
+
+[Step 6] 
+
+.................................... 
+
+LRM 
+
+.................................... 
+
+.................................... 
+
+[Step 4] LRM 
+
+Wait, but actually, once you choose k rows and k columns, the 
+
+number of ways to place the squares is k! because it's the 
+
+number of bijections between the k rows and k columns. So 
+
+yes, that would be (8 choose k)\textasciicircum{}2 * k!. 
+
+[Step 5] LRM 
+
+Correct 
+
+Figure 7: Routing trajectory of RoRo on Case 1 (omnimath_01261 ). RoRo concentrates LRM calls on the first 9 steps for problem formulation and reaches the correct answer with 13 LRM calls. Case Study on RoRo (2) omnimath_01924 
+
+TRIM Fail 
+
+[Step 1] 
+
+Okay, so I need to figure out the probability that I can cross this 
+
+6-foot wide river by jumping, with the help of a stone that I can 
+
+throw into the river. The stone lands uniformly at random, and 
+
+once I throw it, I can jump to that stone and then from there to 
+
+the other side. The maximum jump distance is 4 feet. Let me try 
+
+to break this down step by step. 
+
+But if the stone is placed in the left bank, then I can jump to it, 
+
+but then I can't jump to the other side because the stone is on 
+
+the same bank. Wait, but the stone is in the river, so it's in the 
+
+middle. So, the stone is somewhere in the river, so between 0 
+
+and 6 feet. So, if the stone is placed at position x, then I can 
+
+jump to it, and then from there to the other side. So, the 
+
+distance from x to the right bank is 6 - x. So, if 6 - x 
+
+\ensuremath{\le} 4, then I can jump from x to the right bank. 
+
+Therefore, x \ensuremath{\ge} 2. So, if the stone is placed at x 
+
+\ensuremath{\ge} 2, then I can jump from the stone to the 
+
+other side. Therefore, the probability that I can cross is the 
+
+probability that the stone is placed at x \ensuremath{\ge} 2. 
+
+But since the stone is placed uniformly at random in the river, 
+
+which is 6 feet wide, the probability that x \ensuremath{\ge} 2 
+
+is (6 - 2)/6 = 4/6 = 2/3. Therefore, the probability is 2/3? But 
+
+that seems too straightforward. However, maybe there's a 
+
+catch here. 
+
+But maybe there's a different interpretation. Suppose that 
+
+the stone is placed in the river, and you can jump to the 
+
+stone, but you can also jump from the stone to the other side. 
+
+However, if the stone is placed in the river, you can also 
+
+jump from the stone to the other side. Therefore, the 
+
+probability is 2/3. Therefore, I think that is the answer. 
+
+SRM 
+
+[Step 6] LRM too late 
+
+[Step 30] LRM 
+
+[Step 2] 
+
+First, let me visualize the river. It's 6 feet wide. I need to get 
+
+from one side to the other. The problem says I can jump at 
+
+most 4 feet. So, if I jump directly across, I can't do that 
+
+because the river is 6 feet wide, and my maximum jump is 4 
+
+feet. So, I need to use the stone to help me. 
+
+SRM 
+
+Let me formalize this. Let's assume that I start on the left bank, 
+
+and the other side is 6 feet away. The stone is placed uniformly 
+
+at some point in the river. Let me denote the position of the 
+
+stone as x feet from the left bank. Then, if I can jump from the 
+
+stone to the other side, that would mean that the distance from 
+
+the stone to the right bank is less than or equal to 4 feet. But 
+
+the river is 6 feet wide, so the distance from the stone to the 
+
+right bank is 6 - x feet. Therefore, 6 - x \ensuremath{\le} 4, 
+
+which implies that x \ensuremath{\ge} 2 feet. So, if the stone is 
+
+placed at x \ensuremath{\ge} 2 feet from the left bank, then I 
+
+can jump from the stone to the right bank. But wait, that would 
+
+mean that if the stone is placed anywhere from 2 feet to 6 feet, 
+
+then I can jump to the other side. 
+
+[Step 5] SRM critical step is instead routed to the SRM 
+
+.................................... 
+
+.................................... 
+
+.................................... 
+
+.................................... Figure 8: Routing trajectory of TRIM on Case 2 (omnimath_01924 ). TRIM invokes the LRM mainly in later steps and fails to correct the early SRM error in probability setup. Case Study on RoRo (2) omnimath_01924 
+
+RoRo (Ours) 
+
+[Step 1] 
+
+Okay, so I need to figure out the probability that I can cross this 
+
+6-foot wide river by jumping, with the help of a stone that I can 
+
+throw into the river. The stone lands uniformly at random, and 
+
+once I throw it, I can jump to that stone and then from there to 
+
+the other side. The maximum jump distance is 4 feet. Let me try 
+
+to break this down step by step. 
+
+First, I can jump from my starting position (0) to the stone (x), 
+
+provided that the distance between 0 and x is at most 4 feet. 
+
+So, that would require that x \ensuremath{\le} 4. If x is greater 
+
+than 4, then I can't reach the stone from the starting point. 
+
+Then, even if the stone is in the river, if it's beyond 4 feet, I 
+
+can't get to it. So, that's one condition. 
+
+But maybe there's a different interpretation. Suppose that 
+
+the stone is placed in the river, and you can jump to the 
+
+stone, but you can also jump from the stone to the other side. 
+
+However, if the stone is placed in the river, you can also 
+
+jump from the stone to the other side. Therefore, the 
+
+probability is 1/3. Therefore, I think that is the answer. 
+
+SRM 
+
+[Step 30] LRM 
+
+[Step 2] 
+
+First, let me visualize the river. It's 6 feet wide. I need to get 
+
+from one side to the other. The problem says I can jump at 
+
+most 4 feet. So, if I jump directly across, I can't do that 
+
+because the river is 6 feet wide, and my maximum jump is 4 
+
+feet. So, I need to use the stone to help me. 
+
+SRM 
+
+[Step 6] 
+
+.................................... 
+
+LRM 
+
+.................................... 
+
+.................................... 
+
+[Step 5] LRM 
+
+Then, once I'm on the stone, I can jump from the stone to the 
+
+other side (which is at 6 feet). The distance from the stone to 
+
+the other side is 6 - x. So, I need that distance to be at most 4 
+
+feet. Therefore, 6 - x \ensuremath{\le} 4, which implies that x 
+
+\ensuremath{\ge} 2. So, if the stone is at position x 
+
+\ensuremath{\ge} 2, then I can jump from the stone to the other 
+
+side. 
+
+[Step 6] LRM 
+
+Correct 
+
+LRM handle the critical step 
+
+.................................... 
+
+.................................... 
+
+.................................... 
+
+Therefore, combining these two conditions: to be able to 
+
+cross the river, the stone must be in a position where I can 
+
+reach it from the starting point (x \ensuremath{\le} 4) and 
+
+from there reach the other side (x \ensuremath{\ge} 2). 
+
+Therefore, the stone must be in the interval [2, 4]. If the 
+
+stone is in that interval, then I can jump from 0 to x (since x 
+
+\ensuremath{\le} 4) and then from x to 6 (since x 
+
+\ensuremath{\ge} 2). If the stone is outside of this interval, 
+
+then either I can't reach the stone or can't jump from the 
+
+stone to the other side. 
+
+Figure 9: Routing trajectory of RoRo on Case 2 (omnimath_01924 ). RoRo invokes the LRM at the early critical stage and reaches the correct answer with only 10 LRM calls.
