@@ -1,0 +1,513 @@
+Title: Latency-Quality Routing for Functionally Equivalent Tools in LLM Agents
+
+URL Source: https://arxiv.org/pdf/2605.14241v1
+
+Published Time: Fri, 15 May 2026 00:25:55 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+# Latency-Quality Routing for Functionally Equivalent Tools in LLM Agents 
+
+Kexin Chu and Dawei Xiang and Wei Zhang 
+
+University of Connecticut 
+
+{kexin.chu, ieb24002, wei.13.zhang}@uconn.edu 
+
+Abstract 
+
+Tool-augmented LLM agents increasingly ac-cess the same tool type through multiple func-tionally equivalent providers, such as web-search APIs, retrievers, or LLM backends ex-posed behind a shared interface. This creates a provider-routing problem under runtime load: the router must choose among providers that differ in latency, reliability, and answer qual-ity, often without gold labels at deployment time. We introduce LQM-C ONTEXT ROUTE ,a contextual bandit router for same-function tool providers. Its key design is latency-quality matching: instead of letting low latency offset poor answers in an additive reward, the router ranks providers by expected answer quality per service cycle. It combines this capacity-aware score with query-specific quality estima-tion and LLM-as-judge feedback, allowing it to adapt online to both load changes and provider-quality differences. On the main web-search load benchmark, LQM-C ONTEXT ROUTE im-proves F1 by +2 .18 pp over SW-UCB while staying on the latency-quality frontier. In a high-heterogeneity StrategyQA setting, LQM-CONTEXT ROUTE avoids additive-reward col-lapse and improves accuracy by up to +18 
+
+pp over SW-UCB; on heterogeneous retriever pools, it improves NDCG by +2 .91 –+3 .22 pp over SW-UCB. These results show that same-function tool routing benefits from treating la-tency as service capacity, especially when run-time pressure and provider-quality heterogene-ity coexist. 
+
+1 Introduction 
+
+Tool-augmented LLM agents increasingly call ex-ternal services through shared tool interfaces. A single web_search call, for example, may be served by Tavily, Brave, or DuckDuckGo behind an MCP (Anthropic, 2024) or function-calling in-terface. These providers are functionally equiva-lent in the API sense. Each accepts a query string and returns ranked snippets. They are not oper-ationally equivalent: latency, rate limits, and an-swer contribution vary across providers and across load regimes. Recent industry stress tests of MCP servers and search APIs (Digital Applied, 2026; Gupta, 2026) report runtime failures from time-outs, quota exhaustion, upstream errors, and rate limiting. Our live profile of 270 calls across three search providers shows distinct latency shapes even when all calls succeed (App. C). Provider choice affects the agent’s runtime behavior; it is not just a deployment detail. Prior work on tool-augmented agents (Tool-former (Schick et al., 2023), Gorilla (Patil et al., 2023), ToolLLM (Qin et al., 2023), ReAct (Yao et al., 2022)) primarily studies which tool type an agent should invoke. We study the gateway deci-sion that follows tool selection: which provider of that tool should receive the call under current load, when online gold labels are unavailable? This provider-level view matches how gateways are configured in practice: routing is usually scoped within a selected interface, so the candidate set is the provider pool for that interface rather than the agent’s full tool inventory. Production routers such as Portkey (Portkey, 2026) and LiteLLM (BerriAI, 2026) address availability with priority lists, cooldowns, and fallbacks. These mecha-nisms are useful, but they are largely reactive and quality-blind. In a K=10 priority-router replay, a production-style priority+cooldown policy reaches 
+
+0.610 F1 with a hand-tuned priority order but falls to 0.005 F1 under a mismatched order, indicat-ing that availability signals alone do not recover provider quality. A natural learning alternative is to make a ban-dit load-aware with an additive latency-quality re-ward, r = αu − (1 −α)˜ τ . Such rewards are simple and reasonable when providers have similar answer quality, but they can fail when quality is heteroge-neous: low latency can compensate for a provider 1
+
+> arXiv:2605.14241v1 [cs.LG] 14 May 2026
+
+that contributes little to the answer. In that case, the router may satisfy an SLA while silently degrading task performance. The central question is not only whether the router adapts to load, but how latency should enter the learning objective. We propose LQM-C ONTEXT ROUTE , a con-textual bandit router for same-function providers. Its main design choice is latency-quality matching :instead of treating latency as an additive penalty, the router scores each provider by a renewal-reward rate, ˆui/(1+ˆ τi/L ref ). This treats latency as service-cycle cost. One call consumes one accounting unit plus a service-time penalty proportional to τ /L ref ,so a fast low-quality provider is not rewarded for be-ing fast alone. The router combines this objective with a LinUCB quality head and LLM-as-judge feedback, allowing it to learn query-specific qual-ity estimates without online gold labels. 
+
+Contributions. 
+
+• We formalize same-function provider rout-ing under runtime load, separating provider choice from the upstream decision of which tool type to invoke. • We identify additive latency-quality compen-sation as a concrete failure mode and propose a throughput-style objective that treats latency as service-cycle cost rather than as an additive reward penalty. • We evaluate LQM-C ONTEXT ROUTE across web-search load traces, high-heterogeneity question answering, retriever pools, and LLM-provider pools. It cuts static-provider latency by 50 –67% on the main load benchmark, im-proves F1 by +2 .18 pp over SW-UCB, im-proves StrategyQA accuracy by up to +18 pp, and adds +2 .91 –+3 .22 pp NDCG on retriever pools. 
+
+2 Background and Problem Formulation 
+
+Task. A selected function category C is served by a pool TC = {T1, . . . , T K } of K functionally equivalent tools: each arm implements the same external interface, but may differ in answer quality, latency, rate limits, or backend modality. At round 
+
+t, a query qt arrives; the router selects it ∈ [K],observes latency τit (t) ≥ 0 immediately, and later receives a quality scalar uit (t) ∈ [0 , 1] from an on-line evaluator (an LLM judge in our experiments). The goal is to choose providers that deliver high expected quality while respecting an operator-set service-time budget Lref .
+
+Why the setting is different. This provider-routing problem differs from both tool selection and a vanilla contextual bandit. The upstream agent has already selected the tool type; the gateway only chooses among providers of that interface. Feed-back is partial because the router observes latency and quality only for the provider it calls. Load is non-stationary, quality labels are not available on-line, and provider preferences can depend on the query. Providers may be heterogeneous: a low-latency provider can be a poor answer source for some tasks, while a slower provider can be substan-tially more useful. 
+
+Why the setting matters. External stress reports motivate the load side of the problem: Digital Ap-plied (2026) find that 62% of MCP-server failures are runtime/load-related and that reliability drops by 18 percentage points as concurrency increases from 1 to 32 requests, while Gupta (2026) report rate limiting as the most damaging injected fault. Although our live search profile is smaller than pro-duction traffic, it shows the provider-level variation that a gateway sees even without failures: across 
+
+270 calls, Tavily has a warm p50 of 76 ms with a cold-start tail, Brave has a warm p50 of 316 ms and a tighter spread, and DDG remains around 2.5
+
+s (App. C). These observations motivate a router that tracks service state while still accounting for answer quality. 
+
+Why additive rewards are misaligned. A stan-dard load-aware reward (Poon et al., 2025; Chad-derwala, 2025) is r = αu − (1 −α)˜ τ with ˜τ
+
+normalized to [0 , 1] . The two axes compen-sate : at α=0 .4, ˜τ =0 , u =0 .1 scores 0.04 , while 
+
+˜τ =1 , u =0 .65 scores −0.34 , so the lower-quality low-latency provider is ranked higher. We instead frame routing as the constrained problem 
+
+π⋆ = arg max  
+
+> π
+
+Ei∼π[ui] s.t. Ei∼π[τi] ≤ Lref , (1) where Lref is an operator-set service-time budget (the SLA threshold in our experiments). This objec-tive makes the trade-off explicit: latency constrains how often useful answers can be delivered, but it should not directly compensate for low answer quality. 2State Updated by Role Quality ˆui(x) evaluator score utility estimate Latency ˆτi observed latency service cost Uncertainty ci(x) LinUCB covariance exploration Score si(t, x) quality + latency provider choice 
+
+Table 1: Per-provider state used by the router. 
+
+3 Method: LQM-C ONTEXT ROUTE 
+
+3.1 Router Overview 
+
+LQM-C ONTEXT ROUTE is a router for a fixed pool of functionally equivalent providers. At round t,it receives a query representation xt, chooses one provider it, observes its latency τit (t), receives an online quality score uit (t), and updates only the selected provider. The router maintains three quantities per provider: a query-conditional qual-ity estimate, a provider-level latency estimate, and an uncertainty estimate for exploration. The selec-tion rule combines them into one score: predicted quality is divided by current service cost, and an op-timism bonus encourages exploration when quality is uncertain. The separation mirrors the deployment setting. Load is primarily a property of an upstream service at a given time, so latency is tracked at the provider level. Quality is query-conditional because two providers that share an API can still differ by ques-tion type, retrieval coverage, or reasoning fit. The renewal-rate term is the objective; the LinUCB head estimates query-specific quality; the EMA tracks current service cost. Table 1 summarises these roles. 
+
+3.2 Latency-Quality Matching 
+
+The core design choice is the selection objective. Additive rewards αu − (1 −α)˜ τ allow a low-quality provider to be rescued by low latency. We instead score a provider by the renewal-reward rate 
+
+Vi = ui
+
+1 + τi/L ref 
+
+, (2) where Lref is the operator-set latency budget. This score implements the constrained goal in Eq. 1: quality is the reward, while latency consumes ser-vice capacity. Under the linear-cycle calibration, a call takes one accounting unit plus a service-time penalty τi/L ref . The renewal-reward theorem gives the long-run reward rate ui/(1 + τi/L ref ) (Ross, 1996, Thm. 3.6.1). Appendix B gives the formal characterisation and discusses alternative calibra-tions. The important property for routing is non-compensation: if ui is near zero, the score is near zero regardless of how fast the provider is. This objective also gives Lref a direct opera-tional meaning: it is the latency scale at which one call consumes roughly one extra unit of ser-vice time. A smaller value makes the router more latency-sensitive, while a larger value approaches quality-first routing. In the experiments we set 
+
+Lref to the SLA threshold and check sensitivity in Appendix C. 
+
+3.3 Contextual Quality and Latency Estimates 
+
+LQM-C ONTEXT ROUTE estimates quality with one LinUCB head per provider and estimates la-tency with an exponential moving average. For provider i, let ˆui(xt) = x⊤ 
+
+> t
+
+A−1 
+
+> i
+
+bi be the contex-tual quality estimate and ˆτi the current latency esti-mate. After selecting provider it, the router updates 
+
+ˆτit using the observed latency and updates the se-lected LinUCB head with the pair (xt, u it (t)) . Un-selected providers are not updated, matching the bandit feedback available in the gateway. 
+
+3.4 Selection Rule 
+
+The router selects the provider with the largest score 
+
+si(t, xt) = ˆui(xt)1 + ˆ τi/L ref 
+
++ αucb 
+
+q
+
+x⊤ 
+
+> t
+
+A−1 
+
+> i
+
+xt
+
+1 + λ ∆i(xt) , (3) where ∆i(xt) = max(0 , max j ˆuj (xt) − ˆui(xt)) .The first term is the latency-quality matching score applied to contextual quality; the second is the LinUCB exploration bonus, deflated for arms whose estimated quality is already domi-nated. We use λ = 1 in all experiments. Sliding-window Sherman–Morrison updates maintain A−1
+
+> i
+
+efficiently; Algorithm 1 summarises the online loop. The deflation term is deliberately asymmetric. It does not punish a slow provider merely for being slow, because a slow provider may be the only one with useful evidence for a query. It only reduces exploration when the current contextual model al-ready estimates that another provider has higher quality. This is the mechanism that distinguishes LQM-C ONTEXT ROUTE from a pure load balancer: the router may spend latency when the expected quality return is large, while reducing exploration of arms whose predicted quality is already domi-nated for the current query distribution. 3Algorithm 1 LQM-C ONTEXT ROUTE online rout-ing                                                                     
+
+> 1: init Ai←λrI,bi←0,ˆτi←τ0for each provider i
+> 2: for t= 1 , . . . , T do
+> 3: Embed query qtas xt
+> 4: for each active provider ido
+> 5: ˆui←x⊤
+> tA−1
+> ibi
+> 6: ci←αucb
+> q
+> x⊤
+> tA−1
+> ixt
+> 7: ∆i←max(0 ,max jˆuj−ˆui)
+> 8: si←ˆui/(1 + ˆ τi/L ref ) + ci/(1 + λ∆i)
+> 9: end for
+> 10: Select it←arg max isiand call provider it
+> 11: Observe latency τtand quality score ut
+> 12: Update ˆτitby EMA; update A−1
+> it,bitwith (xt, u t)
+> 13: end for
+
+3.5 Online Update and Feedback 
+
+After a provider returns, the latency observation up-dates ˆτit and an online evaluator supplies uit (t) ∈
+
+[0 , 1] from the chosen provider’s response. In our experiments this evaluator is a local L LAMA -3.2-1B judge (mean 64 ms, P95 115 ms). The judge is a deployment-time reward proxy, not an oracle gold label; we validate it against a 30B reference in App. C. The proposed router throughout the paper is LQM-C ONTEXT ROUTE . We use one ablation, LQM-ONLY , only to isolate the scoring objective from the contextual quality model. It removes xt
+
+and replaces the LinUCB quality head with EMA quality: 
+
+si(t) = ˆui
+
+1 + ˆ τi/L ref 
+
++ βplog( t)/(nw,i +1) 1 + λ ∆i
+
+.
+
+(4) When the pool is quality-homogeneous, Eq. 4 behaves like load-greedy SW-UCB; when one provider dominates on both axes, the quality term drives selection. These limits are tested in §4.4 and §4.3. 
+
+3.6 Properties 
+
+Theorem 2 (App. B) states the main score-level dis-tinction: for every α ∈ (0 , 1) , there are 2-provider instances where an additive composite ranks the lower-quality fast provider above the higher-quality provider, while Eq. 2 ranks them correctly. This the-orem explains the failure mode targeted by the ex-periments; bandit-level performance still depends on exploration. For the unmodulated optimistic bonus ( λ = 0 ), the plug-in throughput estimator concentrates at the EMA rate with Lipschitz constants cu ≤ 1 and 
+
+cτ ≤ L−1 
+
+> ref
+
+, yielding 
+
+RT ≤ X 
+
+> i:∆ Vi>0
+
+C(1 + L−1 
+
+> ref
+
+)2 log T
+
+∆Vi
+
++ o(log T ).
+
+Appendix B gives the proof sketch and states the additional assumptions; the λ > 0 deflation used in Eq. 3 is treated as an empirical exploration control rather than as a separate optimism guarantee. 
+
+4 Evaluation 
+
+The method in §3 makes two linked claims: same-function provider routing should improve service behavior under runtime load, and latency should affect selection through a capacity-aware quality rate rather than an additive penalty. A complete evaluation must also identify the boundary cases where this design should be neutral. We test three claims: • C1: Load-aware routing. Under non-stationary provider load, routing should re-duce latency and SLA misses without sacrific-ing answer quality. • C2: Latency-quality matching. When fast providers are not also high-quality providers, LQM-C ONTEXT ROUTE should avoid the additive-compensation failure predicted by Theorem 2. • C3: Transfer and limits. The latency-quality objective should transfer beyond web search when provider quality differs, and it should remain stable rather than report spurious gains when one provider is already dominant. Web search is the main testbed because it natu-rally exposes multiple interchangeable providers with different latency and quality profiles. We use it as the deployment-shaped benchmark, then place it in a broader same-function provider ma-trix with QA, LLM-backend, and retriever pools that vary in provider-quality heterogeneity. We re-port both task quality and latency: a latency-only router can satisfy the SLA while returning poor answers, whereas a quality-only router can exceed the service budget. 
+
+4.1 Setup Main benchmark. The main benchmark uses 200 questions (100 HotpotQA + 100 TriviaQA) and three web-search providers. For each (query, provider) pair, we execute the provider, run a 4Qwen3-30B reader over the returned evidence, and score the resulting answer with F1. The resulting provider-response score table gives every router the same observed answer surface, so differences come from routing decisions rather than reader noise. 
+
+Runtime load. Latency is drawn online from cal-ibrated service profiles anchored by vendor medi-ans and our live Tavily/Brave/DDG measurements. The profiles define warm, loaded, and overloaded states with measured-scale latency distributions and failure probabilities. We then evaluate four non-stationary load patterns, which are reused in the web-search and retriever tables. In STEP , the preferred provider becomes overloaded at T / 2 and recovers at 3T / 4. In ROTATION , the overloaded provider changes every T /K rounds. In SPIKE ,a provider experiences random 15–40-round over-load bursts. In GRADUAL , provider latency follows a smooth sinusoidal drift. We treat SLA as the fraction of calls below 1.5 seconds, matching Lref .
+
+Baselines. The baselines cover three prior-work styles. First, S TATIC -T1 (always Tavily), R OUND -ROBIN , and R EACTIVE -C OOLDOWN represent production routing policies: fixed priority, load spreading, and LiteLLM-style priority+cooldown failover. Second, EMA-G REEDY , SW-UCB (Garivier and Moulines, 2011), and C ONTEX -
+
+> T
+
+ROUTE represent academic online routing poli-cies with load-aware or contextual selection. Third, additive contextual variants in Table 7 isolate the common prior objective that combines answer qual-ity and latency as an additive reward. We compare these policies with LQM-C ONTEXT ROUTE , and include LQM-ONLY only as a scoring ablation (Lref = 1500 ms, λ = 1 ). LATENCY -O RACLE 
+
+and F1-O RACLE bracket the attainable latency and quality. Unless otherwise noted, each router runs for T = 200 rounds over 50 seeds. Recent LLM endpoint routers such as RouteLLM, PILOT, OmniRouter, BEST-Route, and ParetoBandit opti-mize model selection, dollar cost, or global budget allocation rather than load-aware routing among providers behind one selected tool interface. We therefore compare to their relevant policy classes: contextual selection, additive cost/reward objec-tives, production fallback, and oracle frontiers. 
+
+Unified provider-pool matrix. Table 2 gives the cross-pool view. It uses the same router family, four non-stationary load patterns, and the same qual-ity/latency/SLA metrics across six same-function provider pools. The first row is the deployment-shaped search benchmark; the next three rows vary provider-quality heterogeneity in QA and LLM-backend pools; the last two rows test whether the latency-quality matching objective transfers to retriever providers. All rows report LQM-CONTEXT ROUTE , the final contextual router. 
+
+4.2 Q1: Does routing help under load? 
+
+The WebSearch row of Table 2 is the deployment-shaped load benchmark: three web-search providers behind one logical interface, measured provider-response scores, and non-stationary load. Table 3 breaks this result down by load pattern. The Tavily/Brave quality gap is only about 1 pp, so this panel is primarily a latency/SLA test rather than the largest expected quality gain. All learning routers address the load problem: against S TATIC -T1, they cut mean latency by 50 –67% on STEP ,lift SLA from 89% to ≥ 98% , and stay within 
+
+1 pp F1 of the latency oracle. Within the learning routers, LQM-C ONTEXT ROUTE adds +0 .85 pp F1 over C ONTEXT ROUTE averaged over patterns and 
+
++2 .18 pp over SW-UCB, although individual load patterns still expose the expected latency-quality trade-off. Figure 1 makes the latency-quality trade-off ex-plicit. LQM-C ONTEXT ROUTE sits on the empiri-cal Pareto frontier of the learning routers: relative to SW-UCB, it spends latency for +2 .18 pp F1; relative to C ONTEXT ROUTE , it gains +0 .85 pp F1 with slightly lower mean latency. A sweep over Lref ∈ {750 , 1500 , 3000 } changes LQM-CONTEXT ROUTE by at most 0.29 pp F1 and keeps SLA in 97 .9–98 .0% (App. C). The SPIKE pattern, omitted from Table 3for space, follows the same reading: LQM-CONTEXT ROUTE obtains F1 0.591 at 387 ms mean latency, compared with C ONTEXT ROUTE at 
+
+0.583 and 415 ms, SW-UCB at 0.579 and 263 ms, and S TATIC -T1 at 0.572 and 580 ms. These re-sults support the load-aware routing claim: learning routers reduce latency under non-stationary service states, and LQM-C ONTEXT ROUTE remains on the quality/latency frontier among learnable poli-cies. The comparison with static, cooldown, and load-aware bandit baselines also shows why latency alone is insufficient. 5Pool providers role metric quality latency (ms) SLA ∆SW ∆CR WebSearch search APIs main F1 0.581 442 97.9 +2.18 +0.85 StrategyQA QA providers high heterogeneity Acc. 0.601 645 90.0 +17.54 +4.65 StrategyQA-Synth QA providers moderate F1 0.624 628 91.1 +3.47 +2.76 LLM-Ladder LLM backends non-search F1 0.353 977 89.3 +8.89 +4.64 SciFact retrievers retrieval NDCG 0.711 196 97.8 +2.91 -0.46 NFCorpus retrievers retrieval NDCG 0.294 325 95.1 +3.22 -0.52 
+
+Table 2: Unified same-function provider-pool results. Deltas are quality points relative to SW-UCB and C ONTEX -
+
+> T
+
+ROUTE .                                                     
+
+> STEP ROTATION GRADUAL
+> Router F1 lat. (ms) F1 lat. (ms) F1 lat. (ms) F1-Oracle 0.697 670 0.667 952 0.636 1287 Latency-Or. 0.574 141 0.555 156 0.465 276 Static-T1 0.558 783 0.539 1011 0.499 1511 EMA-Greedy 0.550 228 0.491 360 0.483 301 SW-UCB 0.580 296 0.515 358 0.562 381 ContextRoute 0.602 386 0.538 501 0.566 499 LQM-ONLY 0.573 345 0.531 431 0.551 465
+> LQM-C ONTEXT ROUTE 0.594 409 0.550 490 0.588 481
+
+Table 3: Main web-search benchmark by load pattern.  
+
+> SPIKE
+
+is discussed in the text. 0 200 400 600 800 1000 
+
+> Mean latency (ms)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Mean answer F1
+> CR
+> EMA
+> F1-Oracle
+> LQM-CR
+> LQM-only Lat-Oracle
+> SW-UCB
+> Static
+
+Figure 1: Latency-quality Pareto view of the main benchmark. Marker size encodes SLA@1.5s. 
+
+4.3 Q2: When does latency-quality matching matter? 
+
+The latency-quality matching score should matter most when the same interface hides large provider-quality differences. In the main benchmark, a slice by per-query cross-provider F1 gap tests this mechanism: among 106 high-gap questions, LQM-CONTEXT ROUTE gains +4 .42 pp over SW-UCB and +1 .33 pp over C ONTEXT ROUTE while cutting DDG traffic by 14 .4 and 8.0 pp, respectively. On 85 zero-gap questions, where no router can exploit provider-quality heterogeneity, F1 deltas shrink to within ±0.5 pp. The DDG-share reduction is diagnostic: ad-ditive or load-greedy policies can overuse the fast but weak provider under stress, while LQM-                
+
+> Gap bin qids top-2 gap ∆F1 vs SW ∆DDG zero 85 0.000 -0.49 -13.9 mild 90.061 +0.92 -19.7 large 106 0.317 +4.42 -14.4
+
+Table 4: Main-benchmark heterogeneity slice for LQM-CONTEXT ROUTE vs. SW-UCB. F1 and DDG-share deltas are percentage points. 
+
+CONTEXT ROUTE reduces that traffic most in the high-gap slice. 
+
+StrategyQA (Geva et al., 2021) requires implicit multi-hop boolean reasoning (e.g. “Was the direc-tor of E.T. born before the founding of Pixar?”). We use it to instantiate the high-heterogeneity regime in Theorem 2: three arms share the same question-answering interface but have sharply different qual-ity/latency trade-offs. The pool contains Q WEN -7B (Qwen2.5-7B-Instruct, direct parametric an-swer; accuracy = 0.643), L LAMA -1B (Llama-3.2-1B-Instruct; accuracy = 0.520), and DDG+J UDGE 
+
+(DuckDuckGo snippets judged by Qwen-7B; accu-racy = 0.123). DDG is functionally valid but poorly matched to this task because snippets rarely contain the multi-step inference chain StrategyQA needs. This creates a 52 pp quality gap, large enough to make additive compensation visible in aggregate. Table 5 reports the result. SW-UCB accuracy drops to 0.39 –0.46 (−19 to −26 pp below S TATIC -T0) because DDG’s low ˜τ compensates for its near-zero u and draws traffic toward the lower-quality provider. C ONTEXT ROUTE mitigates this partly (0.521 –0.580 ). LQM-C ONTEXT ROUTE changes the ranking by treating latency as service-cycle cost and reaches 0.574 –0.631 (+18 pp over SW-UCB). The LQM-ONLY ablation recovers 0.547 –0.588 ,which confirms that the scoring objective accounts for most of the gain before context is added. Static-T0 has the highest pure-quality ceiling because it always calls Qwen-7B, but it pays for that choice with 1238 ms mean latency and only 70% SLA. The largest gain appears in the case predicted by the theory: provider quality and latency are misaligned. 6Accuracy by pattern mean Router step rot. spike lat. (ms) SLA Static-T0 0.644 0.633 0.657 1238 70 EMA-Greedy 0.396 0.419 0.382 297 99 SW-UCB 0.412 0.413 0.464 286 100 LQM-ONLY 0.563 0.575 0.588 454 95 ContextRoute 0.577 0.539 0.580 577 92      
+
+> LQM-C ONTEXT ROUTE 0.618 0.580 0.631 645 90
+
+Table 5: StrategyQA high-heterogeneity routing.             
+
+> Pool SW CR LQM-ONLY LQM-C ONTEXT ROUTE
+> No-DDG 0.586 0.577 0.581 0.604
+> Synth-3B 0.587 0.595 0.594 0.625
+
+Table 6: StrategyQA companion pools with no weak DDG arm. 
+
+The no-DDG companions in Table 6 replace the weak DDG arm with plausible providers. With a smaller 12 .3 pp gap, the gains shrink but remain positive on the three-provider companion. Table 7 asks which part of the method produces the gain. On web search, adding the latency-quality matching score to the contextual router improves F1 from 0.573 to 0.581 without increasing mean latency; on StrategyQA, where heterogeneity is stronger, the full router reaches the highest accu-racy. The renewal score addresses latency-quality compensation, while context decides when quality differences are query-specific. An additive α sweep further checks that this is not merely a mis-tuned baseline. Across α ∈ { 0.1, 0.3, 0.5, 0.7, 0.9}, the strongest additive contextual router remains be-low LQM-C ONTEXT ROUTE on both the main benchmark ( 0.5806 vs. 0.5834 F1) and StrategyQA (0.5894 vs. 0.5978 accuracy), while SW-UCB re-mains farther behind (App. C). 
+
+4.4 Q3: Does the objective transfer beyond web search? 
+
+Q3 asks whether the objective transfers beyond web search and then checks stable-provider limits. We run two retriever-pool checks with provider-quality differences large enough for the objective to matter. On SciFact (Wadden et al., 2020), the providers are 
+
+GTE -BASE (NDCG 0.762 ), BGE -BASE (0.740 ), and 
+
+MINILM (0.645 ); per-retriever NDCG@10 on 300 test claims is from BEIR (Thakur et al., 2021). On 
+
+NFCorpus , providers retrieve from the same cor-pus using a slower TF-IDF fusion index ( 0.302 ), a word TF-IDF index ( 0.295 ), and a fast title-only in-dex ( 0.215 ). Table 8 gives the SciFact breakdown, and Table 2 reports both retriever aggregates. The retriever results support the same mechanism as                         
+
+> Component main F1 main lat. (ms) SQA acc SQA lat. (ms) Additive-CR 0.573 435 0.547 542 Score only 0.556 398 0.561 407 Score+defl 0.557 395 0.567 435 Score+ctx 0.581 435 0.591 515 Full router 0.580 430 0.596 565
+
+Table 7: Component ablation; Full router is LQM-CONTEXT ROUTE .                                         
+
+> STEP ROTATION GRADUAL
+> Router NDCG lat. (ms) NDCG lat. (ms) NDCG lat. (ms) Static-T0 0.692 909 0.678 1129 0.631 1665 EMA-Greedy 0.672 46 0.686 134 0.672 46 SW-UCB 0.672 46 0.691 181 0.672 46
+> LQM-ONLY 0.728 205 0.735 255 0.718 240 ContextRoute 0.732 260 0.699 449 0.715 330 LQM-C ONTEXT ROUTE 0.717 102 0.707 365 0.717 102
+
+Table 8: SciFact heterogeneous retriever pool. 
+
+Q2: LQM-C ONTEXT ROUTE spends more latency on the stronger retrievers and improves NDCG by 
+
++2 .91 pp on SciFact and +3 .22 pp on NFCorpus over SW-UCB, while remaining above 95% SLA. The LQM-ONLY ablation is slightly stronger on these retriever pools, which suggests that generic text embeddings are not always the best context for retrieval routing; the proposed router still avoids the latency-greedy failure. On NFCorpus, the always-fusion static provider has the highest raw NDCG but much worse service behavior ( 1104 ms mean latency, 73% SLA), so the routing result should be read as a quality-latency trade-off rather than a pure-quality win. We also run a small live ReAct loop with Tavily/Brave/DDG ( n=30 , max_steps = 3 , full fall-back). This is a stable-provider regime: Tavily is dominant, and LQM-C ONTEXT ROUTE ties Static-T1 ( 0.3690 vs. 0.3681 , p=0 .33 ). Bootstrap-ping the main benchmark from 270 live-measured calls gives LQM-C ONTEXT ROUTE +4 .03 pp over Static-T1 (App. C); this uses measured tail pro-files while reusing the measured provider-response score table. We treat the live ReAct result as a stability check, not as the main evidence for LQM-CONTEXT ROUTE ’s advantage. Outage replay tests a failure regime (Table 9). With full agent fallback, the static strong provider remains hard to beat; without fallback, the same static policy collapses and the routers recover roughly twice its F1. This result is a failure-regime stress test rather than a head-to-head comparison of routing objectives. Table 10 checks the last deployment ingredient: 7Regime Static SW CR LQM-C ONTEXT ROUTE         
+
+> fallback 0.400 0.295 0.311 0.304 no fallback 0.134 0.261 0.256 0.254
+
+Table 9: ReAct outage replay: aggregate F1 under Brave outage.                
+
+> Pattern 30B oracle 1B judge recovery step 0.533 0.468 87.8 rotation 0.508 0.496 97.6 spike 0.535 0.496 92.8 gradual 0.496 0.460 92.6
+
+Table 10: Closed-loop reward-proxy validation for C ON -
+
+> TEXT
+
+ROUTE .
+
+online reward. On K=2 (Brave + DDG), C ON -
+
+> TEXT
+
+ROUTE trained on a 1B LLM-judge reward recovers 88 –98% of the F1 obtained when train-ing on a 30B-oracle reward, evaluated against the same held-out 30B reference. This experiment iso-lates reward-proxy sufficiency; it is not a compari-son of routing objectives. These checks define the operating regime: LQM-C ONTEXT ROUTE helps most when load pressure and quality heterogene-ity appear together. A non-search LLM-provider ladder in App. D adds one more same-function pool: when the same answer interface hides slower but much higher-quality LLM providers, LQM-CONTEXT ROUTE improves F1 by +8 .89 pp over SW-UCB and +4 .64 pp over C ONTEXT ROUTE by spending latency where the quality return is large. 
+
+5 Related Work 
+
+Tool and model routing. Tool-augmented agent work studies which tool an agent should call and how tool outputs enter reasoning (Schick et al., 2023; Patil et al., 2023; Qin et al., 2023; Yao et al., 2022). Our setting begins after that decision: a gateway routes one selected tool type among func-tionally equivalent providers behind the same inter-face, a pattern made common by MCP-style tool interfaces (Anthropic, 2024). LLM-routing bench-marks and systems (Hu et al., 2024; Li et al., 2026; Ong et al., 2024; Jitkrittum et al., 2025) choose among model endpoints, often trading answer qual-ity against inference cost. Recent online and bud-geted routers use bandit feedback, test-time com-pute, or constrained allocation (Zhang et al., 2024; Anonymous, 2025b,a; Poon et al., 2025; Ding et al., 2025; Mei et al., 2025; Taberner-Miller, 2026). We route tool providers instead of LLM endpoints, and the key runtime signal is service load rather than only model cost. Production gateways such as LiteLLM and Portkey provide priority, cooldown, and fallback policies (BerriAI, 2026; Portkey, 2026, 2025); LQM-C ONTEXT ROUTE adds a quality-aware selection layer for same-function pools. 
+
+Cost-aware bandits. Non-stationary and contex-tual bandits adapt to changing rewards and query context (Garivier and Moulines, 2011; Kocsis and Szepesvári, 2006; Russac et al., 2019; Li et al., 2010). Bandits with knapsacks, constrained ban-dits, and CVaR bandits model resource limits or risk (Badanidiyuru et al., 2018; Agrawal and De-vanur, 2019; Combes et al., 2015; Tamkin et al., 2019). These tools do not by themselves ad-dress the failure studied here: additive utility-cost rewards can rank a fast poor provider above a slow useful one. Our renewal score u/ (1+ τ /L ref )
+
+follows the reward-per-service-cycle view (Ross, 1996) and targets that compensation failure directly. 
+
+6 Conclusion 
+
+We study routing among functionally equivalent tool providers for LLM agents under runtime load. Additive latency-quality rewards can pre-fer a fast low-quality provider over a slower use-ful one (Thm. 2). LQM-C ONTEXT ROUTE re-places reward mixing with the renewal-reward score ui/(1 + τi/L ref ) inside a contextual bandit with online judge feedback. Across search, QA, and retriever pools, the main gains appear when runtime pressure and provider-quality heterogene-ity coexist: LQM-C ONTEXT ROUTE cuts latency and SLA misses, avoids additive-reward collapse, and remains neutral in stable-dominant pools. 
+
+7 Limitations 
+
+The main benchmark records provider-response scores before the routing runs and then varies run-time load, so it isolates routing decisions rather than full production traffic. Non-search evidence comes from retriever pools and an LLM-provider ladder, not broad live traffic across many tool cate-gories. The method also assumes a same-function provider pool and a reliable online quality proxy; it does not address upstream tool selection, multi-tool planning, or provider schema mismatch. The results should be read as evidence about when provider routing matters rather than as an estimate of average production lift. 8References 
+
+János Aczél. 1966. Lectures on Functional Equations and Their Applications , volume 19 of Mathematics in Science and Engineering . Academic Press. Shipra Agrawal and Nikhil R. Devanur. 2019. Bandits with concave rewards and convex knapsacks. In ACM EC .Anonymous. 2025a. Learning to route LLMs from bandit feedback (BaRP). arXiv preprint arXiv:2510.07429 . Multi-objective contextual bandit for LLM routing under bandit feedback. Anonymous. 2025b. PILOT: Adaptive LLM rout-ing under budget constraints. arXiv preprint arXiv:2508.21141 . EMNLP 2025 Findings; LinUCB extension with preference prior + cost knapsack for LLM routing. Anthropic. 2024. Model Context Protocol Specifi-cation. https://modelcontextprotocol. io/ . Accessed: 2026-05-02. Ashwinkumar Badanidiyuru, Robert Kleinberg, and Aleksandrs Slivkins. 2018. Bandits with knapsacks. 
+
+Journal of the ACM , 65(3). BerriAI. 2026. LiteLLM Routing and Load Balanc-ing Documentation. https://docs.litellm. ai/docs/routing . Accessed: 2026-05-02. Chadderwala. 2025. Optimizing life sciences agents in real-time using reinforcement learning. arXiv preprint arXiv:2512.03065 . Thompson Sampling contextual bandit over heterogeneous tools (PubMed, drug DBs, calculator, web) with composite reward including latency. Richard Combes, Chong Jiang, and R. Srikant. 2015. Bandits with budgets: Regret lower bounds and opti-mal algorithms. In ACM SIGMETRICS .Digital Applied. 2026. MCP Server Reliabil-ity: A 100-Server Stress Test Study. https: //www.digitalapplied.com/blog/mcp-server-reliability-100-server-stress-test-study . Accessed: 2026-05-02. Dujian Ding, Ankur Mallick, Shaokun Zhang, Chi Wang, Daniel Madrigal, Mirian Hipolito Garcia, Menglin Xia, L. Lakshmanan, Qingyun Wu, and Vic-tor Ruehle. 2025. BEST-Route: Adaptive LLM rout-ing with test-time optimal compute. arXiv preprint arXiv:2506.22716 .Aurélien Garivier and Eric Moulines. 2011. On upper-confidence bound policies for switching bandit prob-lems. ALT .Mor Geva, Daniel Khashabi, Elad Segal, Tushar Khot, Dan Roth, and Jonathan Berant. 2021. Did aristotle use a laptop? a question answering benchmark with implicit reasoning strategies. Transactions of the Association for Computational Linguistics , 9:346– 361. Aayush Gupta. 2026. ReliabilityBench: Evaluating LLM agent reliability under production-like stress conditions. arXiv preprint arXiv:2601.06112 .Qitian Jason Hu and 1 others. 2024. RouterBench: A benchmark for multi-LLM routing system. arXiv preprint arXiv:2403.12031 .Wittawat Jitkrittum, Harikrishna Narasimhan, Ankit Singh Rawat, Jeevesh Juneja, Congchao Wang, Zifeng Wang, Alec Go, Chen-Yu Lee, Pradeep Shenoy, Rina Panigrahy, Aditya Krishna Menon, and Sanjiv Kumar. 2025. Universal model routing for efficient LLM inference. arXiv preprint arXiv:2502.08773 .Levente Kocsis and Csaba Szepesvári. 2006. Dis-counted UCB. In ECML .Hao Li, Yiqun Zhang, Zhaoyan Guo, Chenxu Wang, Shengji Tang, Qiaosheng Zhang, Yang Chen, Biqing Qi, Peng Ye, Lei Bai, Zhen Wang, and Shuyue Hu. 2026. LLMRouterBench: A massive benchmark and unified framework for LLM routing. arXiv preprint arXiv:2601.07206 .Lihong Li, Wei Chu, John Langford, and Robert E. Schapire. 2010. A contextual-bandit approach to per-sonalized news article recommendation. In WWW .Kai Mei, Wujiang Xu, Minghao Guo, Shuhang Lin, and Yongfeng Zhang. 2025. OmniRouter: Budget and performance controllable multi-LLM routing. 
+
+SIGKDD Explorations .Isaac Ong and 1 others. 2024. RouteLLM: Learning to route LLMs with preference data. arXiv preprint arXiv:2406.18665 .Shishir G. Patil and 1 others. 2023. Gorilla: Large language model connected with massive APIs. arXiv preprint arXiv:2305.15334 .Manhin Poon, Xiangxiang Dai, Xutong Liu, Fang Kong, John C. S. Lui, and Jinhang Zuo. 2025. On-line multi-LLM selection via contextual bandits un-der unstructured context evolution. arXiv preprint arXiv:2506.17670 .Portkey. 2025. Failover Routing Strate-gies for LLMs in Production. https: //portkey.ai/blog/failover-routing-strategies-for-llms-in-production/ .Accessed: 2026-05-02. Portkey. 2026. The Most Reliable AI Gateway for Production Systems. https://portkey.ai/ blog/the-most-reliable-ai-gateway-for-production-systems/ . Accessed: 2026-05-02. Yujia Qin and 1 others. 2023. ToolLLM: Facilitating large language models to master 16000+ real-world APIs. arXiv preprint arXiv:2307.16789 .
+
+9Sheldon M. Ross. 1996. Stochastic Processes , 2nd edition. Wiley. Renewal-reward theorem (Theorem 3.6.1). Yoan Russac, Claire Vernade, and Olivier Cappé. 2019. Weighted linear bandits for non-stationary environ-ments. In NeurIPS .Timo Schick and 1 others. 2023. Toolformer: Language models can teach themselves to use tools. arXiv preprint arXiv:2302.04761 .Annette Taberner-Miller. 2026. ParetoBandit: Budget-paced adaptive routing for non-stationary LLM serv-ing. arXiv preprint arXiv:2604.00136 .Alex Tamkin, Doyen Sahoo, and 1 others. 2019. Dis-tributional reinforcement learning for risk-sensitive policies. In NeurIPS .Nandan Thakur and 1 others. 2021. BEIR: A heteroge-neous benchmark for zero-shot evaluation of infor-mation retrieval models. In NeurIPS Datasets and Benchmarks .David Wadden and 1 others. 2020. Fact or fiction: Veri-fying scientific claims. In EMNLP .Shunyu Yao and 1 others. 2022. ReAct: Synergizing rea-soning and acting in language models. arXiv preprint arXiv:2210.03629 .Bowen Zhang, Gang Wang, Qi Chen, and Anton van den Hengel. 2024. How do we select right LLM for each query? MAR: Multi-armed recommender for on-line LLM selection. OpenReview preprint. Contex-tual bandit + LLM-as-judge for online LLM routing on 4,029-query WildArena dataset; OpenReview ID AfA3qNY0Fq. 
+
+A Positioning vs. prior LLM-routing work                                  
+
+> Work route unit deploy fb. runtime state u–τobjective RouteLLM LLM endpoint pref. fixed additive cost RouterBench LLM endpoint gold fixed additive cost PILOT LLM endpoint pref. budget additive cost BaRP LLM endpoint bandit fixed additive reward MAR LLM endpoint judge fixed additive reward Chadderwala tool choice user latency additive reward
+> Ours tool provider judge load renewal rate
+
+Table 11: Positioning by the problem axes used in this paper. 
+
+Constrained, knapsack, and Pareto routing. 
+
+Constrained bandits and bandits with knapsacks model resource limits as budgets over a sequence of decisions (Badanidiyuru et al., 2018; Agrawal and Devanur, 2019; Combes et al., 2015). This view is related to our use of a service-time budget, but it an-swers a different question. A knapsack formulation controls aggregate resource consumption; it does not specify how latency and answer quality should be ranked for two same-function providers on a sin-gle request. An additive Lagrangian or scalarized reward can still prefer a fast low-quality arm when latency compensates for low utility, which is the score-level failure in Theorem 2. Pareto routing methods and budget-paced LLM routers expose a quality-cost frontier or allocate traffic under a global budget (Mei et al., 2025; Taberner-Miller, 2026). LQM-C ONTEXT ROUTE 
+
+instead provides a single online selection rule for a gateway that has already selected the tool type and must choose a provider under current load. The renewal-rate score u/ (1+ τ /L ref ) can be viewed as one operating point on the frontier, with Lref setting the latency scale. This makes the method compat-ible with budgeted routing layers while keeping the provider-level objective focused on avoiding latency-quality compensation. 
+
+B Proofs and regret sketch 
+
+We give the deferred details for the transformed-reward regret sketch and the two score-level the-orems. In the stationary K-armed setting, let 
+
+ui ∈ [0 , 1] be sub-Gaussian with proxy σ2 
+
+> u
+
+and 
+
+τi ≥ 0 be sub-Gaussian with proxy σ2 
+
+> τ
+
+. Define 
+
+V ⋆i = u⋆i /(1 + τ ⋆i /L ref ) and ∆Vi = V ⋆i⋆ − V ⋆i .
+
+Concentration and regret. For the plug-in esti-mator ˆVi = ˆ ui/(1 + ˆ τi/L ref ), a first-order Taylor expansion gives, with probability at least 1 − δ,
+
+| ˆVi −V ⋆i | ≤ (1+ L−1 
+
+> ref
+
+)
+
+s
+
+2σ2 log(1 /δ )
+
+ni
+
++O(1 /n i),
+
+where σ2 = max( σ2
+
+> u
+
+, σ 2 
+
+> τ
+
+). The unmodulated opti-mistic version of the scoring ablation (Eq. 4 with 
+
+λ = 0 ) satisfies 
+
+RT ≤ X 
+
+> i:∆ Vi>0
+
+C(1 + L−1 
+
+> ref
+
+)2σ2 log T
+
+∆Vi
+
++ o(log T ).
+
+Sliding-window concentration gives the usual non-stationary additive term O(√T log T · VT ). The implemented λ > 0 quality modulation is not cov-ered by this optimism guarantee: because ∆i is estimated online, it can suppress exploration after an early quality-estimation error. We use it as an empirical deflation heuristic for clearly dominated arms. 10 Characterisation under linear-cycle calibration. 
+
+Let S(u, τ ) = T (u, z ) with z = τ /L ref . A1–A4 from §3.2 imply non-compensation, scale invari-ance, monotonicity, and boundedness, but they do not uniquely specify a score; for example 
+
+u(1 + z)−α satisfies them for any α > 0. A5 is the additional structural calibration: a call is a renewal cycle of duration 1 + z, so the reward rate is u/ (1 + z) by the renewal-reward theorem (Ross, 1996, Thm. 3.6.1). 
+
+Theorem 1 (Characterisation under linear-cycle calibration) . Under A1–A4 plus A5, the selected member of the admissible score family (up to monotone transformation of the quality scale) is 
+
+Vi = ui/(1 + τi/L ref ).
+
+Formally, A5 makes the latency ra-tio T (u, z 1)/T (u, z 2) depend only on 
+
+(1 + z2)/(1 + z1); standard multiplica-tive functional-equation arguments yield 
+
+T (u, z ) = u(1 + z)−α (Aczél, 1966, Ch. 3), and the linear renewal cycle fixes α = 1 .
+
+Separation from additive composites. Theorem 2 (Renewal-reward vs. additive separa-tion) . Fix α ∈ (0 , 1) and let radd  
+
+> i
+
+(α) = αu i −
+
+(1 − α)˜ τi with ˜τ = min {τ /L ref , 1}. There exists a two-arm instance where the additive score chooses the lower-quality faster arm while Vi = ui/(1 + ˜ τi)
+
+chooses the higher-quality arm whenever 
+
+u2∆˜τ
+
+1 + ˜ τ2
+
+< ∆u < 1 − αα ∆˜τ .
+
+The interval is non-empty when u2/(1 + ˜ τ2) <
+
+(1 − α)/α .
+
+Proof sketch: in a two-arm pool with ˜τ1 > ˜τ2
+
+and ∆u = u1 − u2, the additive score chooses the faster lower-quality arm 2 iff ∆u < 1−αα ∆˜τ . The renewal score chooses arm 1 iff ∆u > u 2∆˜τ /(1 + ˜τ2). Hence the two rankings disagree exactly when 
+
+u2∆˜τ
+
+1 + ˜ τ2
+
+< ∆u < 1 − αα ∆˜τ ,
+
+which is non-empty whenever u2/(1 + ˜ τ2) < (1 −
+
+α)/α .
+
+C Deployment and robustness details 
+
+LLM-as-judge closed-loop validation. On K=2 (Brave + DDG, the two providers with stored raw responses), C ONTEXT ROUTE trained on the 1B LLM-judge reward recovers 88 –98% of the F1 ob-tained when training on the 30B-oracle reward (Ta-ble 10). Static-T1 (always Brave) wins absolute F1 in this response set because Brave is unusually strong; the point of this experiment is judge suffi-ciency, not router dominance. 
+
+ReAct/outage replay. For each of 200 HotpotQA dev questions and each of {Brave, DDG}, we ran the Qwen-2.5-7B agent with up to 3 ReAct steps and stored the final answer, F1, and tool latency. The forced-search replay in §4.4 uses n = 100 
+
+questions, 30 seeds, and a sustained Brave outage at T / 2. Table 9 reports the aggregate F1. Routing helps most when the agent cannot recover through its own retry budget; with full fallback, the static strong arm remains difficult to beat. 
+
+Reference-latency sensitivity. The main exper-iments use Lref = 1500 ms, matching the SLA threshold. To check whether this choice drives the result, we rerun only LQM-C ONTEXT ROUTE on the main HotpotQA+TriviaQA benchmark with 
+
+Lref ∈ { 750 , 1500 , 3000 } ms. Mean F1 varies by at most 0.29 pp and SLA remains within 97 .9–
+
+98 .0% (Table 12).              
+
+> Lref F1 lat. (ms) SLA 750 0.581 432 98.0 1500 0.579 439 97.9 3000 0.582 436 98.0
+> Table 12: LQM-C ONTEXT ROUTE sensitivity to the reference latency on the main benchmark.
+
+Additive-reward alpha sweep. To test addi-tive tuning, we sweep the quality weight α ∈{0.1, 0.3, 0.5, 0.7, 0.9} for both SW-UCB and the contextual additive router. Table 13 reports the strongest additive variants by quality. On the main benchmark, the best additive contextual router nearly matches LQM-C ONTEXT ROUTE but has slightly lower F1 and higher latency. On Strate-gyQA, where the low-latency provider has much lower quality, increasing α helps but does not re-move the additive-compensation failure. 
+
+Live latency profile and real-bootstrap setup. 
+
+We profile Tavily, Brave, and DuckDuckGo on 30 HotpotQA queries under three conditions: idle (se-quential), moderate (200 ms inter-call sleep), and stressed (3 concurrent threads with 800 ms inter-batch sleep). All 270 calls succeeded. The real-bootstrap replay samples latencies with replace-11 Dataset Router quality lat. (ms) ∆qual. main LQM-C ONTEXT ROUTE 0.5834 431 –main CR( α = 0 .9) 0.5806 444 -0.28 main SW( α = 0 .5) 0.5592 337 -2.43 StrategyQA LQM-C ONTEXT ROUTE 0.5978 566 –StrategyQA CR( α = 0 .9) 0.5894 568 -0.84 StrategyQA SW( α = 0 .9) 0.5652 424 -3.26 
+
+Table 13: Best additive baselines under an α sweep. 
+
+ment from the corresponding empirical pool and maps the load bins to idle, moderate, or stressed without interpolation.                                         
+
+> Tool condition mean (ms) p50 (ms) p95 (ms) Tavily idle 1650 1477 2817 Tavily moderate 149 76 87 Tavily stressed 175 79 159 Brave idle 680 715 809 Brave moderate 342 316 405 Brave stressed 320 305 482 DDG idle 2790 2737 3415 DDG moderate 2584 2483 2927 DDG stressed 2151 1955 2903
+
+Table 14: Live latency profile. 
+
+On HotpotQA K=3 ( T = 200 , 50 seeds, 4 load patterns), the real-bootstrap run gives LQM-CONTEXT ROUTE F1 0.5823 (Static-T1 0.5420, 
+
+∆ = +4 .03 pp), SW-UCB 0.5809, C ONTEX -
+
+TROUTE 0.5739, Latency-Oracle 0.5418, and F1-Oracle 0.6750. This replay combines measured latency samples with the same provider-response scores used in the main benchmark, strengthening the load evidence without claiming a full produc-tion deployment. 
+
+D Additional diagnostics 
+
+StrategyQA no-DDG companions. Table 6 re-ports mean accuracy over four load patterns. Per-pattern results follow the same trend: on Pool-synth-3B, LQM-C ONTEXT ROUTE wins all four patterns over C ONTEXT ROUTE ; on Pool-noddg, it wins all four over C ONTEXT ROUTE and three of four over SW-UCB. 
+
+LLM-provider ladder. As a non-search same-function pool, we route among 1B, 7B, and 30B pre-run answer providers over the same 200 questions. This setting reverses the web-search trade-off: the higher-quality providers are slower. LQM-C ONTEXT ROUTE improves F1 by +8 .89 pp over SW-UCB and +4 .64 pp over C ONTEX -
+
+TROUTE , with +526 and +90 ms higher mean latency, respectively. We treat this as a non-search same-function check showing that LQM-CONTEXT ROUTE spends latency budget when the quality return is large. 
+
+Reactive-Cooldown. We also compare against a LiteLLM-style priority+cooldown router. On K=10 
+
+STEP , its F1 varies by 0.605 across operator priority orderings; C ONTEXT ROUTE matches the priority-tuned setting without manual ordering. This sup-ports the claim that quality-aware online routing complements reactive fallback mechanisms. 12

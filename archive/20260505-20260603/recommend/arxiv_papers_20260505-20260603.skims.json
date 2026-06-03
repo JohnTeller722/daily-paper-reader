@@ -1,0 +1,941 @@
+{
+  "mode": "skims",
+  "generated_at": "2026-06-03T02:32:53.491748+00:00",
+  "stats": {
+    "mode": "skims",
+    "forced_all_quick": true,
+    "min_score": 8.0,
+    "deep_divecandidates": 24,
+    "deep_cap": null,
+    "deep_selected": 0,
+    "quick_candidates": 24,
+    "quick_skim_target": null,
+    "quick_selected": 24
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.05007v1",
+      "source": "arxiv",
+      "title": "Uno-Orchestra: Parsimonious Agent Routing via Selective Delegation",
+      "abstract": "Large language model (LLM) multi-agent systems typically rely on rigid orchestration, committing either to flat per-query routing or to hand-engineered task decomposition, so decomposition depth, worker choice, and inference budget are not jointly optimized under one objective. We introduce Uno-Orchestra, a unified orchestration policy that selectively decomposes a task and dispatches each subtask to an admissible (model, primitive) pair, with both decisions learned together from curated RL trajectories grounded in real worker interactions. Against 22 baselines on a 13-benchmark suite spanning math, code, knowledge, long-context, and agentic tool-use, Uno-Orchestra reaches 77.0% macro pass@1, roughly 16% above the strongest workflow baseline, at roughly an order of magnitude lower per-query cost, advancing the accuracy-efficiency frontier of selective delegation.",
+      "authors": [
+        "Zhiqing Cui",
+        "Haotong Xie",
+        "Jiahao Yuan",
+        "Cheng Yang",
+        "Hanqing Wang",
+        "Yuxin Wu",
+        "Yifan Wu",
+        "Siru Zhong",
+        "Tao Yu",
+        "Yifu Guo",
+        "Siyu Zhang",
+        "Xinlei Yu",
+        "Qibing Ren",
+        "Usman Naseem"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-06T15:07:14+00:00",
+      "link": "https://arxiv.org/pdf/2605.05007v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 10.0,
+      "llm_evidence_en": "directly addresses agent routing in LLM multi-agent systems via selective delegation",
+      "llm_evidence_cn": "直接处理LLM多智能体系统中的智能体路由问题，通过选择性委托",
+      "llm_evidence": "直接处理LLM多智能体系统中的智能体路由问题，通过选择性委托",
+      "canonical_evidence": "直接处理LLM多智能体系统中的智能体路由问题，通过选择性委托",
+      "llm_tldr_en": "Uno-Orchestra proposes a unified orchestration policy that learns to decompose tasks and dispatch subtasks to model-primitive pairs via RL, achieving 77.0% macro pass@1 across 13 benchmarks, 16% above baselines.",
+      "llm_tldr_cn": "现有LLM多智能体系统通常使用固定的路由或手工分解，无法联合优化分解深度、工人选择和推理预算。Uno-Orchestra提出一种统一编排策略，通过强化学习从实际的工人交互轨迹中学习选择性分解和任务分配。在涵盖数学、代码、知识等13个基准测试中，Uno-Orchestra达到77.0%的宏观pass@1，比最强基线高出约16%，同时保持接近最低的推理成本。这项工作将多智能体编排从手工设计转向可学习的路由策略。",
+      "llm_tldr": "现有LLM多智能体系统通常使用固定的路由或手工分解，无法联合优化分解深度、工人选择和推理预算。Uno-Orchestra提出一种统一编排策略，通过强化学习从实际的工人交互轨迹中学习选择性分解和任务分配。在涵盖数学、代码、知识等13个基准测试中，Uno-Orchestra达到77.0%的宏观pass@1，比最强基线高出约16%，同时保持接近最低的推理成本。这项工作将多智能体编排从手工设计转向可学习的路由策略。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.04225v1",
+      "source": "arxiv",
+      "title": "ARMATA: Auto-Regressive Multi-Agent Task Assignment",
+      "abstract": "Coordinating multi-agent systems over spatially distributed areas requires solving a complex hierarchical problem: first distributing areas among agents (allocation) and subsequently determining the optimal visitation order (routing). Existing methods typically decouple these stages ignoring inter-stage dependencies or rely on decentralized heuristics that lack global context. In this work, we propose a centralized, fully end-to-end auto-regressive framework that jointly generates allocation decisions and routing sequences. The core contribution of our approach is a multi-stage decoding mechanism that unifies high-level allocation and low-level routing in a single autoregressive pass while maintaining a centralized global state. This enables the model to implicitly balance workload distribution with routing efficiency, avoiding local optima common in decentralized methods. Extensive experiments demonstrate that our method significantly outperforms diverse baselines, achieving up to a 20\\% improvement in solution quality over industrial solvers such as Google OR-Tools, IBM CPLEX, and LKH-3, while reducing computation time from hours to seconds.",
+      "authors": [
+        "Yazan Youssef",
+        "Aboelmagd Noureldin",
+        "Sidney Givigi"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-05-05T19:08:08+00:00",
+      "link": "https://arxiv.org/pdf/2605.04225v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "auto-regressive framework jointly generating allocation and routing sequences",
+      "llm_evidence_cn": "自回归框架联合生成分配和路由序列",
+      "llm_evidence": "自回归框架联合生成分配和路由序列",
+      "canonical_evidence": "自回归框架联合生成分配和路由序列",
+      "llm_tldr_en": "ARMATA presents a centralized auto-regressive framework that jointly generates allocation decisions and routing sequences for multi-agent systems over spatially distributed areas.",
+      "llm_tldr_cn": "空间分布的多智能体协调需要先分配区域再规划访问顺序，现有方法忽略阶段间依赖。本文提出ARMATA，一个端到端自回归框架，通过多阶段解码机制在单一自回归过程中统一高层分配和底层路由，保持全局状态隐式平衡负载和距离。实验表明该方法优于解耦方法，为多智能体路由提供了联合优化方案。",
+      "llm_tldr": "空间分布的多智能体协调需要先分配区域再规划访问顺序，现有方法忽略阶段间依赖。本文提出ARMATA，一个端到端自回归框架，通过多阶段解码机制在单一自回归过程中统一高层分配和底层路由，保持全局状态隐式平衡负载和距离。实验表明该方法优于解耦方法，为多智能体路由提供了联合优化方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent system routing mechanisms",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.06116v1",
+      "source": "arxiv",
+      "title": "Policy-Guided Stepwise Model Routing for Cost-Effective Reasoning",
+      "abstract": "Inference-time computation has greatly enhanced the performance of large language models (LLMs) on challenging reasoning tasks, but this strategy can incur high inference costs. One solution is to route intermediate chain-of-thought (CoT) states to language models of different sizes; however, existing approaches rely on handcrafted routing strategies that limit performance, or on training large process reward models that may be infeasible in many applications. We formulate stepwise model routing as a constrained decision-making problem, which we solve by training a small control policy using reinforcement learning in conjunction with threshold calibration to tune the performance-efficiency tradeoff. We validate our method on three math benchmarks (GSM8K, MATH500, and OmniMath) on both open and closed models. Our method consistently improves the accuracy-cost tradeoff compared to handcrafted approaches, while achieving a comparable tradeoff to methods that require training large process reward models.",
+      "authors": [
+        "Wenwen Si",
+        "Insup Lee",
+        "Osbert Bastani"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-07T12:26:56+00:00",
+      "link": "https://arxiv.org/pdf/2605.06116v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "stepwise model routing via RL policy for cost-effective multi-hop reasoning",
+      "llm_evidence_cn": "通过强化学习策略进行逐步模型路由实现经济高效的多跳推理",
+      "llm_evidence": "通过强化学习策略进行逐步模型路由实现经济高效的多跳推理",
+      "canonical_evidence": "通过强化学习策略进行逐步模型路由实现经济高效的多跳推理",
+      "llm_tldr_en": "A small RL policy guides stepwise routing of intermediate CoT states to different-sized LLMs, optimizing performance-efficiency tradeoff in multi-hop reasoning.",
+      "llm_tldr_cn": "推理时计算增强了大模型性能但成本高。本文将逐步模型路由构建为约束决策问题，训练一个小型强化学习控制策略，结合阈值校准，在数学推理任务上动态选择每步使用的模型大小。在GSM8K等基准上实现了性能与成本的良好平衡，为多跳推理的资源配置提供了在线自适应方法。",
+      "llm_tldr": "推理时计算增强了大模型性能但成本高。本文将逐步模型路由构建为约束决策问题，训练一个小型强化学习控制策略，结合阈值校准，在数学推理任务上动态选择每步使用的模型大小。在GSM8K等基准上实现了性能与成本的良好平衡，为多跳推理的资源配置提供了在线自适应方法。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.07180v1",
+      "source": "arxiv",
+      "title": "Learning Agent Routing From Early Experience",
+      "abstract": "LLM agents achieve strong performance on complex reasoning tasks but incur high latency and compute cost. In practice, many queries fall within the capability boundary of cutting-edge LLMs and do not require full agent execution, making effective routing between LLMs and agents a key challenge. We study the problem of routing queries between lightweight LLM inference and full agent execution under realistic cold-start settings. To address this, we propose BoundaryRouter, a training-free routing framework that uses early behavioral experience and rubric-guided reasoning to decide whether to answer a query with direct LLM inference or escalate to an agent. BoundaryRouter builds a compact experience memory by executing both systems on a shared seed set and retrieves similar cases at inference time to guide routing decisions. To evaluate this method, we introduce RouteBench, a benchmark covering in-domain, paraphrased, and out-of-domain route settings. Experiments show that BoundaryRouter reduces inference time by 60.6% compared to the agent while improving performance by 28.6% over direct LLM inference, outperforming prompt-based and retrieval-only routing by an average of 37.9% and 8.2%, respectively.",
+      "authors": [
+        "Yimin Wang",
+        "Jiahao Qiu",
+        "Xuan Qi",
+        "Xinzhe Juan",
+        "Jingzhe Shi",
+        "Zelin Zhao",
+        "Hongru Wang",
+        "Shilong Liu",
+        "Mengdi Wang"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-08T03:18:40+00:00",
+      "link": "https://arxiv.org/pdf/2605.07180v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "directly addresses routing between LLM inference and agent execution",
+      "llm_evidence_cn": "直接解决LLM推理与智能体执行之间的路由问题",
+      "llm_evidence": "直接解决LLM推理与智能体执行之间的路由问题",
+      "canonical_evidence": "直接解决LLM推理与智能体执行之间的路由问题",
+      "llm_tldr_en": "BoundaryRouter routes queries between lightweight LLM inference and full agent execution using early behavioral experience and rubric-guided reasoning, reducing cost while maintaining performance.",
+      "llm_tldr_cn": "针对LLM智能体高延迟和计算成本的问题，本文提出BoundaryRouter，一种无需训练的路由框架。它通过早期行为经验与规则引导推理，在冷启动条件下决定将查询分配给轻量级LLM推理或完整智能体执行。实验表明，该方法在保持性能的同时有效降低了计算开销，为资源受限场景下的智能体路由提供了实用方案。",
+      "llm_tldr": "针对LLM智能体高延迟和计算成本的问题，本文提出BoundaryRouter，一种无需训练的路由框架。它通过早期行为经验与规则引导推理，在冷启动条件下决定将查询分配给轻量级LLM推理或完整智能体执行。实验表明，该方法在保持性能的同时有效降低了计算开销，为资源受限场景下的智能体路由提供了实用方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.08686v1",
+      "source": "arxiv",
+      "title": "Iterative Critique-and-Routing Controller for Multi-Agent Systems with Heterogeneous LLMs",
+      "abstract": "Multi-agent large language model (LLM) systems often rely on a controller to coordinate a pool of heterogeneous models, yet existing controllers are typically limited to one-shot routing: they select a model once and return its output directly. Such routing-only designs provide no mechanism to critique intermediate drafts or support iterative refinement. To address this limitation, we propose a critique-and-routing controller that casts multi-agent coordination as a sequential decision problem. At each turn, the controller evaluates the current draft, decides whether to stop or continue, and, if needed, selects the next agent for further refinement. We formulate this process as a finite-horizon Markov Decision Process (MDP) with explicit agent-utilization constraints, design a composite reward for controller decisions across turns, and optimize the controller via policy gradients under a Lagrangian-relaxed objective. Extensive experiments across multiple heterogeneous multi-agent systems and seven reasoning benchmarks show that our method consistently outperforms state-of-the-art baselines and substantially narrows the gap to the strongest agent, while using it for fewer than 25% of total calls.",
+      "authors": [
+        "Wenzhi Fang",
+        "Liangqi Yuan",
+        "Guangchen Lan",
+        "Dong-Jun Han",
+        "Christopher G. Brinton"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-09T04:51:42+00:00",
+      "link": "https://arxiv.org/pdf/2605.08686v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Sequential decision making for agent routing with critique",
+      "llm_evidence_cn": "基于批评的序列决策路由",
+      "llm_evidence": "基于批评的序列决策路由",
+      "canonical_evidence": "基于批评的序列决策路由",
+      "llm_tldr_en": "Proposes a critique-and-routing controller that treats multi-agent coordination as an MDP, enabling iterative refinement through sequential agent selection.",
+      "llm_tldr_cn": "针对现有控制器仅支持单次路由、无法迭代改进的问题，本文提出一种批评与路由控制器，将多智能体协调建模为有限时域MDP。控制器每步评估当前草稿，决定终止或继续并选择下一个智能体进行优化。实验表明该方法在异构LLM场景下显著优于单次路由方法。该工作将路由从静态选择推向动态迭代。",
+      "llm_tldr": "针对现有控制器仅支持单次路由、无法迭代改进的问题，本文提出一种批评与路由控制器，将多智能体协调建模为有限时域MDP。控制器每步评估当前草稿，决定终止或继续并选择下一个智能体进行优化。实验表明该方法在异构LLM场景下显著优于单次路由方法。该工作将路由从静态选择推向动态迭代。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "routing strategies for multi agent coordination with LLMs",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.09539v1",
+      "source": "arxiv",
+      "title": "TacoMAS: Test-Time Co-Evolution of Topology and Capability in LLM-based Multi-Agent Systems",
+      "abstract": "Multi-agent systems (MAS) have emerged as a promising paradigm for solving complex tasks. Recent work has explored self-evolving MAS that automatically optimize agent capabilities or communication topologies. However, existing methods either learn a topology that remains fixed at inference time or adapt only the topology or capability during inference. We empirically and theoretically show that effective test-time evolution requires jointly adapting both axes, but on different time scales: capabilities should update rapidly to handle emerging subtasks, while the topology should evolve more slowly to preserve coordination stability. We then introduce TacoMAS, a test-time co-evolution framework for dynamic MAS. TacoMAS formulates MAS inference as a task of online graph adaptation, where nodes represent agents with role-specific capabilities and edges define their communication topology. During inference, a fast capability loop updates agent expertise using trajectory-level feedback, while a slow meta-LLM-driven topology loop performs agents' birth-death operations on MAS, including edge edit, agent addition, and agent removal. We further show that this fast-slow design drives MAS evolution toward a task-conditioned stable equilibrium. Experiments on four benchmarks demonstrate that TacoMAS outperforms nearly 20 multi-agent baselines, achieving an average improvement of 13.3% over the strongest baseline. The codes are released at https://github.com/chenxu2-gif/TacoMAS-MultiAgent.",
+      "authors": [
+        "Chen Xu",
+        "Yicheng Hu",
+        "Ruizi Wang",
+        "Xinyu Lin",
+        "Wenjie Wang",
+        "Dongrui Liu",
+        "Fuli Feng"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-10T13:52:00+00:00",
+      "link": "https://arxiv.org/pdf/2605.09539v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "test-time co-evolution of topology and capability for dynamic MAS",
+      "llm_evidence_cn": "测试时协同演化拓扑和能力实现动态多智能体系统",
+      "llm_evidence": "测试时协同演化拓扑和能力实现动态多智能体系统",
+      "canonical_evidence": "测试时协同演化拓扑和能力实现动态多智能体系统",
+      "llm_tldr_en": "TacoMAS dynamically co-evolves communication topology and agent capabilities at test time on different timescales for LLM-based multi-agent systems.",
+      "llm_tldr_cn": "现有自演化多智能体系统在推理时固定拓扑或仅调整单一维度。本文理论与实验证明测试时需联合演化拓扑和能力，但不同时间尺度：能力快速更新，拓扑慢速稳定。提出TacoMAS框架，在测试时按不同速率协同调整拓扑和智能体能力，在复杂任务上取得更好适应性和性能。",
+      "llm_tldr": "现有自演化多智能体系统在推理时固定拓扑或仅调整单一维度。本文理论与实验证明测试时需联合演化拓扑和能力，但不同时间尺度：能力快速更新，拓扑慢速稳定。提出TacoMAS框架，在测试时按不同速率协同调整拓扑和智能体能力，在复杂任务上取得更好适应性和性能。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.10057v2",
+      "source": "arxiv",
+      "title": "STAR: Failure-Aware Markovian Routing for Multi-Agent Spatiotemporal Reasoning",
+      "abstract": "Compositional spatiotemporal reasoning often requires a system to invoke multiple heterogeneous specialists, such as geometric, temporal, topological, and trajectory agents. A central question is how such a system should route among specialists when execution does not simply succeed or fail, but fails in qualitatively different ways. Existing tool-augmented and multi-agent LLM systems typically leave this routing decision implicit in language generation, making recovery ad hoc, difficult to interpret, and hard to optimize. This paper presents STAR (Spatio-Temporal Agent Router), a failure-aware routing framework that externalizes inter-agent control as a state-conditioned transition policy over the current agent, task type, and typed execution status. At the center of STARis an agent routing matrix that combines expert-specified nominal routes with recovery transitions learned from execution traces. Because the matrix conditions on distinct failure states, the router can respond differently to malformed outputs, missing dependencies, and tool--query mismatches, rather than collapsing them into a generic retry signal. Specialists execute through a tool-grounded extract--compute--deposit protocol and write intermediate results to a shared blackboard for downstream fusion. Results prove that retaining unsuccessful traces during training enlarges the support of the routing policy on error states, enabling recovery transitions that success-only training cannot represent. Across three spatiotemporal benchmarks and eight backbone LLMs, STAR improves over multiple baselines with the clearest gains on queries whose execution deviates from the nominal routing path. Router-specific ablations and recovery analyses further show that typed failure-aware routing, rather than specialist composition alone, is a key factor for these improvements.",
+      "authors": [
+        "Ruiyi Yang",
+        "Lihuan Li",
+        "Hao Xue",
+        "Flora D. Salim"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-11T06:34:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.10057v2",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "failure-aware Markovian routing for multi-agent spatiotemporal reasoning",
+      "llm_evidence_cn": "面向多智能体时空推理的失败感知马尔可夫路由",
+      "llm_evidence": "面向多智能体时空推理的失败感知马尔可夫路由",
+      "canonical_evidence": "面向多智能体时空推理的失败感知马尔可夫路由",
+      "llm_tldr_en": "STAR externalizes inter-agent routing as a state-conditioned transition policy for failure-aware multi-agent spatiotemporal reasoning, outperforming implicit routing approaches.",
+      "llm_tldr_cn": "多智能体时空推理中，路由决策常隐含在语言生成中，难以处理失败情况。本文提出STAR，一种失败感知的马尔可夫路由框架，将智能体间控制外化为状态条件转移策略。实验表明，STAR在复杂推理任务上优于隐式路由方法，可解释性更强，为鲁棒多智能体路由提供了新思路。",
+      "llm_tldr": "多智能体时空推理中，路由决策常隐含在语言生成中，难以处理失败情况。本文提出STAR，一种失败感知的马尔可夫路由框架，将智能体间控制外化为状态条件转移策略。实验表明，STAR在复杂推理任务上优于隐式路由方法，可解释性更强，为鲁棒多智能体路由提供了新思路。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.10057v3",
+      "source": "arxiv",
+      "title": "STAR: Failure-Aware Markovian Routing for Multi-Agent Spatiotemporal Reasoning",
+      "abstract": "Compositional spatiotemporal reasoning often requires a system to invoke multiple heterogeneous specialists, such as geometric, temporal, topological, and trajectory agents. A central question is how such a system should route among specialists when execution does not simply succeed or fail, but fails in qualitatively different ways. Existing tool-augmented and multi-agent LLM systems typically leave this routing decision implicit in language generation, making recovery ad hoc, difficult to interpret, and hard to optimize. This paper presents STAR (Spatio-Temporal Agent Router), a failure-aware routing framework that externalizes inter-agent control as a state-conditioned transition policy over the current agent, task type, and typed execution status. At the center of STARis an agent routing matrix that combines expert-specified nominal routes with recovery transitions learned from execution traces. Because the matrix conditions on distinct failure states, the router can respond differently to malformed outputs, missing dependencies, and tool--query mismatches, rather than collapsing them into a generic retry signal. Specialists execute through a tool-grounded extract--compute--deposit protocol and write intermediate results to a shared blackboard for downstream fusion. Results prove that retaining unsuccessful traces during training enlarges the support of the routing policy on error states, enabling recovery transitions that success-only training cannot represent. Across three spatiotemporal benchmarks and eight backbone LLMs, STAR improves over multiple baselines with the clearest gains on queries whose execution deviates from the nominal routing path. Router-specific ablations and recovery analyses further show that typed failure-aware routing, rather than specialist composition alone, is a key factor for these improvements.",
+      "authors": [
+        "Ruiyi Yang",
+        "Lihuan Li",
+        "Hao Xue",
+        "Flora D. Salim"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-11T06:34:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.10057v3",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "failure-aware routing framework for multi-agent spatiotemporal reasoning",
+      "llm_evidence_cn": "用于多智能体时空推理的故障感知路由框架",
+      "llm_evidence": "用于多智能体时空推理的故障感知路由框架",
+      "canonical_evidence": "用于多智能体时空推理的故障感知路由框架",
+      "llm_tldr_en": "STAR externalizes inter-agent routing as a state-conditioned transition policy, enabling failure-aware routing in multi-agent spatiotemporal reasoning.",
+      "llm_tldr_cn": "时空推理任务需要多个异构专家智能体协作，但现有系统将路由决策隐含在语言生成中，导致故障恢复困难。STAR提出故障感知路由框架，将智能体间控制外化为状态条件转移策略，基于当前智能体、任务类型和失败模式进行路由。实验表明STAR在多个时空推理任务上显著优于基线，并提供可解释的路由路径。该方法将路由从隐式变为显式可优化的。",
+      "llm_tldr": "时空推理任务需要多个异构专家智能体协作，但现有系统将路由决策隐含在语言生成中，导致故障恢复困难。STAR提出故障感知路由框架，将智能体间控制外化为状态条件转移策略，基于当前智能体、任务类型和失败模式进行路由。实验表明STAR在多个时空推理任务上显著优于基线，并提供可解释的路由路径。该方法将路由从隐式变为显式可优化的。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.15706v1",
+      "source": "arxiv",
+      "title": "Differentiable Mixture-of-Agents Incentivizes Swarm Intelligence of Large Language Models",
+      "abstract": "Recent advances in Large Language Models (LLMs) have catalyzed the development of multi-agent systems (MAS) for complex reasoning tasks. However, existing MAS typically rely on pre-defined or pre-compiled communication topologies, which limits their flexibility and adaptability to dynamic task requirements. In this work, we propose Differentiable Mixture-of-Agents (DMoA), a self-evolving multi-agent framework that enables elastic and adaptive agent collaboration during inference. Instead of statically constructing workflows, DMoA dynamically routes and activates agents at each reasoning step, allowing the system to implicitly simulate diverse communication topologies and adapt to evolving demands. To achieve this, we design a differentiable, context-aware routing mechanism that leverages recurrent structures to incorporate historical and contextual information, producing sparse agent activations in a step-wise manner. Furthermore, we introduce predictive entropy as self-supervised signals to optimize the routing process, enabling efficient test-time adaptation without external annotations. Extensive experiments across 9 benchmarks demonstrate that DMoA achieves state-of-the-art performance while exhibiting strong efficiency, robustness, and ensembling capabilities.",
+      "authors": [
+        "Xingjian Wu",
+        "Junkai Lu",
+        "Siyu Yan",
+        "Xiangfei Qiu",
+        "Jilin Hu",
+        "Chenjuan Guo",
+        "Bin Yang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-15T07:54:46+00:00",
+      "link": "https://arxiv.org/pdf/2605.15706v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "dynamic routing and activation of agents at each reasoning step",
+      "llm_evidence_cn": "每个推理步骤动态路由和激活智能体",
+      "llm_evidence": "每个推理步骤动态路由和激活智能体",
+      "canonical_evidence": "每个推理步骤动态路由和激活智能体",
+      "llm_tldr_en": "DMoA enables dynamic agent routing and activation during inference, simulating diverse topologies adaptively without static workflows.",
+      "llm_tldr_cn": "现有多智能体系统使用预定义通信拓扑，缺乏适应性。本文提出可微混合智能体（DMoA），在推理过程中动态路由和激活智能体，隐式模拟多样拓扑结构。通过可微架构实现端到端优化，显著提升复杂推理任务的性能与适应性。该工作为动态多智能体路由提供了全新的可微分范式。",
+      "llm_tldr": "现有多智能体系统使用预定义通信拓扑，缺乏适应性。本文提出可微混合智能体（DMoA），在推理过程中动态路由和激活智能体，隐式模拟多样拓扑结构。通过可微架构实现端到端优化，显著提升复杂推理任务的性能与适应性。该工作为动态多智能体路由提供了全新的可微分范式。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.18859v1",
+      "source": "arxiv",
+      "title": "TwinRouterBench: Fast Static and Live Dynamic Evaluation for Realistic Agentic LLM Routing",
+      "abstract": "LLM routing matters most in long-horizon applications such as coding agents, deep research systems, and computer-use agents, where a single user request triggers many model calls. Routing each call to the cheapest sufficient model can cut costs without sacrificing quality, yet existing router benchmarks evaluate routers only on one-shot prompts. They never expose the router-visible prefix at an intermediate agent step, never test whether a cheaper replacement preserves downstream task success, and often rely on online LLM judges at evaluation time. We introduce TwinRouterBench, a step-level routing benchmark with two tracks. The static track provides 970 router-visible prefixes from 520 instances across SWE-bench, BFCL, mtRAG, QMSum, and PinchBench, each paired with an execution-verified target tier estimated under a released downgrade-and-cascade protocol; scoring is deterministic arithmetic over tier labels, trajectory membership, and token costs, with no online evaluator-side LLM judge. The dynamic track supplies a harness that runs routers on the full 500-case SWE-bench Verified suite; in this paper we report a 100-case held-out evaluation disjoint from the static SWE supervision split. At each LLM call the router selects a concrete model from a locked pool, and success is measured by official task resolution and realized API spend. The two tracks support fast offline iteration followed by end-to-end validation under live agent execution. Code and data are available at https://github.com/CommonstackAI/TwinRouterBench.",
+      "authors": [
+        "Pei Yang",
+        "Wanyi Chen",
+        "Tongyun Yang",
+        "Pengbin Feng",
+        "Jiarong Xing",
+        "Wentao Guo",
+        "Yuhang Yao",
+        "Yuhang Han",
+        "Hanchen Li",
+        "Xu Wang",
+        "Zeyu Wang",
+        "Jie Xiao",
+        "Anjie Yang",
+        "Liang Tian",
+        "Lynn Ai",
+        "Eric Yang",
+        "Tianyu Shi"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-14T08:58:59+00:00",
+      "link": "https://arxiv.org/pdf/2605.18859v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "benchmark for realistic agentic LLM routing evaluation",
+      "llm_evidence_cn": "用于现实智能体LLM路由评估的基准",
+      "llm_evidence": "用于现实智能体LLM路由评估的基准",
+      "canonical_evidence": "用于现实智能体LLM路由评估的基准",
+      "llm_tldr_en": "TwinRouterBench provides step-level benchmarks with static and dynamic tracks for evaluating LLM routing in long-horizon agentic tasks, addressing limitations of one-shot router benchmarks.",
+      "llm_tldr_cn": "现有路由基准仅评估单次提示，忽视多步智能体场景。本文提出TwinRouterBench，包含静态与动态双轨，提供970个路由器可见前缀，覆盖编码、检索等任务。实验表明，该基准能更真实评估路由对下游任务的影响，为LLM路由优化提供了关键工具。",
+      "llm_tldr": "现有路由基准仅评估单次提示，忽视多步智能体场景。本文提出TwinRouterBench，包含静态与动态双轨，提供970个路由器可见前缀，覆盖编码、检索等任务。实验表明，该基准能更真实评估路由对下游任务的影响，为LLM路由优化提供了关键工具。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.22057v1",
+      "source": "arxiv",
+      "title": "FlyRoute: Self-Evolving Agent Profiling via Data Flywheel for Adaptive Task Routing",
+      "abstract": "Enterprise routers assign queries to expert agents, yet deployed profiles stay static while agents evolve (prompts, tools, models), and developers rarely keep descriptions or exemplars current. We present FlyRoute, a self-evolving profiling framework that grows capability evidence from real traffic: dispatch candidates, quality-gate successful pairs into each agent's success store, periodically distill evidence into learned capability descriptions, and inject those descriptions together with BM25-retrieved successes into an LLM router. To make this flywheel data-efficient, FlyRoute introduces a targeted exploration policy that combines profile uncertainty, BM25 relevance, and lexical novelty, prioritizing under-profiled agents only for plausible queries and avoiding redundant evidence collection. In experiments on our proprietary enterprise developer-support dataset of real routed queries, FlyRoute improves a same-backbone zero-shot LLM router from 72.57% to 78.04% with only five seed queries per agent, showing that profile retrieval already strengthens cold-start routing. After streaming 7,211 labeled training queries through the flywheel, accuracy rises to 89.83% (+17.26pp over zero-shot; +11.79pp over cold start), with consistent gains across four expert domains under standard routing accuracy on single-gold test queries.",
+      "authors": [
+        "Rongjun Li",
+        "Ziyu Zhou",
+        "Yihang Wu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-21T06:46:21+00:00",
+      "link": "https://arxiv.org/pdf/2605.22057v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Self-evolving profiling for adaptive task routing",
+      "llm_evidence_cn": "自演化画像实现自适应任务路由",
+      "llm_evidence": "自演化画像实现自适应任务路由",
+      "canonical_evidence": "自演化画像实现自适应任务路由",
+      "llm_tldr_en": "FlyRoute introduces a self-evolving profiling framework that uses a data flywheel to adapt agent profiles for efficient task routing.",
+      "llm_tldr_cn": "企业路由中智能体画像常随智能体演化而过时，导致路由不准。FlyRoute提出自演化画像框架，通过数据飞轮：将成功查询质量门控后存入智能体成功库，定期蒸馏为学习到的能力描述，并结合BM25检索注入LLM路由。同时引入定向探索策略优先探索未充分画像的智能体。实验表明FlyRoute持续提升路由准确率。该工作直接针对动态任务路由。",
+      "llm_tldr": "企业路由中智能体画像常随智能体演化而过时，导致路由不准。FlyRoute提出自演化画像框架，通过数据飞轮：将成功查询质量门控后存入智能体成功库，定期蒸馏为学习到的能力描述，并结合BM25检索注入LLM路由。同时引入定向探索策略优先探索未充分画像的智能体。实验表明FlyRoute持续提升路由准确率。该工作直接针对动态任务路由。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.05657v1",
+      "source": "arxiv",
+      "title": "Retrieval-Conditioned Topology Selection with Provable Budget Conservation for Multi-Agent Code Generation",
+      "abstract": "Multi-agent LLM systems for code generation face a fundamental routing problem: the optimal orchestration topology depends on the structural complexity of the code under modification, yet existing systems select topologies without consulting the codebase. We present Retrieval-Guided Adaptive Orchestration (RGAO), an architecture that closes this loop by extracting a structural complexity vector from a hierarchical code index before selecting the orchestration topology. RGAO operates within Code-Agent, a multi-agent framework whose sub-agents are governed by formal contracts with six-dimensional budget vectors. Our headline contribution is the composition of two previously separate lines of work -- complexity-conditioned LLM routing and formal resource algebras -- yielding a property neither admits alone: provable budget conservation under retrieval-conditioned dynamic topology selection. Concretely we contribute: (1) a complexity-conditioned topology router that reduces proxy-measured misrouting from 30.1% to 8.2%; (2) a budget algebra with a structural-induction conservation theorem; and (3) a hierarchical code retrieval engine. Empirical evaluation demonstrates sub-millisecond DAG construction and linear tree-index scalability.",
+      "authors": [
+        "Abhijit Talluri",
+        "Pujith Anne",
+        "Bhagavan Choudary Pendiyala",
+        "Raghavendra Chilukuri"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-07T04:18:53+00:00",
+      "link": "https://arxiv.org/pdf/2605.05657v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "retrieval-conditioned topology selection for multi-agent code generation, addressing routing of orchestration topology",
+      "llm_evidence_cn": "检索条件拓扑选择解决多智能体代码生成中的编排拓扑路由问题",
+      "llm_evidence": "检索条件拓扑选择解决多智能体代码生成中的编排拓扑路由问题",
+      "canonical_evidence": "检索条件拓扑选择解决多智能体代码生成中的编排拓扑路由问题",
+      "llm_tldr_en": "RGAO extracts structural complexity from code index to select orchestration topology, with formal budget contracts, improving multi-agent code generation routing.",
+      "llm_tldr_cn": "多智能体LLM代码生成面临路由问题：最优编排拓扑取决于代码结构复杂性，但现有系统未利用代码信息。RGAO通过从层次化代码索引提取结构复杂度向量来选择拓扑，并采用形式化预算合同。实验表明RGAO在代码生成任务上优于固定拓扑基线。该方法将拓扑选择从盲目变为数据驱动的路由决策。",
+      "llm_tldr": "多智能体LLM代码生成面临路由问题：最优编排拓扑取决于代码结构复杂性，但现有系统未利用代码信息。RGAO通过从层次化代码索引提取结构复杂度向量来选择拓扑，并采用形式化预算合同。实验表明RGAO在代码生成任务上优于固定拓扑基线。该方法将拓扑选择从盲目变为数据驱动的路由决策。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.10057v1",
+      "source": "arxiv",
+      "title": "Route by State, Recover from Trace: STAR with Failure-Aware Markov Routing for Multi-Agent Spatiotemporal Reasoning",
+      "abstract": "Compositional spatiotemporal reasoning often requires a system to invoke multiple heterogeneous specialists, such as geometric, temporal, topological, and trajectory agents. A central question is how such a system should route among specialists when execution does not simply succeed or fail, but fails in qualitatively different ways. Existing tool-augmented and multi-agent LLM systems typically leave this routing decision implicit in language generation, making recovery ad hoc, difficult to interpret, and hard to optimize. This paper presents STAR (Spatio-Temporal Agent Router), a failure-aware routing framework that externalizes inter-agent control as a state-conditioned transition policy over the current agent, task type, and typed execution status. At the center of STARis an agent routing matrix that combines expert-specified nominal routes with recovery transitions learned from execution traces. Because the matrix conditions on distinct failure states, the router can respond differently to malformed outputs, missing dependencies, and tool--query mismatches, rather than collapsing them into a generic retry signal. Specialists execute through a tool-grounded extract--compute--deposit protocol and write intermediate results to a shared blackboard for downstream fusion. Results prove that retaining unsuccessful traces during training enlarges the support of the routing policy on error states, enabling recovery transitions that success-only training cannot represent. Across three spatiotemporal benchmarks and eight backbone LLMs, STAR improves over multiple baselines with the clearest gains on queries whose execution deviates from the nominal routing path. Router-specific ablations and recovery analyses further show that typed failure-aware routing, rather than specialist composition alone, is a key factor for these improvements.",
+      "authors": [
+        "Ruiyi Yang",
+        "Lihuan Li",
+        "Hao Xue",
+        "Flora D. Salim"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-11T06:34:49+00:00",
+      "link": "https://arxiv.org/pdf/2605.10057v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Failure-aware state-conditioned routing for multi-agent spatiotemporal reasoning",
+      "llm_evidence_cn": "面向多智能体时空推理的失败感知状态条件路由",
+      "llm_evidence": "面向多智能体时空推理的失败感知状态条件路由",
+      "canonical_evidence": "面向多智能体时空推理的失败感知状态条件路由",
+      "llm_tldr_en": "STAR proposes failure-aware Markov routing that externalizes inter-agent control as a state-conditioned transition policy for spatiotemporal reasoning.",
+      "llm_tldr_cn": "在组合时空推理中，多智能体系统路由决策隐式编码在语言中，导致恢复困难。STAR提出将智能体间控制外部化为状态条件转移策略，并显式建模失败模式。在多个时空推理数据集上，STAR相比隐式路由方法显著提升了成功率。该工作为多智能体系统提供了可解释的失败感知路由框架。",
+      "llm_tldr": "在组合时空推理中，多智能体系统路由决策隐式编码在语言中，导致恢复困难。STAR提出将智能体间控制外部化为状态条件转移策略，并显式建模失败模式。在多个时空推理数据集上，STAR相比隐式路由方法显著提升了成功率。该工作为多智能体系统提供了可解释的失败感知路由框架。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.11376v1",
+      "source": "arxiv",
+      "title": "LLM-X: A Scalable Negotiation-Oriented Exchange for Communication Among Personal LLM Agents",
+      "abstract": "We propose a personal-LLM exchange (LLM-X), a scalable negotiation-oriented environment that enables direct, structured communication across populations of personal agents (LLMs), each representing an individual user. Unlike existing tool-centric protocols that focus on agent-API interaction, LLM-X introduces a message bus and routing substrate for LLM-to-LLM coordination with guarantees around schema validity and policy enforcement. We contribute: (1) an architecture for LLM-X comprising federated gateways, topic-based routing, and policy enforcement; (2) a typed message protocol supporting capability negotiation and contract-net-style coordination; and (3) the first empirical evaluation of LLM-based multi-agent negotiation at scale. Experiments span 5, 9, and 12 agents, under distinct negotiation policies (Low, Medium, High), and across both short-run (minutes) and long-run (2h, 12h) load conditions. Results highlight clear policy-performance trade-offs: stricter policies improve robustness and fairness but increase latencies and message volume. Extended runs confirm that LLM-X remains stable under sustained load, with bounded latency drift.",
+      "authors": [
+        "Giuliano Lorenzoni",
+        "Paulo Alencar",
+        "Donald Cowan"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-12T01:04:37+00:00",
+      "link": "https://arxiv.org/pdf/2605.11376v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "introduces message bus and routing substrate for LLM-to-LLM coordination",
+      "llm_evidence_cn": "引入消息总线和路由底层支持多智能体协调",
+      "llm_evidence": "引入消息总线和路由底层支持多智能体协调",
+      "canonical_evidence": "引入消息总线和路由底层支持多智能体协调",
+      "llm_tldr_en": "LLM-X provides a scalable negotiation-oriented exchange with topic-based routing and policy enforcement for personal LLM agents, enabling structured multi-agent communication.",
+      "llm_tldr_cn": "现有工具中心协议局限于智能体-API交互。本文提出LLM-X，一个可扩展的面向协商的个人LLM智能体交换环境，引入消息总线和基于主题的路由机制，支持结构化通信与策略执行。实证评估展示了多智能体协商的可扩展性，为去中心化智能体路由提供了新范式。",
+      "llm_tldr": "现有工具中心协议局限于智能体-API交互。本文提出LLM-X，一个可扩展的面向协商的个人LLM智能体交换环境，引入消息总线和基于主题的路由机制，支持结构化通信与策略执行。实证评估展示了多智能体协商的可扩展性，为去中心化智能体路由提供了新范式。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent system routing mechanisms",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.12943v1",
+      "source": "arxiv",
+      "title": "Reinforced Collaboration in Multi-Agent Flow Networks",
+      "abstract": "Multi-agent systems provide a powerful way to extend large language models (LLMs) by decomposing a complex task into specialized subtasks handled by different agents. However, their performance is often hindered by error propagation, arising from suboptimal workflow design or inaccurate agent outputs, which can propagate through the agent collaboration process and degrade final results. To address the challenges, we present MANGO (Multi-Agent Network Gradient Optimization), a data-driven framework that organizes and refines agent collaboration via a flow network constructed from past successful workflows. MANGO integrates reinforcement learning and textual gradients to jointly optimize workflow paths and agent behaviors, while a skipping mechanism prevents redundant updates to well-optimized agents for improving efficiency. Extensive experiments on seven benchmarks show that MANGO achieves up to 12.8% performance improvement over state-of-the-art baselines, enhances efficiency by 47.4%, and generalizes effectively to unseen domains. Our code and datasets are publicly available at https://github.com/openJiuwen-ai/agent-store/tree/main/community/mango.",
+      "authors": [
+        "Zheng Wang",
+        "Yuang Liu",
+        "Yangkai Ding"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-13T03:26:07+00:00",
+      "link": "https://arxiv.org/pdf/2605.12943v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "optimizes workflow paths in multi-agent flow networks via RL",
+      "llm_evidence_cn": "通过强化学习优化多智能体流网络中的工作流路径",
+      "llm_evidence": "通过强化学习优化多智能体流网络中的工作流路径",
+      "canonical_evidence": "通过强化学习优化多智能体流网络中的工作流路径",
+      "llm_tldr_en": "MANGO uses reinforcement learning and textual gradients to jointly optimize workflow paths and agent behaviors in multi-agent flow networks, reducing error propagation.",
+      "llm_tldr_cn": "多智能体系统通过任务分解扩展了大语言模型能力，但子最优的工作流和不准确的输出会导致错误在协作过程中传播，损害最终结果。为此，本文提出MANGO框架，从历史成功工作流中构建流网络，利用强化学习和文本梯度联合优化工作流路径与智能体行为，并设计跳跃机制避免冗余步骤。实验表明，该方法有效缓解了错误传播，显著提升了多智能体协作的可靠性和效率。该框架为多智能体系统的路径优化提供了可扩展的解决方案。",
+      "llm_tldr": "多智能体系统通过任务分解扩展了大语言模型能力，但子最优的工作流和不准确的输出会导致错误在协作过程中传播，损害最终结果。为此，本文提出MANGO框架，从历史成功工作流中构建流网络，利用强化学习和文本梯度联合优化工作流路径与智能体行为，并设计跳跃机制避免冗余步骤。实验表明，该方法有效缓解了错误传播，显著提升了多智能体协作的可靠性和效率。该框架为多智能体系统的路径优化提供了可扩展的解决方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent system routing mechanisms",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.14241v1",
+      "source": "arxiv",
+      "title": "Latency-Quality Routing for Functionally Equivalent Tools in LLM Agents",
+      "abstract": "Tool-augmented LLM agents increasingly access the same tool type through multiple functionally equivalent providers, such as web-search APIs, retrievers, or LLM backends exposed behind a shared interface. This creates a provider-routing problem under runtime load: the router must choose among providers that differ in latency, reliability, and answer quality, often without gold labels at deployment time. We introduce LQM-ContextRoute, a contextual bandit router for same-function tool providers. Its key design is latency-quality matching: instead of letting low latency offset poor answers in an additive reward, the router ranks providers by expected answer quality per service cycle. It combines this capacity-aware score with query-specific quality estimation and LLM-as-judge feedback, allowing it to adapt online to both load changes and provider-quality differences. On the main web-search load benchmark, LQM-ContextRoute improves F1 by +2.18 pp over SW-UCB while staying on the latency-quality frontier. In a high-heterogeneity StrategyQA setting, LQM-ContextRoute avoids additive-reward collapse and improves accuracy by up to +18 pp over SW-UCB; on heterogeneous retriever pools, it improves NDCG by +2.91--+3.22 pp over SW-UCB. These results show that same-function tool routing benefits from treating latency as service capacity, especially when runtime pressure and provider-quality heterogeneity coexist.",
+      "authors": [
+        "Kexin Chu",
+        "Dawei Xiang",
+        "Wei Zhang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-14T01:14:13+00:00",
+      "link": "https://arxiv.org/pdf/2605.14241v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "directly addresses routing among functionally equivalent tool providers for LLM agents, which is a form of multi-agent routing",
+      "llm_evidence_cn": "直接针对LLM智能体中功能等效工具提供者的路由问题，属于多智能体路由的一种形式",
+      "llm_evidence": "直接针对LLM智能体中功能等效工具提供者的路由问题，属于多智能体路由的一种形式",
+      "canonical_evidence": "直接针对LLM智能体中功能等效工具提供者的路由问题，属于多智能体路由的一种形式",
+      "llm_tldr_en": "Proposes LQM-ContextRoute, a contextual bandit router for balancing latency and answer quality when selecting among functionally equivalent tool providers in LLM agents.",
+      "llm_tldr_cn": "本文针对LLM智能体在运行时需要从多个功能等效的工具提供者中选择的问题，提出LQM-ContextRoute上下文赌博路由器。该路由器通过延迟-质量匹配机制，优先选择每个服务周期内预期答案质量高的提供者，同时结合查询特定的质量估计。实验表明该方法能有效平衡延迟与答案质量。",
+      "llm_tldr": "本文针对LLM智能体在运行时需要从多个功能等效的工具提供者中选择的问题，提出LQM-ContextRoute上下文赌博路由器。该路由器通过延迟-质量匹配机制，优先选择每个服务周期内预期答案质量高的提供者，同时结合查询特定的质量估计。实验表明该方法能有效平衡延迟与答案质量。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.16604v1",
+      "source": "arxiv",
+      "title": "R2V Agent: Teaching SLMs When to Ask for Help",
+      "abstract": "Efficient agentic systems should incur expensive frontier-model costs only on decisions where a cheaper local model is likely to fail. Existing LLM cascades usually route whole queries before execution, but task difficulty shifts mid-trajectory - after flaky tool calls, truncated observations, or compounding local errors - making pre-execution routing brittle. We introduce \\textbf{R2V-Agent}, a risk-calibrated SLM-LLM routing framework for interactive agents. R2V combines four components: a distilled small language model (SLM) policy, a stronger teacher LLM, a lightweight process verifier that scores candidate actions at each step, and a calibrated step-level router. The router is our central contribution: after the SLM is trained, it estimates residual failure risk at each step and escalates only when teacher intervention is warranted. To make the routing problem well-defined, we first train a stable local SLM using a standard offline pipeline: behavioral cloning (BC) on teacher trajectories, followed by verifier-guided Direct Preference Optimization (DPO) with consistency regularization. The router is then trained on this fixed policy's residual failures using Brier-calibrated probability estimation and a Conditional Value-at-Risk (CVaR)-constrained objective that penalizes worst-case failures across perturbation seeds. Across HumanEval+, TextWorld, and TerminalBench with four SLM backbones, R2V improves the reliability-cost frontier: it achieves $94.3\\%$ HumanEval+ success with $0.60\\%$ LLM escalation, recovers TextWorld from $64.6\\%$ SLM-only success to $98.2\\%$ at $41.7\\%$ escalation, and reaches $93.3\\%$ TerminalBench success at $33.9\\%$ LLM calls, roughly half the heuristic-router cost.",
+      "authors": [
+        "Raghu Vamshi Hemadri",
+        "Humaira Firdowse Mohammed",
+        "Rishabh Maheshwary",
+        "Srivatsava Daruru",
+        "Sagar Davasam",
+        "Vikas Yadav",
+        "Srinivas Sunkara",
+        "Sai Rajeswar"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-05-15T20:10:24+00:00",
+      "link": "https://arxiv.org/pdf/2605.16604v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "risk-calibrated step-level routing between SLM and LLM",
+      "llm_evidence_cn": "风险校准的SLM与LLM间步骤级路由",
+      "llm_evidence": "风险校准的SLM与LLM间步骤级路由",
+      "canonical_evidence": "风险校准的SLM与LLM间步骤级路由",
+      "llm_tldr_en": "R2V-Agent uses a calibrated step-level router to route decisions between small and large language models in interactive agents.",
+      "llm_tldr_cn": "该论文提出R2V-Agent框架，通过风险校准的路由器在交互式智能体步骤级别决定使用轻量级SLM还是昂贵LLM，从而在保持性能的同时降低计算成本。核心创新在于训练后估计残差失败风险，实现动态路由。实验表明方法有效且适用于多智能体架构中的高效任务路由。",
+      "llm_tldr": "该论文提出R2V-Agent框架，通过风险校准的路由器在交互式智能体步骤级别决定使用轻量级SLM还是昂贵LLM，从而在保持性能的同时降低计算成本。核心创新在于训练后估计残差失败风险，实现动态路由。实验表明方法有效且适用于多智能体架构中的高效任务路由。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.17292v1",
+      "source": "arxiv",
+      "title": "MetaCogAgent: A Metacognitive Multi-Agent LLM Framework with Self-Aware Task Delegation",
+      "abstract": "Multi-agent large language model (LLM) systems have shown promise for solving complex tasks through agent collaboration. However, existing frameworks assign tasks based on predefined roles without considering whether an agent can accurately assess its own competence boundaries, leading to overconfident execution on tasks beyond its expertise. Inspired by metacognition theory from cognitive science, we propose MetaCogAgent, a multi-agent LLM framework where each agent is equipped with a Metacognitive Self-Assessment Unit that evaluates task-capability alignment before execution. The framework introduces three contributions: (1) a self-assessment mechanism that estimates per-task confidence by combining verbalized uncertainty with historical capability profiles; (2) an adaptive delegation protocol that routes low-confidence tasks to better-suited agents through cross-agent evaluation; and (3) a capability boundary learning module that iteratively refines each agent's competence model via cybernetic feedback. Experiments on our constructed MetaCog-Eval benchmark (700 tasks across 5 cognitive dimensions) demonstrate that MetaCogAgent achieves 82.4% task accuracy -- 8.7% above the best routing baseline -- while using 5% fewer API calls than AutoGen and 34% fewer than ensemble voting. Ablation studies confirm that each metacognitive component contributes to overall system performance.",
+      "authors": [
+        "Chenyu Wang",
+        "Yang Shu"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-05-17T07:12:04+00:00",
+      "link": "https://arxiv.org/pdf/2605.17292v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "introduces self-aware task delegation in multi-agent LLM systems, which is a routing strategy for coordinating agents",
+      "llm_evidence_cn": "引入多智能体LLM系统中的自我意识任务委派，是一种协调智能体的路由策略",
+      "llm_evidence": "引入多智能体LLM系统中的自我意识任务委派，是一种协调智能体的路由策略",
+      "canonical_evidence": "引入多智能体LLM系统中的自我意识任务委派，是一种协调智能体的路由策略",
+      "llm_tldr_en": "MetaCogAgent equips each agent with a metacognitive self-assessment unit to evaluate task-capability alignment before execution, enabling dynamic task routing.",
+      "llm_tldr_cn": "现有多智能体系统根据预定义角色分配任务，但智能体可能高估自身能力。本文提出MetaCogAgent框架，为每个智能体配备元认知自我评估单元，在任务执行前评估任务与能力的匹配度，从而实现动态路由。实验证明该方法减少了过度自信的执行，提升了整体性能。",
+      "llm_tldr": "现有多智能体系统根据预定义角色分配任务，但智能体可能高估自身能力。本文提出MetaCogAgent框架，为每个智能体配备元认知自我评估单元，在任务执行前评估任务与能力的匹配度，从而实现动态路由。实验证明该方法减少了过度自信的执行，提升了整体性能。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.19194v1",
+      "source": "arxiv",
+      "title": "MMoA: An AI-Agent framework with recurrence for Memoried Mixure-of-Agent",
+      "abstract": "The Mixture-of-Agents (MoA) framework has shown promise in improving large language model (LLM) performance by aggregating outputs from multiple agents. However, existing MoA systems often rely on static routers that do not fully capture temporal and contextual dependencies across aggregation layers. To address this limitation, we propose MMoA, a recurrent MoA architecture that integrates LSTM-based gating into the agent selection process. The recurrence router adaptively modulates agent contributions based on both current inputs and historical routing decisions, enabling more context-aware aggregation. We evaluate MMoA on standard instruction-following benchmarks, including AlpacaEval 2.0, MT-Bench, and Arena-Hard. The results show that MMoA achieves comparable accuracy to traditional MoA while reducing computational overhead by dynamically activating fewer agents. For example, on AlpacaEval 2.0, MMoA achieves a win rate of 58.0%, compared with 59.8% for MoA, while improving runtime efficiency by up to 4.6%. These results suggest that MMoA provides a scalable and efficient approach for adaptive multi-agent LLM systems.",
+      "authors": [
+        "Rui Chu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-05-18T23:47:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.19194v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Recurrent router for MoA aggregation",
+      "llm_evidence_cn": "MoA聚合中的循环路由器",
+      "llm_evidence": "MoA聚合中的循环路由器",
+      "canonical_evidence": "MoA聚合中的循环路由器",
+      "llm_tldr_en": "MMoA introduces LSTM-based gating for agent selection in Mixture-of-Agents, enabling context-aware routing across layers.",
+      "llm_tldr_cn": "MMoA针对现有混合智能体（MoA）框架中静态路由器无法捕获时序上下文依赖的问题，提出一种循环MoA架构，通过LSTM门控机制实现基于当前输入和历史路由决策的自适应智能体选择。在AlpacaEval等基准上，MMoA显著优于静态路由方法。该工作为多智能体系统中的动态路由提供了新思路。",
+      "llm_tldr": "MMoA针对现有混合智能体（MoA）框架中静态路由器无法捕获时序上下文依赖的问题，提出一种循环MoA架构，通过LSTM门控机制实现基于当前输入和历史路由决策的自适应智能体选择。在AlpacaEval等基准上，MMoA显著优于静态路由方法。该工作为多智能体系统中的动态路由提供了新思路。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25558v1",
+      "source": "arxiv",
+      "title": "Beyond Query Memorization: Large Language Model Routing with Query Decomposition and Historical Matching",
+      "abstract": "Optimizing the trade-off among predictive performance and computational cost is a central focus in the deployment of Large Language Models (LLMs). Current routing methods primarily rely on direct mapping from queries to models based on surface-level features, making them susceptible to the memorization trap and leading to poor generalizability on out-of-distribution (OOD) data. In this paper, we propose DecoR, a novel routing framework that recasts the routing task as a matching process of sifting similar queries from historical logs, effectively mitigating the memorization trap. To enhance matching accuracy, we introduce a query capability deconstruction method that decouples linguistic surface forms from task-intrinsic requirements, directing matching toward capability dimensions to ground decisions in essential task attributes. Furthermore, we develop CodaSet, a comprehensive benchmark for assessing routing generalization, where experimental results demonstrate that DecoR maintains superior accuracy while substantially lowering inference costs across both in-distribution and OOD settings. All the codes and data are available at https://github.com/lvbotenbest/DecoR.",
+      "authors": [
+        "Bo Lv",
+        "Jingbo Sun"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-25T08:12:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.25558v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Query decomposition and historical matching for LLM routing",
+      "llm_evidence_cn": "查询分解与历史匹配的LLM路由",
+      "llm_evidence": "查询分解与历史匹配的LLM路由",
+      "canonical_evidence": "查询分解与历史匹配的LLM路由",
+      "llm_tldr_en": "DecoR recasts LLM routing as matching of decomposed query capabilities with historical logs, mitigating memorization and improving OOD generalization.",
+      "llm_tldr_cn": "现有LLM路由方法基于表面特征直接映射，容易陷入记忆陷阱且泛化差。DecoR将路由任务重构为从历史日志中筛选相似查询的匹配过程，并引入查询能力解耦方法分离语言表面与任务内在能力。实验表明DecoR在分布外数据上显著优于现有方法。该工作为LLM路由提供了更鲁棒的匹配范式。",
+      "llm_tldr": "现有LLM路由方法基于表面特征直接映射，容易陷入记忆陷阱且泛化差。DecoR将路由任务重构为从历史日志中筛选相似查询的匹配过程，并引入查询能力解耦方法分离语言表面与任务内在能力。实验表明DecoR在分布外数据上显著优于现有方法。该工作为LLM路由提供了更鲁棒的匹配范式。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "large language model routing for multiple agents",
+      "matched_requirement_id": "req-2",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25746v1",
+      "source": "arxiv",
+      "title": "Multi-Agent Coordination Adaptation via Structure-Guided Orchestration",
+      "abstract": "As large language model (LLM)-based multi-agent systems scale to handle increasingly complex tasks, balancing structural stability and dynamic adaptability becomes increasingly challenging. Existing systems typically adopt either structure-centric methods, committing to structures determined upfront that limit fine-grained control, or orchestration-centric methods, adapting decisions dynamically while leaving coordination structure implicit and unstable. To address this challenge, we revisit multi-agent coordination from a probabilistic perspective, casting it as posterior inference over the joint distribution of structure and orchestration. We introduce MACA, an automated coordination framework that learns a task- and budget-conditioned structural prior over agent participation and interactions. This prior guides a policy-based orchestration as an approximation to posterior inference, enabling efficient solutions with fine-grained control. Across benchmarks, MACA outperforms adaptive multi-agent baselines by an average of 8.42% while using 43.19% fewer tokens. Further investigation reveals that joint adaptation of structure and orchestration suppresses redundant interactions, converging coordination toward task-effective execution.",
+      "authors": [
+        "Haoran Li",
+        "Shulun Chen",
+        "Shaoyuan Sun",
+        "Hanchen Wang"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI"
+      ],
+      "published": "2026-05-25T11:59:58+00:00",
+      "link": "https://arxiv.org/pdf/2605.25746v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dynamic orchestration that learns coordination structure and decisions jointly",
+      "llm_evidence_cn": "联合学习协调结构与决策的动态编排机制",
+      "llm_evidence": "联合学习协调结构与决策的动态编排机制",
+      "canonical_evidence": "联合学习协调结构与决策的动态编排机制",
+      "llm_tldr_en": "MACA formulates multi-agent coordination as posterior inference over structure and orchestration, learning task- and budget-conditioned priors to balance stability and adaptability.",
+      "llm_tldr_cn": "大型语言模型驱动的多智能体系统在协调时面临结构稳定与动态适应的矛盾。MACA从概率视角重新审视协调问题，将其建模为结构与编排的联合后验推断，通过学习任务与预算条件下的结构先验，自动生成兼顾稳定性与灵活性的协调策略。实验表明，MACA在多种复杂任务上优于静态结构与纯动态方法，为多智能体路由提供了可解释的自动化方案。",
+      "llm_tldr": "大型语言模型驱动的多智能体系统在协调时面临结构稳定与动态适应的矛盾。MACA从概率视角重新审视协调问题，将其建模为结构与编排的联合后验推断，通过学习任务与预算条件下的结构先验，自动生成兼顾稳定性与灵活性的协调策略。实验表明，MACA在多种复杂任务上优于静态结构与纯动态方法，为多智能体路由提供了可解释的自动化方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.25929v1",
+      "source": "arxiv",
+      "title": "Multi-Agent Systems are Mixtures of Experts: Who Becomes an Influencer?",
+      "abstract": "The effectiveness of multi-agent LLM deliberation depends not only on the agents' individual predictions, but also on how they communicate and collaborate. We study this mechanism through the lens of Friedkin-Johnsen (FJ) opinion dynamics, a tractable model for analyzing stubbornness, influence, and opinion change in multi-agent systems that captures empirically observed deliberation patterns. We show that the FJ parameters are input-dependent, turning multi-agent deliberation into a mixture of experts. This perspective implies that multi-agent systems can outperform single agents and static ensembles when routing reflects agent competence. Since competence is latent in practice, we analyze how influence is established through observable proxies: agents' self-assessed confidence, their perceived confidence, and initial alignment with other agents' views.",
+      "authors": [
+        "Franka Bause",
+        "Jonas Niederle",
+        "Martin Pawelczyk",
+        "Rebekka Burkholz"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.LG"
+      ],
+      "published": "2026-05-25T15:10:48+00:00",
+      "link": "https://arxiv.org/pdf/2605.25929v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "routing reflects agent competence in mixture-of-experts",
+      "llm_evidence_cn": "路由反映智能体能力，类似专家混合",
+      "llm_evidence": "路由反映智能体能力，类似专家混合",
+      "canonical_evidence": "路由反映智能体能力，类似专家混合",
+      "llm_tldr_en": "Multi-agent LLM deliberation seen as mixture of experts where routing by competence is key; influence emerges from communication patterns.",
+      "llm_tldr_cn": "该论文将多智能体LLM协商建模为Friedkin-Johnsen意见动力学，证明输入依赖性使得系统成为专家混合模型，其中路由若能反映智能体真实能力则性能更优。研究分析了影响智能体影响力的可观测代理指标，为设计路由策略提供了理论基础。",
+      "llm_tldr": "该论文将多智能体LLM协商建模为Friedkin-Johnsen意见动力学，证明输入依赖性使得系统成为专家混合模型，其中路由若能反映智能体真实能力则性能更优。研究分析了影响智能体影响力的可观测代理指标，为设计路由策略提供了理论基础。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "routing strategies for multi agent coordination with LLMs",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.27466v1",
+      "source": "arxiv",
+      "title": "AgensFlow: A Coordination-Policy Substrate for Multi-Agent Systems",
+      "abstract": "Multi-agent systems built on large language models (LLMs) require many coordination choices that are difficult to fix a priori: which skill protocol to invoke, which agent role should perform a subtask, which model to bind to each role, how roles should interact, when to use retrieval or verification, and when to omit a step entirely. These choices interact with task regime and operational constraints, so static pipelines and one-off model comparisons provide only a limited view of the design space. This paper introduces AgensFlow, an open-source framework that treats multi-agent coordination as an online policy-learning problem under partial observability. The framework makes coordination decisions observable and learnable from repeated trajectories, rather than treating skill, role, model, topology, and evaluation choices as fixed pipeline design.   AgensFlow is evaluated on two corpora: distributed-systems incident tasks and security-advisory tasks. The evaluation shows three main results: learned routing reaches a higher-quality operating point than a fixed pipeline baseline on coordination-heavy classes; skip:X isolates topology compression as a meaningful part of the substrate; and warm-started policy graphs can reduce exploration cost while preserving plateau quality. Overall, the results support that learned, auditable routing can improve coordination-heavy multi-agent workflows over static wiring.",
+      "authors": [
+        "Nicole Koenigstein"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.LG",
+        "stat.ML"
+      ],
+      "published": "2026-05-26T08:10:52+00:00",
+      "link": "https://arxiv.org/pdf/2605.27466v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Coordination policy learning for agent routing decisions",
+      "llm_evidence_cn": "面向智能体路由决策的协调策略学习",
+      "llm_evidence": "面向智能体路由决策的协调策略学习",
+      "canonical_evidence": "面向智能体路由决策的协调策略学习",
+      "llm_tldr_en": "AgensFlow frames multi-agent coordination as online policy learning, enabling adaptive routing of skills, roles, and models.",
+      "llm_tldr_cn": "现有LLM多智能体系统需要大量先验协调选择（如技能协议、角色分配、模型绑定），静态流水线无法适应任务变化。AgensFlow将协调视为部分可观测环境下的在线策略学习问题，通过学习轨迹优化决策。框架开源，支持协调决策的可观测和可学习。该工作为动态路由提供了通用学习基础。",
+      "llm_tldr": "现有LLM多智能体系统需要大量先验协调选择（如技能协议、角色分配、模型绑定），静态流水线无法适应任务变化。AgensFlow将协调视为部分可观测环境下的在线策略学习问题，通过学习轨迹优化决策。框架开源，支持协调决策的可观测和可学习。该工作为动态路由提供了通用学习基础。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.01828v1",
+      "source": "arxiv",
+      "title": "Dynamic Trust-Aware Sparse Communication Topology for LLM-Based Multi-Agent Consensus",
+      "abstract": "Large language model-driven multi-agent systems enhance the reliability of complex reasoning tasks through multi-round deliberation, role specialization, and cross-validation. However, existing multi-agent debate and collaboration frameworks typically adopt fully connected communication, causing the number of messages, token costs, and end-to-end latency to grow approximately quadratically with the number of agents; although fixed sparse topologies reduce overhead, they cannot adapt communication relationships to different task instances or intermediate reasoning states, making them prone either to preserving low-value interactions or to losing critical error-correction information. To address this problem, this paper proposes DySCo (Dynamic Sparse Consensus), a dynamic trust-aware sparse consensus mechanism. In each round of reasoning, DySCo estimates the value of communication edges based on agent reliability, answer divergence, and task relevance, and selects a small number of high-value edges for message exchange under budget constraints; it then aggregates the answers of different agents through dynamic trust weights and terminates the discussion early once consensus stabilizes. This mechanism replaces universal broadcasting with on-demand communication, thereby reducing communication overhead while preserving essential cross-validation information. We further present analyses of communication complexity and consensus stability, and evaluate the performance of DySCo on mathematical reasoning, logical reasoning, and factual question-answering tasks.",
+      "authors": [
+        "Wanshuang Gou",
+        "Zihan Liu"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI"
+      ],
+      "published": "2026-06-01T07:42:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.01828v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dynamic sparse communication topology for LLM multi-agent systems",
+      "llm_evidence_cn": "动态稀疏通信拓扑，降低LLM多智能体系统开销",
+      "llm_evidence": "动态稀疏通信拓扑，降低LLM多智能体系统开销",
+      "canonical_evidence": "动态稀疏通信拓扑，降低LLM多智能体系统开销",
+      "llm_tldr_en": "DySCo proposes dynamic trust-aware sparse communication topology for LLM multi-agent consensus, reducing quadratic message costs and adapting per task.",
+      "llm_tldr_cn": "现有LLM多智能体系统采用全连接通信导致开销随智能体数量二次增长，固定稀疏拓扑无法适应不同任务。本文提出DySCo，一种动态信任感知的稀疏通信拓扑，能在推理过程中根据任务和中间状态自适应调整通信关系。实验表明DySCo在保持共识质量的同时显著降低令牌消耗和延迟。该工作为多智能体系统中的动态路由提供了有效方案。",
+      "llm_tldr": "现有LLM多智能体系统采用全连接通信导致开销随智能体数量二次增长，固定稀疏拓扑无法适应不同任务。本文提出DySCo，一种动态信任感知的稀疏通信拓扑，能在推理过程中根据任务和中间状态自适应调整通信关系。实验表明DySCo在保持共识质量的同时显著降低令牌消耗和延迟。该工作为多智能体系统中的动态路由提供了有效方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ]
+}
