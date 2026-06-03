@@ -25,3 +25,65 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: mas-routing
+      description: 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: multi-agent routing
+          keyword_cn: 多智能体路由
+          query: multi-agent routing in large language model systems
+        - keyword: large language model routing
+          keyword_cn: 大语言模型路由
+          query: large language model routing for multiple agents
+        - keyword: multi-agent system
+          keyword_cn: 多智能体系统
+          query: multi-agent system routing mechanisms
+        - keyword: agent routing
+          keyword_cn: 智能体路由
+          query: agent routing strategies
+        - keyword: multi-agent coordination
+          keyword_cn: 多智能体协调
+          query: multi-agent coordination routing
+        - keyword: dynamic agent routing
+          keyword_cn: 动态智能体路由
+          query: dynamic routing of agents in multi agent systems
+      intent_queries:
+        - query: research on routing in large language model based multi agent systems
+          query_cn: 基于大语言模型的多智能体系统路由研究
+          enabled: true
+          source: manual
+          note: ''
+        - query: routing strategies for multi agent coordination with LLMs
+          query_cn: 大语言模型驱动的多智能体协调路由策略
+          enabled: true
+          source: manual
+          note: ''
+        - query: Efficient task routing in multi agent LLM architectures
+          query_cn: 多智能体大语言模型架构中的高效任务路由
+          enabled: true
+          source: manual
+          note: ''
+        - query: how to choose best configuration for multi hop reasoning
+          query_cn: 如何为多跳推理选择最佳配置
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-06-03T02:25:07.947Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq
