@@ -1,21 +1,21 @@
 ---
 title: "DFA-RAG: Conversational Semantic Router for Large Language Model with Definite Finite Automaton"
-title_zh: DFA-RAG：基于确定有限自动机的大语言模型对话语义路由器
+title_zh: DFA-RAG：基于确定性有限自动机的对话语义路由器
 authors: "Yiyou Sun, Junjie Hu, Wei Cheng, Haifeng Chen"
 date: 2024-05-02
 pdf: "https://openreview.net/pdf?id=LpAzlcGzJ6"
 tags: ["query:mas-routing"]
-score: 5.0
-evidence: 基于确定有限自动机的对话语义路由器
-tldr: 该论文提出DFA-RAG框架，通过嵌入从训练对话中学到的确定有限自动机，充当语义路由器，使大语言模型能严格遵循预定响应路径。实验表明该方法在情感支持和客户服务等场景下有效提升合规性，为对话智能体提供了结构化的路由机制。
+score: 4.0
+evidence: 使用确定性有限自动机作为语义路由器引导LLM响应，与LLM系统中的路由机制相关
+tldr: 传统大语言模型在需要遵守预定指南的场景（如情感支持）中难以生成合规回应。本文提出DFA-RAG框架，通过学习对话数据构建确定有限自动机，嵌入LLM作为语义路由器，引导回复沿确定性路径生成。该方法在保持对话流畅性的同时提高了回复规范性和符合性，展示了结构化的路由机制在LLM对话中的价值。
 source: ICML-2024-Public
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1776, \"height\": 663, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 742, \"height\": 136, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1759, \"height\": 759, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 862, \"height\": 234, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1755, \"height\": 633, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1708, \"height\": 1701, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1713, \"height\": 1735, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1715, \"height\": 1930, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 1383, \"height\": 1850, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1449, \"height\": 1752, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-lpazlcgzj6/fig-011.webp\", \"caption\": \"\", \"page\": 0, \"index\": 11, \"width\": 1566, \"height\": 2127, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2024-lpazlcgzj6/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1717, \"height\": 480, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-lpazlcgzj6/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 833, \"height\": 276, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-lpazlcgzj6/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 838, \"height\": 561, \"label\": \"Table\"}]"
-motivation: 大语言模型在需遵循预定规则的对话场景中难以生成合规响应。
-method: 嵌入确定性有限自动机作为语义路由器，结合检索增强生成。
-result: 在多个对话数据集上提升了响应合规性和一致性。
-conclusion: 结构化路由可增强LLM在约束场景下的可靠性。
+motivation: LLM在需要遵循预定规则的特殊场景中难以生成合规回复，需要有效的路由机制。
+method: 从训练对话中学习确定有限自动机，并将其嵌入LLM作为语义路由器，结合检索增强生成实现路径引导。
+result: 实验表明DFA-RAG在情感支持和客服等场景下有效提升了回复的规范性和对话连贯性。
+conclusion: 结构化自动机可作为LLM语义路由的有效手段，为受控对话生成提供新思路。
 ---
 
 ## Abstract

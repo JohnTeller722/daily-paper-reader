@@ -5,17 +5,17 @@ authors: "Guibin Zhang, Yanwei Yue, Xiangguo Sun, Guancheng Wan, Miao Yu, Junfen
 date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=LpE54NUnmO"
 tags: ["query:mas-routing"]
-score: 8.0
-evidence: 为多智能体系统设计任务感知的通信拓扑
-tldr: 基于LLM的多智能体系统依赖精心设计的通信拓扑，但如何为具体任务选择最佳拓扑困扰着实践者。本文提出G-Designer，利用图神经网络动态生成任务感知的自定义通信拓扑，兼顾高效性与质量。实验表明G-Designer在多种任务上优于固定拓扑，显著减少了不必要的通信开销。该工作为多智能体路由拓扑的自动设计提供了有效方案。
+score: 9.0
+evidence: 动态通信拓扑设计以实现任务感知路由
+tldr: 在多智能体系统中，通信拓扑的选择直接影响任务效率和成本。本文提出G-Designer，利用图神经网络为每个任务动态设计定制化的通信拓扑，避免了不必要的令牌开销。实验表明G-Designer在多种任务上自适应地找到了最优拓扑，显著提升了路由效率。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 822, \"height\": 472, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 853, \"height\": 358, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1762, \"height\": 1031, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 841, \"height\": 677, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 852, \"height\": 301, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 494, \"height\": 202, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 117, \"height\": 143, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 107, \"height\": 143, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 623, \"height\": 224, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 515, \"height\": 202, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-lpe54nunmo/fig-011.webp\", \"caption\": \"\", \"page\": 0, \"index\": 11, \"width\": 515, \"height\": 239, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1766, \"height\": 884, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 864, \"height\": 229, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 857, \"height\": 353, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1307, \"height\": 400, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 661, \"height\": 139, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-lpe54nunmo/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 907, \"height\": 1023, \"label\": \"Table\"}]"
-motivation: 多智能体系统中通信拓扑选择困难，现有固定拓扑无法适应任务需求。
-method: 提出G-Designer，利用图神经网络根据任务特征动态设计智能体间的通信拓扑结构。
-result: 在多个基准任务上，G-Designer相比固定拓扑提升了任务性能并降低了通信开销。
-conclusion: G-Designer实现了任务自适应的通信拓扑设计，为多智能体路由提供了高效解决方案。
+motivation: 固定通信拓扑无法适应不同任务需求，导致效率低下。
+method: 使用图神经网络动态生成任务感知的通信拓扑。
+result: G-Designer在多个基准上实现了高效且自适应的路由。
+conclusion: 动态拓扑设计是实现高效多智能体路由的关键技术。
 ---
 
 ## Abstract

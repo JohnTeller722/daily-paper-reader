@@ -6,16 +6,16 @@ date: 2025-01-23
 pdf: "https://openreview.net/pdf?id=uCKvHweh1g"
 tags: ["query:mas-routing"]
 score: 8.0
-evidence: 优化多智能体拓扑和提示设计
-tldr: 该论文针对多智能体系统中提示和拓扑设计复杂的问题，提出了MASS框架，通过搜索最优的提示和智能体交互拓扑来优化系统性能。拓扑结构决定了智能体间的路由与协作方式，实验表明MASS能显著提升多智能体任务完成质量，为自动化多智能体路由设计提供了有效解决方案。
+evidence: 优化智能体提示和拓扑以实现有效路由
+tldr: 多智能体系统设计中提示和拓扑的选择极为复杂。本文通过分析设计空间，提出MASS框架，自动优化智能体的提示和交互拓扑，从而实现了高效的任务路由和协作。实验证明MASS在多个复杂任务上显著提升了性能，并降低了人工设计成本。
 source: ICML-2025-Rejected-Public
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 854, \"height\": 507, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 842, \"height\": 576, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 841, \"height\": 433, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1672, \"height\": 724, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 841, \"height\": 399, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 838, \"height\": 568, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1786, \"height\": 670, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1673, \"height\": 691, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 1130, \"height\": 746, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-uckvhweh1g/fig-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1870, \"height\": 2155, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-uckvhweh1g/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1769, \"height\": 929, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-uckvhweh1g/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1773, \"height\": 469, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-uckvhweh1g/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1757, \"height\": 329, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-uckvhweh1g/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1754, \"height\": 472, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-uckvhweh1g/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1758, \"height\": 477, \"label\": \"Table\"}]"
-motivation: 多智能体系统设计依赖于手动配置提示和拓扑，缺乏自动化方法。
-method: 提出多智能体系统搜索(MASS)，联合优化提示和交互拓扑。
-result: MASS在多种任务上优于人工设计基线，证明了拓扑优化的有效性。
-conclusion: 提示与拓扑是MAS的关键，自动化搜索能生成更优的路由策略。
+motivation: 手动设计多智能体系统的提示和拓扑费时费力，且难以达到最优。
+method: 提出MASS框架，利用搜索算法联合优化提示和拓扑。
+result: MASS在多个基准任务上取得了优于手工设计的性能。
+conclusion: 自动化提示和拓扑优化是提升多智能体系统路由效果的有效途径。
 ---
 
 ## Abstract

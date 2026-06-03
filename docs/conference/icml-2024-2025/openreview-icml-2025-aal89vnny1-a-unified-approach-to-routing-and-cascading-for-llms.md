@@ -1,21 +1,21 @@
 ---
 title: A Unified Approach to Routing and Cascading for LLMs
-title_zh: 大语言模型路由与级联的统一方法
+title_zh: LLM路由与级联的统一方法
 authors: "Jasper Dekoninck, Maximilian Baader, Martin Vechev"
 date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=AAl89VNNy1"
 tags: ["query:mas-routing"]
-score: 9.0
-evidence: 直接针对智能体系统中的LLM路由
-tldr: 本文提出了一个统一的框架，整合了路由和级联这两种模型选择策略。针对现有方法缺乏最优性证明、无法识别有效条件以及无法结合两种范式的局限，首次推导了级联的最优策略，并给出了结合路由与级联的改进方法。实验表明该方法在降低成本和提升性能方面显著优于单独使用任一策略。
+score: 7.0
+evidence: LLM在智能体系统中的路由与级联
+tldr: 针对现有LLM路由与级联策略缺乏最优性证明和组合能力的问题，本文提出了一种统一的最优策略，通过形式化推导证明了其最优性，并揭示了策略有效的条件。实验表明该策略在多种设置下显著改善了成本-性能权衡。该工作为LLM模型选择提供了理论基础和实用指导。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-aal89vnny1/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1546, \"height\": 483, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-aal89vnny1/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 606, \"height\": 607, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-aal89vnny1/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1711, \"height\": 574, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 856, \"height\": 589, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1596, \"height\": 355, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 697, \"height\": 268, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1760, \"height\": 310, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1767, \"height\": 291, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1766, \"height\": 306, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1326, \"height\": 302, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1639, \"height\": 354, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 1260, \"height\": 354, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1555, \"height\": 354, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-aal89vnny1/table-011.webp\", \"caption\": \"\", \"page\": 0, \"index\": 11, \"width\": 793, \"height\": 301, \"label\": \"Table\"}]"
-motivation: 现有LLM模型选择策略（路由或级联）缺乏最优性证明，且无法结合两者优势以优化成本-性能权衡。
-method: 提出统一框架，推导级联最优策略，并设计结合路由与级联的联合方法。
-result: 在多个基准上，统一方法相比单独路由或级联显著改善了成本-性能权衡。
-conclusion: 本研究为LLM代理系统中的模型选择提供了理论基础和实用统一方案。
+motivation: 现有LLM路由和级联策略缺乏最优性理论，且无法结合两者优势以优化成本-性能。
+method: 推导出级联的最优策略，并提出统一框架结合路由与级联，给出形式化最优性证明。
+result: 在多个基准上验证了统一策略的优越性，相比单独路由或级联实现了更好的成本-性能平衡。
+conclusion: 统一路由与级联策略为LLM系统选择提供了理论保障和实践优势。
 ---
 
 ## Abstract

@@ -1,21 +1,21 @@
 ---
 title: Learning to Route Among Specialized Experts for Zero-Shot Generalization
-title_zh: 学习在专用专家之间路由以实现零样本泛化
+title_zh: 学习在专业专家之间路由以实现零样本泛化
 authors: "Mohammed Muqeeth, Haokun Liu, Yufan Liu, Colin Raffel"
 date: 2024-05-02
 pdf: "https://openreview.net/pdf?id=r0qcGcFL4U"
 tags: ["query:mas-routing"]
 score: 8.0
-evidence: 学习在专用专家模型之间进行路由
-tldr: 该论文提出PHATGOOSE方法，通过后训练的自适应令牌级门控机制，在大量专用专家模型中选择性地路由，从而显著提升零样本泛化能力。该方法避免了以往需要额外训练数据的限制，实现了灵活高效的专家路由，为多智能体系统中的智能体路由提供了可迁移的思路。
+evidence: 学习在专业专家之间路由以实现零样本泛化
+tldr: 针对大量专业语言模型难以复用的问题，本文提出PHATGOOSE方法，学习在参数高效微调产生的专家模块之间进行路由。该方法在零样本泛化任务上取得显著提升，为专家模型的路由提供了一种有效策略，对多智能体路由机制有直接借鉴意义。
 source: ICML-2024-Public
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2024-r0qcgcfl4u/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 781, \"height\": 500, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-r0qcgcfl4u/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1259, \"height\": 371, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2024-r0qcgcfl4u/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1719, \"height\": 441, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 813, \"height\": 444, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1721, \"height\": 205, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 493, \"height\": 2265, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1524, \"height\": 1879, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1492, \"height\": 1472, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1522, \"height\": 1877, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2024-r0qcgcfl4u/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1492, \"height\": 1470, \"label\": \"Table\"}]"
-motivation: 大量专用语言模型难以有效复用，需一种路由机制实现零样本泛化。
-method: 提出PHATGOOSE，通过后训练自适应令牌级门控学习路由。
-result: 在多个零样本任务上优于现有路由方法，提升了泛化性能。
-conclusion: 学习路由策略可有效利用专家库，推动零样本泛化。
+motivation: 大量专业语言模型难以复用，需要一种路由机制来动态选择专家以提升零样本泛化能力。
+method: 提出PHATGOOSE，通过后验自适应令牌级门控，学习在参数高效微调产生的专家模块之间进行路由。
+result: 在多个零样本泛化基准上，PHATGOOSE优于以往路由方法和单个模型，验证了路由的有效性。
+conclusion: 该工作证明了专家间路由能有效提升零样本泛化，为多专家路由提供了新思路。
 ---
 
 ## Abstract

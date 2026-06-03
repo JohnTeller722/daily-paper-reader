@@ -6,16 +6,16 @@ date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=vOxaD3hhPt"
 tags: ["query:mas-routing"]
 score: 7.0
-evidence: 基于有限状态机自动构建多智能体系统
-tldr: 该论文提出MetaAgent框架，基于有限状态机自动构建多智能体系统。给定任务描述后，MetaAgent能设计智能体结构并优化其通信路由，无需人工预定义。实验表明该方法在多种任务上生成了高效的多智能体系统，实现了动态任务分配和路由，直接服务于多智能体路由研究。
+evidence: 自动构建多智能体系统，隐含路由机制
+tldr: 现有手动设计的多智能体框架局限于预定义场景，而自动设计方法存在工具集成不足、通信结构僵化等问题。MetaAgent提出基于有限状态机的框架，根据任务描述自动生成并优化多智能体系统，部署后通过状态转换实现智能体间的灵活路由与协作。实验表明该方法能有效构建适应性强的多智能体系统，为动态路由机制提供了自动化基础。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1743, \"height\": 753, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1702, \"height\": 829, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1743, \"height\": 922, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1813, \"height\": 2157, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1821, \"height\": 1895, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1820, \"height\": 2062, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1828, \"height\": 1394, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-voxad3hhpt/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1810, \"height\": 889, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1555, \"height\": 464, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 757, \"height\": 347, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1434, \"height\": 399, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1453, \"height\": 238, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1406, \"height\": 235, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1606, \"height\": 282, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 808, \"height\": 456, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1020, \"height\": 941, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 586, \"height\": 242, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-voxad3hhpt/table-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 409, \"height\": 205, \"label\": \"Table\"}]"
-motivation: 现有手动设计多智能体框架局限于预定场景，且自动构造方法缺乏灵活路由。
-method: 使用有限状态机建模智能体行为，通过优化算法自动生成和调整路由。
-result: 生成的多智能体系统在多个基准任务上性能优于手工设计。
-conclusion: 自动构建多智能体系统可有效支持动态路由和任务分配。
+motivation: 现有手动和自动构建多智能体系统的方法存在场景局限、灵活性差等问题，亟需通用自动化框架。
+method: 提出基于有限状态机的MetaAgent框架，根据任务描述自动设计并优化多智能体系统的结构和交互路由。
+result: MetaAgent能够自动生成适应多种任务的多智能体系统，并通过优化算法提升性能。
+conclusion: 自动化构建多智能体系统是可行的，为路由机制设计提供了新思路。
 ---
 
 ## Abstract

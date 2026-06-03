@@ -1,21 +1,21 @@
 ---
 title: LLM-Assisted Semantically Diverse Teammate Generation for Efficient Multi-agent Coordination
-title_zh: 基于大语言模型的语义多样队友生成以实现高效多智能体协调
+title_zh: 基于LLM的语义多样队友生成实现高效多智能体协调
 authors: "Lihe Li, Lei Yuan, Pengsen Liu, Tao Jiang, Yang Yu"
 date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=Vhktpw6Vid"
 tags: ["query:mas-routing"]
-score: 6.0
-evidence: 生成语义多样的队友以促进多智能体协调
-tldr: 该论文提出SemDiv框架，利用大语言模型自动发现和生成语义层面多样的协调行为，用于训练泛化性更强的智能体。与传统随机化方法相比，SemDiv生成的队友具有明确语义，显著提升了智能体在新环境中的适应能力。该工作为多智能体系统中的协调路由提供了新视角。
+score: 4.0
+evidence: 利用LLM生成语义多样的队友以促进多智能体协调
+tldr: 训练可泛化多智能体代理需要多样化队友，但传统方法缺乏语义信息导致效率低。本文提出SemDiv，利用大语言模型在语义层面发现并学习多样化的协调行为——每次迭代生成自然语言描述的协调策略并转化为可执行策略。该方法显著提高了队友多样性生成效率和代理的泛化能力，是多智能体协调中路由策略研究的重要支撑。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1743, \"height\": 569, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1729, \"height\": 631, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1753, \"height\": 539, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 862, \"height\": 327, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 845, \"height\": 568, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1731, \"height\": 422, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1728, \"height\": 536, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1693, \"height\": 763, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 1685, \"height\": 582, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-vhktpw6vid/fig-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1691, \"height\": 595, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1782, \"height\": 801, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1755, \"height\": 383, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1780, \"height\": 581, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1779, \"height\": 583, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1780, \"height\": 581, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1780, \"height\": 581, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-vhktpw6vid/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1780, \"height\": 578, \"label\": \"Table\"}]"
-motivation: 传统队友生成缺乏语义信息，导致协调效率低和适应差。
-method: 利用LLM迭代生成自然语言描述的协调行为并转化为策略。
-result: 在多个多智能体协调任务中提升了智能体的泛化性能。
-conclusion: 语义多样的队友生成能有效促进多智能体协调和适应。
+motivation: 现有多样化队友生成方法缺乏语义信息，导致生成效率低且代理泛化性差。
+method: 迭代利用LLM生成新的协调行为自然语言描述，并翻译为可执行策略来丰富队友池。
+result: 在多智能体协调任务中，SemDiv生成的队友多样性更高，训练出的代理泛化能力显著提升。
+conclusion: LLM的语义理解能力能有效提升多智能体协调中队友的多样性及代理的适应性。
 ---
 
 ## Abstract

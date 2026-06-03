@@ -1,61 +1,30 @@
 {
   "top_k": 200,
-  "generated_at": "2026-06-03T02:27:41.449796+00:00",
+  "generated_at": "2026-06-03T03:46:18.689530+00:00",
   "papers": [
     {
-      "id": "openreview-icml-2025-tfbibcvxkg",
+      "id": "openreview-icml-2025-clf25dahga",
       "source": "ICML-2025-Accepted",
-      "title": "BEST-Route: Adaptive LLM Routing with Test-Time Optimal Compute",
-      "abstract": "Large language models (LLMs) are powerful tools but are often expensive to deploy at scale.  LLM query routing mitigates this by dynamically assigning queries to models of varying cost and quality to obtain a desired tradeoff. Prior query routing approaches generate only one response from the selected model and a single response from a small (inexpensive) model was often not good enough to beat a response from a large (expensive) model due to which they end up overusing the large model and missing out on potential cost savings. However, it is well known that for small models, generating multiple responses and selecting the best can enhance quality while remaining cheaper than a single large-model response. We leverage this idea to propose BEST-Route, a novel routing framework that chooses a model and the number of responses to sample from it based on query difficulty and the quality thresholds. Experiments on real-world datasets demonstrate that our method reduces costs by up to 60% with less than 1% performance drop.",
+      "title": "LaRA: Benchmarking Retrieval-Augmented Generation and Long-Context LLMs – No Silver Bullet for LC or RAG Routing",
+      "abstract": "As Large Language Model (LLM) context windows expand, the necessity of Retrieval-Augmented Generation (RAG) for integrating external knowledge is debated. Existing RAG vs. long-context (LC) LLM comparisons are often inconclusive due to benchmark limitations. We introduce LaRA, a novel benchmark with 2326 test cases across four QA tasks and three long context types, for rigorous evaluation. Our analysis of eleven LLMs reveals the optimal choice between RAG and LC depends on a complex interplay of model capabilities, context length, task type, and retrieval characteristics, offering actionable guidelines for practitioners. Our code and dataset is provided at:https://github.com/Alibaba-NLP/LaRA",
       "authors": [
-        "Dujian Ding",
-        "Ankur Mallick",
-        "Shaokun Zhang",
-        "Chi Wang",
-        "Daniel Madrigal",
-        "Mirian Del Carmen Hipolito Garcia",
-        "Menglin Xia",
-        "Laks V. S. Lakshmanan",
-        "Qingyun Wu",
-        "Victor Rühle"
-      ],
-      "primary_category": "Large language models",
-      "categories": [
-        "Large language models",
-        "Efficient ML",
-        "Query Routing",
-        "Test-time Optimal Compute"
-      ],
-      "published": "2025-05-01T13:20:37.03+00:00",
-      "link": "https://openreview.net/forum?id=tFBIbCVXkG",
-      "pdf_url": null,
-      "tags": [
-        "keyword:mas-routing",
-        "query:mas-routing"
-      ]
-    },
-    {
-      "id": "openreview-icml-2025-u08muoggdm",
-      "source": "ICML-2025-Accepted",
-      "title": "Learning to Route LLMs with Confidence Tokens",
-      "abstract": "Large language models (LLMs) have demonstrated impressive performance on several tasks and are increasingly deployed in real-world applications. However, especially in high-stakes settings, it becomes vital to know when the output of an LLM may be unreliable. Depending on whether an answer is trustworthy, a system can then choose to route the question to another expert, or otherwise fall back on a safe default behavior. In this work, we study the extent to which LLMs can reliably indicate confidence in their answers, and how this notion of confidence can translate into downstream accuracy gains. We propose Self-Reflection with Error-based Feedback (Self-REF), a lightweight training strategy to teach LLMs to express confidence in whether their answers are correct in a reliable manner. Self-REF introduces confidence tokens into the LLM, from which a confidence score can be extracted. Compared to conventional approaches such as verbalizing confidence and examining token probabilities, we demonstrate empirically that confidence tokens show significant improvements in downstream routing and rejection learning tasks.",
-      "authors": [
-        "Yu-Neng Chuang",
-        "Prathusha Kameswara Sarma",
-        "Parikshit Gopalan",
-        "John Boccio",
-        "Sara Bolouki",
-        "Xia Hu",
-        "Helen Zhou"
+        "Kuan Li",
+        "Liwen Zhang",
+        "Yong Jiang",
+        "Pengjun Xie",
+        "Fei Huang",
+        "Shuai Wang",
+        "Minhao Cheng"
       ],
       "primary_category": "Large Language Model",
       "categories": [
         "Large Language Model",
-        "LLM Routing",
-        "Model Confidence"
+        "Retrieval Augmented Generation",
+        "Benchmark",
+        "Long-context"
       ],
-      "published": "2025-05-01T13:12:46.071+00:00",
-      "link": "https://openreview.net/forum?id=U08mUogGDM",
+      "published": "2025-05-01T13:18:13.326+00:00",
+      "link": "https://openreview.net/forum?id=CLF25dahgA",
       "pdf_url": null,
       "tags": [
         "keyword:mas-routing"
@@ -100,6 +69,29 @@
       "categories": [],
       "published": "2024-05-02T00:40:48.629+00:00",
       "link": "https://openreview.net/forum?id=r0qcGcFL4U",
+      "pdf_url": null,
+      "tags": [
+        "keyword:mas-routing"
+      ]
+    },
+    {
+      "id": "openreview-icml-2024-0zfwfevsad",
+      "source": "ICML-2024-Public",
+      "title": "Towards Modular LLMs by Building and Reusing a Library of LoRAs",
+      "abstract": "Given the increasing number of parameter-efficient adapters of large language models (LLMs), how can we reuse them to improve LLM performance on new tasks? We study how to best build a *library* of adapters given multi-task data and devise techniques for both *zero-shot* and *supervised* task generalization through *routing* in such library. We benchmark existing approaches to build this library and introduce model-based clustering, $\\texttt{MBC}$, a method that groups tasks based on the similarity of their adapter parameters, indirectly optimizing for transfer across the multi-task dataset. In order to reuse the library, we present a novel zero-shot routing mechanism, $\\texttt{Arrow}$, which enables dynamic selection of the most relevant adapters for new inputs without the need for retraining. We experiment with several LLMs, such as Phi-2 and Mistral, on a wide array of held-out tasks, verifying that MBC-based adapters and Arrow routing lead to superior generalization to new tasks. Thus, we make steps towards creating modular, adaptable LLMs that can match or outperform traditional joint training.",
+      "authors": [
+        "Oleksiy Ostapenko",
+        "Zhan Su",
+        "Edoardo Ponti",
+        "Laurent Charlin",
+        "Nicolas Le Roux",
+        "Lucas Caccia",
+        "Alessandro Sordoni"
+      ],
+      "primary_category": "ICML.cc/2024/Conference",
+      "categories": [],
+      "published": "2024-05-02T00:40:57.57+00:00",
+      "link": "https://openreview.net/forum?id=0ZFWfeVsaD",
       "pdf_url": null,
       "tags": [
         "keyword:mas-routing"
@@ -321,30 +313,6 @@
       ]
     },
     {
-      "id": "openreview-icml-2025-6k3ofs3lbl",
-      "source": "ICML-2025-Accepted",
-      "title": "Reinforce LLM Reasoning through Multi-Agent Reflection",
-      "abstract": "Leveraging more test-time computation has proven to be an effective way to boost the reasoning capabilities of large language models (LLMs). Among various methods, the verify-and-improve paradigm stands out for enabling dynamic solution exploration and feedback incorporation. However, existing approaches often suffer from restricted feedback spaces and lack of coordinated training of different parties, leading to suboptimal performance. To address this, we model this multi-turn refinement process as a Markov Decision Process and introduce DPSDP (**D**irect **P**olicy **S**earch by **D**ynamic **P**rogramming), a reinforcement learning algorithm that trains an actor-critic LLM system to iteratively refine answers via direct preference learning on self-generated data. Theoretically, DPSDP can match the performance of any policy within the training distribution. Empirically, we instantiate DPSDP with various base models and show improvements on both in- and out-of-distribution benchmarks. For example, on benchmark MATH 500, majority voting over five refinement steps increases first-turn accuracy from 58.2% to 63.2% with Ministral-based models. An ablation study further confirms the benefits of multi-agent collaboration and out-of-distribution generalization.",
-      "authors": [
-        "Yurun Yuan",
-        "Tengyang Xie"
-      ],
-      "primary_category": "Post-training",
-      "categories": [
-        "Post-training",
-        "LLM-based multi-agents",
-        "Reinforcement learning",
-        "Mathematical reasoning"
-      ],
-      "published": "2025-05-01T13:20:20.067+00:00",
-      "link": "https://openreview.net/forum?id=6k3oFS3Lbl",
-      "pdf_url": null,
-      "tags": [
-        "keyword:mas-routing",
-        "query:mas-routing"
-      ]
-    },
-    {
       "id": "openreview-icml-2025-vhktpw6vid",
       "source": "ICML-2025-Accepted",
       "title": "LLM-Assisted Semantically Diverse Teammate Generation for Efficient Multi-agent Coordination",
@@ -398,6 +366,28 @@
       ]
     },
     {
+      "id": "openreview-icml-2024-njwv9bsghf",
+      "source": "ICML-2024-Public",
+      "title": "Language Agent Tree Search Unifies Reasoning, Acting, and Planning in Language Models",
+      "abstract": "While language models (LMs) have shown potential across a range of decision-making tasks, their reliance on simple acting processes limits their broad deployment as autonomous agents. In this paper, we introduce Language Agent Tree Search (LATS) -- the first general framework that synergizes the capabilities of LMs in reasoning, acting, and planning. By leveraging the in-context learning ability of LMs, we integrate Monte Carlo Tree Search into LATS to enable LMs as agents, along with LM-powered value functions and self-reflections for proficient exploration and enhanced decision-making. A key feature of our approach is the incorporation of an environment for external feedback, which offers a more deliberate and adaptive problem-solving mechanism that surpasses the constraints of existing techniques. Our experimental evaluation across diverse domains, including programming, interactive question-answering (QA), web navigation, and math, validates the effectiveness and generality of LATS in decision-making while maintaining competitive or improved reasoning performance. Notably, LATS achieves state-of-the-art pass@1 accuracy (92.7%) for programming on HumanEval with GPT-4 and demonstrates gradient-free performance (average score of 75.9) comparable to gradient-based fine-tuning for web navigation on WebShop with GPT-3.5. Code can be found at https://github.com/lapisrocks/LanguageAgentTreeSearch",
+      "authors": [
+        "Andy Zhou",
+        "Kai Yan",
+        "Michal Shlapentokh-Rothman",
+        "Haohan Wang",
+        "Yu-Xiong Wang"
+      ],
+      "primary_category": "ICML.cc/2024/Conference",
+      "categories": [],
+      "published": "2024-05-02T00:39:19.753+00:00",
+      "link": "https://openreview.net/forum?id=njwv9BsGHF",
+      "pdf_url": null,
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ]
+    },
+    {
       "id": "openreview-icml-2024-utc9afxihg",
       "source": "ICML-2024-Public",
       "title": "GPTSwarm: Language Agents as Optimizable Graphs",
@@ -414,6 +404,29 @@
       "categories": [],
       "published": "2024-05-02T00:37:47.687+00:00",
       "link": "https://openreview.net/forum?id=uTC9AFXIhg",
+      "pdf_url": null,
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ]
+    },
+    {
+      "id": "openreview-icml-2024-evgpdivonq",
+      "source": "ICML-2024-Public",
+      "title": "Graph-enhanced Large Language Models in Asynchronous Plan Reasoning",
+      "abstract": "Planning is a fundamental property of human intelligence. Reasoning about asynchronous plans is challenging since it requires sequential and parallel planning to optimize time costs. Can large language models (LLMs) succeed at this task? Here, we present the first large-scale study investigating this question. We find that a representative set of closed and open-source LLMs, including GPT-4 and LLaMA-2, behave poorly when not supplied with illustrations about the task-solving process in our benchmark AsyncHow. We propose a novel technique called *Plan Like a Graph* (PLaG) that combines graphs with natural language prompts and achieves state-of-the-art results. We show that although PLaG can boost model performance, LLMs still suffer from drastic degradation when task complexity increases, highlighting the limits of utilizing LLMs for simulating digital devices. We see our study as an exciting step towards using LLMs as efficient autonomous agents. Our code and data are available at https://github.com/fangru-lin/graph-llm-asynchow-plan.",
+      "authors": [
+        "Fangru Lin",
+        "Emanuele La Malfa",
+        "Valentin Hofmann",
+        "Elle Michelle Yang",
+        "Anthony G. Cohn",
+        "Janet B. Pierrehumbert"
+      ],
+      "primary_category": "ICML.cc/2024/Conference",
+      "categories": [],
+      "published": "2024-05-02T00:39:47.197+00:00",
+      "link": "https://openreview.net/forum?id=eVGpdivOnQ",
       "pdf_url": null,
       "tags": [
         "keyword:mas-routing",
@@ -449,6 +462,88 @@
       "pdf_url": null,
       "tags": [
         "keyword:mas-routing",
+        "query:mas-routing"
+      ]
+    },
+    {
+      "id": "openreview-icml-2025-nmdwqxosfs",
+      "source": "ICML-2025-Accepted",
+      "title": "Guided Search Strategies in Non-Serializable Environments with Applications to Software Engineering Agents",
+      "abstract": "Large language models (LLMs) have recently achieved remarkable results in complex multi-step tasks, such as mathematical reasoning and agentic software engineering. However, they often struggle to maintain consistent performance across multiple solution attempts. One effective approach to narrow the gap between average-case and best-case performance is guided test-time search, which explores multiple solution paths to identify the most promising one. Unfortunately, effective search techniques (e.g. MCTS) are often unsuitable for *non-serializable* RL environments, such as Docker containers, where intermediate environment states cannot be easily saved and restored. We investigate two complementary search strategies applicable to such environments: 1-step lookahead and trajectory selection, both guided by a learned action-value function estimator. On the SWE-bench Verified benchmark, a key testbed for agentic software engineering, we find these methods to double the average success rate of a fine-tuned Qwen-72B model, achieving $40.8$\\%, the new state-of-the-art for open-weights models. Additionally, we show that these techniques are transferable to more advanced closed models, yielding similar improvements with GPT-4o.",
+      "authors": [
+        "Karina Zainullina",
+        "Alexander Golubev",
+        "Maria Trofimova",
+        "Sergei Polezhaev",
+        "Ibragim Badertdinov",
+        "Daria Litvintseva",
+        "Simon Karasik",
+        "Filipp Fisin",
+        "Sergei Skvortsov",
+        "Maksim Nekrashevich",
+        "Anton Shevtsov",
+        "Boris Yangel"
+      ],
+      "primary_category": "RL",
+      "categories": [
+        "RL",
+        "Planning",
+        "Test-time search",
+        "Test-time computation",
+        "Agents",
+        "LLM",
+        "Software Engineering",
+        "SWE-bench",
+        "Process supervision",
+        "Outcome supervision"
+      ],
+      "published": "2025-05-01T13:19:50.4+00:00",
+      "link": "https://openreview.net/forum?id=NMdWQXosFs",
+      "pdf_url": null,
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ]
+    },
+    {
+      "id": "openreview-icml-2025-bmj3pyyxu2",
+      "source": "ICML-2025-Accepted",
+      "title": "Forest-of-Thought: Scaling Test-Time Compute for Enhancing LLM Reasoning",
+      "abstract": "Large Language Models (LLMs) have demonstrated remarkable abilities across various language tasks, but solving complex reasoning problems remains a significant challenge. While existing methods, such as Chain-of-Thought (CoT) and Tree-of-Thought (ToT), enhance reasoning by decomposing problems or structuring prompts, they typically perform a single pass of reasoning and may fail to revisit flawed paths, compromising accuracy. To address this limitation, we propose a novel reasoning framework called Forest-of-Thought (FoT), which integrates multiple reasoning trees to leverage collective decision-making for solving complex logical problems. FoT employs sparse activation strategies to select the most relevant reasoning paths, improving both efficiency and accuracy. Additionally, we introduce a dynamic self-correction strategy that enables real-time error correction, along with consensus-guided decision-making strategies to optimize both correctness and computational resources. Experimental results demonstrate that the FoT framework, combined with these strategies, significantly enhances the reasoning capabilities of LLMs, enabling them to solve complex tasks with greater precision and efficiency.",
+      "authors": [
+        "Zhenni Bi",
+        "Kai Han",
+        "Chuanjian Liu",
+        "Yehui Tang",
+        "Yunhe Wang"
+      ],
+      "primary_category": "forest of thought; fot; nlp; llm",
+      "categories": [
+        "forest of thought; fot; nlp; llm"
+      ],
+      "published": "2025-05-01T13:11:29.16+00:00",
+      "link": "https://openreview.net/forum?id=BMJ3pyYxu2",
+      "pdf_url": null,
+      "tags": [
+        "query:mas-routing"
+      ]
+    },
+    {
+      "id": "openreview-icml-2025-nnwsny4yb4",
+      "source": "ICML-2025-Accepted",
+      "title": "Policy Guided Tree Search for Enhanced LLM Reasoning",
+      "abstract": "Despite their remarkable capabilities, large language models often struggle with tasks requiring complex reasoning and planning. While existing approaches like Chain-of-Thought prompting and tree search techniques show promise, they are limited by their reliance on predefined heuristics and computationally expensive exploration strategies. We propose Policy-Guided Tree Search (PGTS), a framework that combines reinforcement learning with structured tree exploration to efficiently navigate reasoning paths. Our key innovation is a learned policy that dynamically decides between expanding, branching, backtracking, or terminating exploration, eliminating the need for manual heuristics or exhaustive search. Experiments across mathematical reasoning, logical deduction, and planning benchmarks demonstrate that PGTS achieves superior reasoning performance while significantly reducing computational costs compared to existing methods. These results establish PGTS as a scalable and effective solution for tackling complex reasoning tasks with LLMs.",
+      "authors": [
+        "Yang Li"
+      ],
+      "primary_category": "LLM Reasoning; Tree Search; Reinforcement Learning",
+      "categories": [
+        "LLM Reasoning; Tree Search; Reinforcement Learning"
+      ],
+      "published": "2025-05-01T13:15:54.655+00:00",
+      "link": "https://openreview.net/forum?id=NNWSNy4YB4",
+      "pdf_url": null,
+      "tags": [
         "query:mas-routing"
       ]
     }
@@ -488,6 +583,10 @@
           "score": 0.0125,
           "rank": 20
         },
+        "openreview-icml-2024-evgpdivonq": {
+          "score": 0.011764705882352941,
+          "rank": 25
+        },
         "openreview-icml-2025-3cispy3qdz": {
           "score": 0.011111111111111112,
           "rank": 30
@@ -496,10 +595,6 @@
           "score": 0.010309278350515464,
           "rank": 37
         },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.01,
-          "rank": 40
-        },
         "openreview-icml-2025-bkim54qftz": {
           "score": 0.009708737864077669,
           "rank": 43
@@ -507,13 +602,18 @@
       },
       "ranked": [
         {
+          "paper_id": "openreview-icml-2025-lpe54nunmo",
+          "score": 1.0,
+          "star_rating": 5
+        },
+        {
           "paper_id": "openreview-icml-2025-rqwexjucxm",
           "score": 1.0,
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-lpe54nunmo",
-          "score": 1.0,
+          "paper_id": "openreview-icml-2025-voxad3hhpt",
+          "score": 0.9586435070306036,
           "star_rating": 5
         },
         {
@@ -522,27 +622,17 @@
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-tfbibcvxkg",
-          "score": 0.9586435070306036,
-          "star_rating": 5
-        },
-        {
-          "paper_id": "openreview-icml-2025-voxad3hhpt",
-          "score": 0.9185999185999183,
-          "star_rating": 5
-        },
-        {
-          "paper_id": "openreview-icml-2025-ynpyb376zf",
+          "paper_id": "openreview-icml-2025-imcyvlzpxh",
           "score": 0.8798076923076922,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-imcyvlzpxh",
+          "paper_id": "openreview-icml-2025-ynpyb376zf",
           "score": 0.8422090729783037,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-vhktpw6vid",
+          "paper_id": "openreview-icml-2025-3cispy3qdz",
           "score": 0.8057498057498057,
           "star_rating": 4
         },
@@ -552,43 +642,68 @@
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-3cispy3qdz",
+          "paper_id": "openreview-icml-2024-0zfwfevsad",
           "score": 0.73604826546003,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-u08muoggdm",
+          "paper_id": "openreview-icml-2025-nmdwqxosfs",
           "score": 0.702712746191007,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2024-lpazlcgzj6",
-          "score": 0.6703296703296702,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-akvy9a4jho",
-          "score": 0.6388587937883712,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-bkim54qftz",
-          "score": 0.608262108262108,
+          "paper_id": "openreview-icml-2025-vhktpw6vid",
+          "score": 0.702712746191007,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2024-utc9afxihg",
+          "score": 0.6388587937883712,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-lpazlcgzj6",
           "score": 0.608262108262108,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-6k3ofs3lbl",
-          "score": 0.4411571334648256,
+          "paper_id": "openreview-icml-2025-akvy9a4jho",
+          "score": 0.578503688092729,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-njwv9bsghf",
+          "score": 0.5495495495495496,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-bkim54qftz",
+          "score": 0.5213675213675214,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-clf25dahga",
+          "score": 0.41577409931840303,
           "star_rating": 3
         },
         {
           "paper_id": "openreview-icml-2024-r0qcgcfl4u",
-          "score": 0.3668882557771445,
+          "score": 0.32035835650293487,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-bmj3pyyxu2",
+          "score": 0.2760180995475112,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-nnwsny4yb4",
+          "score": 0.21328671328671328,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2024-evgpdivonq",
+          "score": 0.1360089186176142,
           "star_rating": 3
         }
       ]
@@ -599,6 +714,14 @@
       "paper_tag": "query:mas-routing",
       "query_text": "how to choose best configuration for multi hop reasoning",
       "sim_scores": {
+        "openreview-icml-2025-bmj3pyyxu2": {
+          "score": 0.015873015873015872,
+          "rank": 3
+        },
+        "openreview-icml-2025-nnwsny4yb4": {
+          "score": 0.015384615384615385,
+          "rank": 5
+        },
         "openreview-icml-2025-akvy9a4jho": {
           "score": 0.014925373134328358,
           "rank": 7
@@ -606,20 +729,21 @@
         "openreview-icml-2025-rqwexjucxm": {
           "score": 0.010869565217391304,
           "rank": 32
-        },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.00909090909090909,
-          "rank": 50
         }
       },
       "ranked": [
+        {
+          "paper_id": "openreview-icml-2025-bmj3pyyxu2",
+          "score": 1.0,
+          "star_rating": 5
+        },
         {
           "paper_id": "openreview-icml-2025-rqwexjucxm",
           "score": 0.9586435070306036,
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-6k3ofs3lbl",
+          "paper_id": "openreview-icml-2025-nnwsny4yb4",
           "score": 0.8798076923076922,
           "star_rating": 4
         },
@@ -629,64 +753,84 @@
           "star_rating": 4
         },
         {
+          "paper_id": "openreview-icml-2025-nmdwqxosfs",
+          "score": 0.8057498057498057,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-evgpdivonq",
+          "score": 0.7703788748564866,
+          "star_rating": 4
+        },
+        {
           "paper_id": "openreview-icml-2025-imcyvlzpxh",
-          "score": 0.73604826546003,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-ynpyb376zf",
-          "score": 0.702712746191007,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-tfbibcvxkg",
           "score": 0.702712746191007,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-aal89vnny1",
+          "score": 0.702712746191007,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-ynpyb376zf",
           "score": 0.6703296703296702,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-uckvhweh1g",
+          "paper_id": "openreview-icml-2024-njwv9bsghf",
+          "score": 0.6703296703296702,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-0zfwfevsad",
           "score": 0.6388587937883712,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2024-utc9afxihg",
-          "score": 0.49392712550607265,
-          "star_rating": 3
+          "paper_id": "openreview-icml-2025-uckvhweh1g",
+          "score": 0.578503688092729,
+          "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-3cispy3qdz",
-          "score": 0.41577409931840303,
+          "score": 0.46719946719946726,
           "star_rating": 3
         },
         {
-          "paper_id": "openreview-icml-2025-u08muoggdm",
-          "score": 0.3668882557771445,
+          "paper_id": "openreview-icml-2024-utc9afxihg",
+          "score": 0.4411571334648256,
           "star_rating": 3
         },
         {
           "paper_id": "openreview-icml-2025-bkim54qftz",
-          "score": 0.32035835650293487,
-          "star_rating": 3
-        },
-        {
-          "paper_id": "openreview-icml-2024-r0qcgcfl4u",
-          "score": 0.29792429792429775,
-          "star_rating": 3
-        },
-        {
-          "paper_id": "openreview-icml-2025-akvy9a4jho",
-          "score": 0.23371647509578536,
+          "score": 0.3910256410256411,
           "star_rating": 3
         },
         {
           "paper_id": "openreview-icml-2025-voxad3hhpt",
-          "score": 0.21328671328671328,
+          "score": 0.3668882557771445,
           "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-akvy9a4jho",
+          "score": 0.3433395872420263,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-clf25dahga",
+          "score": 0.29792429792429775,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2024-r0qcgcfl4u",
+          "score": 0.23371647509578536,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2024-lpazlcgzj6",
+          "score": 0.015799015799015898,
+          "star_rating": 2
         }
       ]
     },
@@ -720,6 +864,10 @@
           "score": 0.014285714285714285,
           "rank": 10
         },
+        "openreview-icml-2024-njwv9bsghf": {
+          "score": 0.0136986301369863,
+          "rank": 13
+        },
         "openreview-icml-2024-lpazlcgzj6": {
           "score": 0.013333333333333334,
           "rank": 15
@@ -728,25 +876,25 @@
           "score": 0.01282051282051282,
           "rank": 18
         },
+        "openreview-icml-2024-evgpdivonq": {
+          "score": 0.0125,
+          "rank": 20
+        },
         "openreview-icml-2025-lpe54nunmo": {
           "score": 0.012195121951219513,
           "rank": 22
+        },
+        "openreview-icml-2025-nmdwqxosfs": {
+          "score": 0.011363636363636364,
+          "rank": 28
         },
         "openreview-icml-2025-3cispy3qdz": {
           "score": 0.01098901098901099,
           "rank": 31
         },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.010638297872340425,
-          "rank": 34
-        },
         "openreview-icml-2025-ynpyb376zf": {
           "score": 0.01020408163265306,
           "rank": 38
-        },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.009433962264150943,
-          "rank": 46
         },
         "openreview-icml-2025-rqwexjucxm": {
           "score": 0.009345794392523364,
@@ -764,17 +912,12 @@
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2024-lpazlcgzj6",
-          "score": 1.0,
-          "star_rating": 5
-        },
-        {
           "paper_id": "openreview-icml-2025-bkim54qftz",
           "score": 0.9586435070306036,
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-lpe54nunmo",
+          "paper_id": "openreview-icml-2025-voxad3hhpt",
           "score": 0.9586435070306036,
           "star_rating": 5
         },
@@ -784,63 +927,83 @@
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-3cispy3qdz",
+          "paper_id": "openreview-icml-2024-lpazlcgzj6",
           "score": 0.9185999185999183,
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-tfbibcvxkg",
+          "paper_id": "openreview-icml-2025-lpe54nunmo",
           "score": 0.8798076923076922,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-u08muoggdm",
-          "score": 0.8798076923076922,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-voxad3hhpt",
-          "score": 0.8422090729783037,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-ynpyb376zf",
-          "score": 0.8422090729783037,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-imcyvlzpxh",
-          "score": 0.7703788748564866,
+          "score": 0.8798076923076922,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-3cispy3qdz",
+          "score": 0.8422090729783037,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-uckvhweh1g",
-          "score": 0.73604826546003,
-          "star_rating": 4
-        },
-        {
-          "paper_id": "openreview-icml-2025-6k3ofs3lbl",
-          "score": 0.73604826546003,
+          "score": 0.8057498057498057,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-akvy9a4jho",
+          "score": 0.7703788748564866,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-ynpyb376zf",
+          "score": 0.73604826546003,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-utc9afxihg",
+          "score": 0.73604826546003,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-0zfwfevsad",
           "score": 0.702712746191007,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2024-r0qcgcfl4u",
-          "score": 0.6703296703296702,
+          "score": 0.6388587937883712,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2024-utc9afxihg",
-          "score": 0.6388587937883712,
+          "paper_id": "openreview-icml-2024-njwv9bsghf",
+          "score": 0.608262108262108,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-vhktpw6vid",
           "score": 0.49392712550607265,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-clf25dahga",
+          "score": 0.49392712550607265,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-nmdwqxosfs",
+          "score": 0.41577409931840303,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2024-evgpdivonq",
+          "score": 0.23371647509578536,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-nnwsny4yb4",
+          "score": 0.1933160472486314,
           "star_rating": 3
         }
       ]
@@ -895,13 +1058,9 @@
           "score": 0.010752688172043012,
           "rank": 33
         },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.010101010101010102,
-          "rank": 39
-        },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.009345794392523364,
-          "rank": 47
+        "openreview-icml-2024-evgpdivonq": {
+          "score": 0.01020408163265306,
+          "rank": 38
         }
       },
       "ranked": [
@@ -911,37 +1070,27 @@
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-tfbibcvxkg",
+          "paper_id": "openreview-icml-2025-rqwexjucxm",
           "score": 1.0,
           "star_rating": 5
         },
         {
-          "paper_id": "openreview-icml-2025-rqwexjucxm",
-          "score": 0.9586435070306036,
-          "star_rating": 5
-        },
-        {
-          "paper_id": "openreview-icml-2025-u08muoggdm",
-          "score": 0.9586435070306036,
-          "star_rating": 5
-        },
-        {
           "paper_id": "openreview-icml-2025-ynpyb376zf",
-          "score": 0.9185999185999183,
+          "score": 0.9586435070306036,
           "star_rating": 5
         },
         {
           "paper_id": "openreview-icml-2025-vhktpw6vid",
-          "score": 0.8798076923076922,
-          "star_rating": 4
+          "score": 0.9185999185999183,
+          "star_rating": 5
         },
         {
           "paper_id": "openreview-icml-2024-lpazlcgzj6",
-          "score": 0.8798076923076922,
+          "score": 0.8422090729783037,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-akvy9a4jho",
+          "paper_id": "openreview-icml-2025-nmdwqxosfs",
           "score": 0.8422090729783037,
           "star_rating": 4
         },
@@ -951,43 +1100,73 @@
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-voxad3hhpt",
-          "score": 0.73604826546003,
+          "paper_id": "openreview-icml-2025-akvy9a4jho",
+          "score": 0.7703788748564866,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-uckvhweh1g",
-          "score": 0.702712746191007,
+          "score": 0.7703788748564866,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-bkim54qftz",
-          "score": 0.6388587937883712,
+          "score": 0.73604826546003,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2024-utc9afxihg",
-          "score": 0.608262108262108,
+          "score": 0.702712746191007,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-imcyvlzpxh",
-          "score": 0.608262108262108,
+          "paper_id": "openreview-icml-2025-voxad3hhpt",
+          "score": 0.6703296703296702,
           "star_rating": 4
         },
         {
-          "paper_id": "openreview-icml-2025-6k3ofs3lbl",
-          "score": 0.578503688092729,
+          "paper_id": "openreview-icml-2024-0zfwfevsad",
+          "score": 0.6388587937883712,
           "star_rating": 4
         },
         {
           "paper_id": "openreview-icml-2025-3cispy3qdz",
+          "score": 0.608262108262108,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2024-njwv9bsghf",
+          "score": 0.578503688092729,
+          "star_rating": 4
+        },
+        {
+          "paper_id": "openreview-icml-2025-imcyvlzpxh",
           "score": 0.5495495495495496,
           "star_rating": 4
         },
         {
+          "paper_id": "openreview-icml-2025-clf25dahga",
+          "score": 0.5213675213675214,
+          "star_rating": 4
+        },
+        {
           "paper_id": "openreview-icml-2024-r0qcgcfl4u",
-          "score": 0.4411571334648256,
+          "score": 0.3433395872420263,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-nnwsny4yb4",
+          "score": 0.29792429792429775,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2025-bmj3pyyxu2",
+          "score": 0.1933160472486314,
+          "star_rating": 3
+        },
+        {
+          "paper_id": "openreview-icml-2024-evgpdivonq",
+          "score": 0.1737891737891738,
           "star_rating": 3
         }
       ]
@@ -1046,13 +1225,13 @@
           "score": 0.010869565217391304,
           "rank": 32
         },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.009615384615384616,
-          "rank": 44
-        },
         "openreview-icml-2025-rqwexjucxm": {
           "score": 0.009433962264150943,
           "rank": 46
+        },
+        "openreview-icml-2025-nmdwqxosfs": {
+          "score": 0.009345794392523364,
+          "rank": 47
         }
       }
     },
@@ -1102,13 +1281,9 @@
       "paper_tag": "keyword:mas-routing",
       "query_text": "large language model routing",
       "sim_scores": {
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.016129032258064516,
-          "rank": 2
-        },
-        "openreview-icml-2025-u08muoggdm": {
-          "score": 0.015873015873015872,
-          "rank": 3
+        "openreview-icml-2025-clf25dahga": {
+          "score": 0.01639344262295082,
+          "rank": 1
         },
         "openreview-icml-2025-aal89vnny1": {
           "score": 0.015151515151515152,
@@ -1117,6 +1292,10 @@
         "openreview-icml-2024-r0qcgcfl4u": {
           "score": 0.014084507042253521,
           "rank": 11
+        },
+        "openreview-icml-2024-0zfwfevsad": {
+          "score": 0.013513513513513514,
+          "rank": 14
         },
         "openreview-icml-2024-lpazlcgzj6": {
           "score": 0.013157894736842105,
@@ -1146,6 +1325,10 @@
           "score": 0.0136986301369863,
           "rank": 13
         },
+        "openreview-icml-2024-njwv9bsghf": {
+          "score": 0.013513513513513514,
+          "rank": 14
+        },
         "openreview-icml-2025-akvy9a4jho": {
           "score": 0.013157894736842105,
           "rank": 16
@@ -1166,6 +1349,14 @@
           "score": 0.011235955056179775,
           "rank": 29
         },
+        "openreview-icml-2024-0zfwfevsad": {
+          "score": 0.010526315789473684,
+          "rank": 35
+        },
+        "openreview-icml-2024-evgpdivonq": {
+          "score": 0.010309278350515464,
+          "rank": 37
+        },
         "openreview-icml-2025-ynpyb376zf": {
           "score": 0.009900990099009901,
           "rank": 41
@@ -1173,10 +1364,6 @@
         "openreview-icml-2025-3cispy3qdz": {
           "score": 0.009615384615384616,
           "rank": 44
-        },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.00909090909090909,
-          "rank": 50
         }
       }
     },
@@ -1197,10 +1384,6 @@
         "openreview-icml-2025-rqwexjucxm": {
           "score": 0.013157894736842105,
           "rank": 16
-        },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.012987012987012988,
-          "rank": 17
         }
       }
     },
@@ -1277,6 +1460,10 @@
           "score": 0.014084507042253521,
           "rank": 11
         },
+        "openreview-icml-2024-njwv9bsghf": {
+          "score": 0.013333333333333334,
+          "rank": 15
+        },
         "openreview-icml-2025-akvy9a4jho": {
           "score": 0.01282051282051282,
           "rank": 18
@@ -1293,13 +1480,17 @@
           "score": 0.012048192771084338,
           "rank": 23
         },
+        "openreview-icml-2024-0zfwfevsad": {
+          "score": 0.011363636363636364,
+          "rank": 28
+        },
         "openreview-icml-2025-lpe54nunmo": {
           "score": 0.011111111111111112,
           "rank": 30
         },
-        "openreview-icml-2025-tfbibcvxkg": {
-          "score": 0.010869565217391304,
-          "rank": 32
+        "openreview-icml-2024-evgpdivonq": {
+          "score": 0.010416666666666666,
+          "rank": 36
         },
         "openreview-icml-2025-ynpyb376zf": {
           "score": 0.01020408163265306,
@@ -1312,10 +1503,6 @@
         "openreview-icml-2025-3cispy3qdz": {
           "score": 0.009433962264150943,
           "rank": 46
-        },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.00909090909090909,
-          "rank": 50
         }
       }
     },
@@ -1352,10 +1539,6 @@
         "openreview-icml-2025-bkim54qftz": {
           "score": 0.012987012987012988,
           "rank": 17
-        },
-        "openreview-icml-2025-6k3ofs3lbl": {
-          "score": 0.011363636363636364,
-          "rank": 28
         }
       }
     },
@@ -1404,6 +1587,10 @@
         "openreview-icml-2024-utc9afxihg": {
           "score": 0.009615384615384616,
           "rank": 44
+        },
+        "openreview-icml-2025-nmdwqxosfs": {
+          "score": 0.00909090909090909,
+          "rank": 50
         }
       }
     }
@@ -1534,157 +1721,174 @@
   "global_pool_limit": 120,
   "global_pool_guaranteed_per_lane": 2,
   "global_pool_effective_size": 120,
-  "reranked_at": "2026-06-03T02:28:52.897383+00:00",
+  "reranked_at": "2026-06-03T03:47:29.319681+00:00",
   "llm_ranked": [
     {
       "paper_id": "openreview-icml-2025-imcyvlzpxh",
       "score": 9.0,
-      "evidence_en": "dynamic architecture selection for multi-hop reasoning",
-      "evidence_cn": "为多跳推理动态选择架构",
-      "canonical_evidence": "为多跳推理动态选择架构",
-      "tldr_en": "Proposes MaAS for searching optimal multi-agent architecture per query, directly addressing routing and configuration selection for multi-hop reasoning.",
-      "tldr_cn": "该论文针对LLM多智能体系统的手工设计难题，提出MaAS框架。它放弃固定单一架构，转而优化一个概率性的智能体超网络，能够根据每个查询的难度和领域动态分配推理资源。实验表明，MaAS在多个多跳推理任务上实现了更好的准确率-成本权衡，直接满足了如何为开放式多跳推理选择最佳配置的需求。",
-      "title_zh": "通过智能体超网络进行多智能体架构搜索",
-      "motivation_cn": "手动设计多智能体系统耗时且难以动态适应不同查询的难度和领域。",
-      "method_cn": "提出MaAS框架，优化一个概率分布的智能体超网络，实现按需动态架构选择。",
-      "result_cn": "在多个推理任务上，MaAS在准确率和推理成本之间取得了优于静态系统的平衡。",
-      "conclusion_cn": "动态架构搜索是优化多智能体推理性能和资源利用的有效途径。",
-      "matched_requirement_id": "req-10",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "how to choose best configuration for multi hop reasoning"
-    },
-    {
-      "paper_id": "openreview-icml-2025-aal89vnny1",
-      "score": 9.0,
-      "evidence_en": "directly addresses LLM routing for agentic systems",
-      "evidence_cn": "直接针对智能体系统中的LLM路由",
-      "canonical_evidence": "直接针对智能体系统中的LLM路由",
-      "tldr_en": "Proposes an optimal strategy combining routing and cascading for LLMs in agentic systems, with formal optimality proofs and conditions for cost-performance improvement.",
-      "tldr_cn": "本文提出了一个统一的框架，整合了路由和级联这两种模型选择策略。针对现有方法缺乏最优性证明、无法识别有效条件以及无法结合两种范式的局限，首次推导了级联的最优策略，并给出了结合路由与级联的改进方法。实验表明该方法在降低成本和提升性能方面显著优于单独使用任一策略。",
-      "title_zh": "大语言模型路由与级联的统一方法",
-      "motivation_cn": "现有LLM模型选择策略（路由或级联）缺乏最优性证明，且无法结合两者优势以优化成本-性能权衡。",
-      "method_cn": "提出统一框架，推导级联最优策略，并设计结合路由与级联的联合方法。",
-      "result_cn": "在多个基准上，统一方法相比单独路由或级联显著改善了成本-性能权衡。",
-      "conclusion_cn": "本研究为LLM代理系统中的模型选择提供了理论基础和实用统一方案。",
-      "matched_requirement_id": "req-1",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "multi-agent routing in large language model systems"
-    },
-    {
-      "paper_id": "openreview-icml-2024-utc9afxihg",
-      "score": 8.0,
-      "evidence_en": "optimizes edge connectivity for dynamic agent routing",
-      "evidence_cn": "优化边连接以实现动态智能体路由",
-      "canonical_evidence": "优化边连接以实现动态智能体路由",
-      "tldr_en": "Proposes GPTSwarm, representing LLM agents as optimizable graphs with edge optimization for dynamic routing and orchestration.",
-      "tldr_cn": "该论文将LLM智能体形式化为可优化的计算图，其中边表示信息流与智能体间的协作。通过自动图优化器（节点优化和边优化），GPTSwarm能够动态调整智能体间的连接方式，实现高效的任务路由和编排。实验表明，该方法在多个任务上优于静态设计的智能体系统，为多智能体路由提供了灵活的解决方案。",
-      "title_zh": "GPTSwarm：可优化图形式语言智能体",
-      "motivation_cn": "大量人工设计的提示工程方法缺乏统一视角，尤其是智能体间的动态路由难以手动优化。",
-      "method_cn": "将LLM智能体建模为计算图，通过自动边优化调整智能体间的连接和路由。",
-      "result_cn": "在多个基准上，GPTSwarm提升了任务性能，展示了动态路由的有效性。",
-      "conclusion_cn": "图优化可自动改进多智能体系统中的任务分配和协作路由。",
-      "matched_requirement_id": "req-6",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "dynamic routing of agents in multi agent systems"
-    },
-    {
-      "paper_id": "openreview-icml-2025-ynpyb376zf",
-      "score": 8.0,
-      "evidence_en": "dynamic agent routing via particle filtering selection",
-      "evidence_cn": "通过粒子滤波选择实现动态智能体路由",
-      "canonical_evidence": "通过粒子滤波选择实现动态智能体路由",
-      "tldr_en": "Fleet of Agents uses dynamic tree search with genetic-type particle filtering to coordinate multiple agents, effectively implementing a routing strategy that balances exploration and exploitation.",
-      "tldr_cn": "现有LLM多智能体框架在成本与质量间难以平衡。本文提出Fleet of Agents (FoA)，利用遗传式粒子滤波方法，多个智能体动态探索搜索树，通过启发式价值函数重采样选择最优路径。实验表明FoA能在控制成本的同时显著提升推理质量。该方法为多智能体系统中的高效任务路由提供了新范式。",
-      "title_zh": "智能体舰队：基于大语言模型的协同问题求解",
-      "motivation_cn": "现有LLM多智能体框架难以平衡成本与质量，缺乏动态路由机制。",
-      "method_cn": "提出Fleet of Agents框架，使用遗传式粒子滤波在动态树搜索中调度多个智能体探索路径，并通过重采样优化。",
-      "result_cn": "在多个推理任务上，FoA在保持较低计算成本的同时取得了优于基线方法的准确率。",
-      "conclusion_cn": "FoA通过动态路由有效平衡了探索与利用，为多智能体系统提供了一种高效的协调机制。",
+      "evidence_en": "dynamic resource allocation via agentic supernet for routing",
+      "evidence_cn": "通过智能体超网动态分配推理资源实现路由",
+      "canonical_evidence": "通过智能体超网动态分配推理资源实现路由",
+      "tldr_en": "Proposes MaAS framework that optimizes an agentic supernet to dynamically allocate inference resources based on query difficulty, directly addressing efficient task routing in multi-agent LLM architectures.",
+      "tldr_cn": "现有自动化多智能体设计方法通常生成静态系统，无法根据查询难度动态分配推理资源。本文提出MaAS框架，通过优化一个概率和连续的智能体超网分布，为每个查询动态选择最优的智能体架构和路由路径。实验表明MaAS在平衡准确率和成本方面显著优于静态方法，为多智能体系统中的高效任务路由提供了全新范式。",
+      "title_zh": "通过智能体超网进行多智能体架构搜索",
+      "motivation_cn": "现有自动化智能体工作流设计寻求静态系统，无法动态分配推理资源。",
+      "method_cn": "优化智能体超网，一个概率和连续的架构分布，为每个查询动态选择最佳架构。",
+      "result_cn": "MaAS在多个任务上实现了更优的准确率-成本平衡，优于静态搜索方法。",
+      "conclusion_cn": "动态架构分配是提升多智能体系统效率的关键，MaAS提供了有效的自动化框架。",
       "matched_requirement_id": "req-9",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "Efficient task routing in multi agent LLM architectures"
     },
     {
-      "paper_id": "openreview-icml-2025-lpe54nunmo",
-      "score": 8.0,
-      "evidence_en": "task-aware communication topology design for multi-agent systems",
-      "evidence_cn": "为多智能体系统设计任务感知的通信拓扑",
-      "canonical_evidence": "为多智能体系统设计任务感知的通信拓扑",
-      "tldr_en": "G-Designer uses graph neural networks to dynamically design optimal communication topologies for LLM-based multi-agent teams, directly addressing the routing topology selection problem.",
-      "tldr_cn": "基于LLM的多智能体系统依赖精心设计的通信拓扑，但如何为具体任务选择最佳拓扑困扰着实践者。本文提出G-Designer，利用图神经网络动态生成任务感知的自定义通信拓扑，兼顾高效性与质量。实验表明G-Designer在多种任务上优于固定拓扑，显著减少了不必要的通信开销。该工作为多智能体路由拓扑的自动设计提供了有效方案。",
-      "title_zh": "G-Designer：通过图神经网络构建多智能体通信拓扑",
-      "motivation_cn": "多智能体系统中通信拓扑选择困难，现有固定拓扑无法适应任务需求。",
-      "method_cn": "提出G-Designer，利用图神经网络根据任务特征动态设计智能体间的通信拓扑结构。",
-      "result_cn": "在多个基准任务上，G-Designer相比固定拓扑提升了任务性能并降低了通信开销。",
-      "conclusion_cn": "G-Designer实现了任务自适应的通信拓扑设计，为多智能体路由提供了高效解决方案。",
-      "matched_requirement_id": "req-8",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "routing strategies for multi agent coordination with LLMs"
-    },
-    {
-      "paper_id": "openreview-icml-2024-r0qcgcfl4u",
-      "score": 8.0,
-      "evidence_en": "learns to route among specialized expert models",
-      "evidence_cn": "学习在专用专家模型之间进行路由",
-      "canonical_evidence": "学习在专用专家模型之间进行路由",
-      "tldr_en": "Proposes PHATGOOSE to learn token-wise routing among specialized expert modules for zero-shot generalization, enabling dynamic selection of the best expert for each input.",
-      "tldr_cn": "该论文提出PHATGOOSE方法，通过后训练的自适应令牌级门控机制，在大量专用专家模型中选择性地路由，从而显著提升零样本泛化能力。该方法避免了以往需要额外训练数据的限制，实现了灵活高效的专家路由，为多智能体系统中的智能体路由提供了可迁移的思路。",
-      "title_zh": "学习在专用专家之间路由以实现零样本泛化",
-      "motivation_cn": "大量专用语言模型难以有效复用，需一种路由机制实现零样本泛化。",
-      "method_cn": "提出PHATGOOSE，通过后训练自适应令牌级门控学习路由。",
-      "result_cn": "在多个零样本任务上优于现有路由方法，提升了泛化性能。",
-      "conclusion_cn": "学习路由策略可有效利用专家库，推动零样本泛化。",
-      "matched_requirement_id": "req-4",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "agent routing strategies"
-    },
-    {
       "paper_id": "openreview-icml-2025-akvy9a4jho",
-      "score": 8.0,
-      "evidence_en": "dynamic expert coordination via Bayesian bandits",
-      "evidence_cn": "基于知识感知贝叶斯强盗的动态专家协调",
-      "canonical_evidence": "基于知识感知贝叶斯强盗的动态专家协调",
-      "tldr_en": "KABB uses knowledge-aware Bayesian bandits to dynamically select experts in multi-agent LLM systems, achieving cost-performance balance via semantic understanding and Thompson sampling.",
-      "tldr_cn": "针对多智能体系统中专家协调效率低和静态知识假设的问题，KABB提出一种知识感知贝叶斯强盗框架，通过自定义知识距离模型实现深层语义理解，结合双适应机制和知识感知汤普森采样策略进行动态专家选择。在多个基准上的评估表明，KABB在保持高性能的同时实现了最优的成本-性能平衡，优于现有方法。",
-      "title_zh": "KABB：知识感知贝叶斯强盗用于多智能体系统中的动态专家协调",
-      "motivation_cn": "多智能体系统面临静态知识和协调效率挑战",
-      "method_cn": "提出知识距离模型、双适应机制和知识感知汤普森采样策略",
-      "result_cn": "在多个任务上达到了最优成本-性能平衡",
-      "conclusion_cn": "动态专家协调可显著提升多智能体系统效率",
+      "score": 9.0,
+      "evidence_en": "dynamic expert coordination via Bayesian bandits for routing",
+      "evidence_cn": "通过贝叶斯Bandits动态协调专家实现路由",
+      "canonical_evidence": "通过贝叶斯Bandits动态协调专家实现路由",
+      "tldr_en": "Introduces KABB framework using knowledge-aware Bayesian bandits for dynamic expert selection in multi-agent systems, achieving optimal cost-performance routing.",
+      "tldr_cn": "多智能体系统面临静态知识和协调效率低下的挑战。本文提出KABB框架，利用知识感知贝叶斯Bandits实现动态专家选择和自适应路由。该框架通过知识距离模型和Thompson采样策略，在保持高性能的同时显著降低了通信成本。实验证明KABB在多智能体任务中取得了最优的成本-性能平衡。",
+      "title_zh": "KABB：多智能体系统中动态专家协调的知识感知贝叶斯Bandits",
+      "motivation_cn": "多智能体系统受限于静态知识和低效的协调机制。",
+      "method_cn": "提出知识感知贝叶斯Bandits框架，包含知识距离模型和自适应Thompson采样。",
+      "result_cn": "KABB在多个任务上实现了最优的成本-性能平衡。",
+      "conclusion_cn": "动态专家路由是提升多智能体系统效率的关键，KABB提供了有效方案。",
       "matched_requirement_id": "req-6",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "dynamic routing of agents in multi agent systems"
     },
     {
-      "paper_id": "openreview-icml-2025-rqwexjucxm",
+      "paper_id": "openreview-icml-2025-lpe54nunmo",
+      "score": 9.0,
+      "evidence_en": "dynamic communication topology design for task-aware routing",
+      "evidence_cn": "动态通信拓扑设计以实现任务感知路由",
+      "canonical_evidence": "动态通信拓扑设计以实现任务感知路由",
+      "tldr_en": "Proposes G-Designer that uses graph neural networks to dynamically design task-specific communication topologies for multi-agent systems, enabling efficient routing.",
+      "tldr_cn": "在多智能体系统中，通信拓扑的选择直接影响任务效率和成本。本文提出G-Designer，利用图神经网络为每个任务动态设计定制化的通信拓扑，避免了不必要的令牌开销。实验表明G-Designer在多种任务上自适应地找到了最优拓扑，显著提升了路由效率。",
+      "title_zh": "G-Designer：通过图神经网络构建多智能体通信拓扑",
+      "motivation_cn": "固定通信拓扑无法适应不同任务需求，导致效率低下。",
+      "method_cn": "使用图神经网络动态生成任务感知的通信拓扑。",
+      "result_cn": "G-Designer在多个基准上实现了高效且自适应的路由。",
+      "conclusion_cn": "动态拓扑设计是实现高效多智能体路由的关键技术。",
+      "matched_requirement_id": "req-9",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures"
+    },
+    {
+      "paper_id": "openreview-icml-2025-uckvhweh1g",
       "score": 8.0,
-      "evidence_en": "multi-agent coordination via Bayesian Nash equilibrium",
-      "evidence_cn": "基于贝叶斯纳什均衡的多智能体协调路由",
-      "canonical_evidence": "基于贝叶斯纳什均衡的多智能体协调路由",
-      "tldr_en": "ECON recasts multi-LLM coordination as a Bayesian game, achieving efficient distributed reasoning via Nash equilibrium with convergence guarantees.",
-      "tldr_cn": "针对多智能体推理计算成本高且缺乏收敛保证的问题，ECON将多LLM协调建模为不完全信息博弈，求解贝叶斯纳什均衡。该方法采用分层强化学习范式，每个智能体基于对他人策略的信念独立选择最优响应，最终集中输出。实验表明ECON在保证收敛性的同时显著降低了计算开销，并在多个推理任务上验证了其有效性。",
-      "title_zh": "从辩论到均衡：基于贝叶斯纳什均衡的信念驱动多智能体大模型推理",
-      "motivation_cn": "多智能体推理计算成本高且缺乏收敛保证",
-      "method_cn": "将协调建模为不完全信息博弈，求解贝叶斯纳什均衡",
-      "result_cn": "在多个推理任务上实现更高效且可收敛的协调",
-      "conclusion_cn": "博弈论视角为多智能体协调提供了理论基础和高效方案",
+      "evidence_en": "optimizes agent prompts and topologies for effective routing",
+      "evidence_cn": "优化智能体提示和拓扑以实现有效路由",
+      "canonical_evidence": "优化智能体提示和拓扑以实现有效路由",
+      "tldr_en": "Proposes MASS framework that jointly optimizes prompts and communication topologies for multi-agent systems, automating routing strategy design.",
+      "tldr_cn": "多智能体系统设计中提示和拓扑的选择极为复杂。本文通过分析设计空间，提出MASS框架，自动优化智能体的提示和交互拓扑，从而实现了高效的任务路由和协作。实验证明MASS在多个复杂任务上显著提升了性能，并降低了人工设计成本。",
+      "title_zh": "多智能体设计：通过更好的提示和拓扑优化智能体",
+      "motivation_cn": "手动设计多智能体系统的提示和拓扑费时费力，且难以达到最优。",
+      "method_cn": "提出MASS框架，利用搜索算法联合优化提示和拓扑。",
+      "result_cn": "MASS在多个基准任务上取得了优于手工设计的性能。",
+      "conclusion_cn": "自动化提示和拓扑优化是提升多智能体系统路由效果的有效途径。",
+      "matched_requirement_id": "req-4",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies"
+    },
+    {
+      "paper_id": "openreview-icml-2024-r0qcgcfl4u",
+      "score": 8.0,
+      "evidence_en": "learning to route among specialized experts for zero-shot generalization",
+      "evidence_cn": "学习在专业专家之间路由以实现零样本泛化",
+      "canonical_evidence": "学习在专业专家之间路由以实现零样本泛化",
+      "tldr_en": "Proposes PHATGOOSE, which learns to route among specialized expert modules produced via parameter-efficient fine-tuning, improving zero-shot generalization to unseen tasks.",
+      "tldr_cn": "针对大量专业语言模型难以复用的问题，本文提出PHATGOOSE方法，学习在参数高效微调产生的专家模块之间进行路由。该方法在零样本泛化任务上取得显著提升，为专家模型的路由提供了一种有效策略，对多智能体路由机制有直接借鉴意义。",
+      "title_zh": "学习在专业专家之间路由以实现零样本泛化",
+      "motivation_cn": "大量专业语言模型难以复用，需要一种路由机制来动态选择专家以提升零样本泛化能力。",
+      "method_cn": "提出PHATGOOSE，通过后验自适应令牌级门控，学习在参数高效微调产生的专家模块之间进行路由。",
+      "result_cn": "在多个零样本泛化基准上，PHATGOOSE优于以往路由方法和单个模型，验证了路由的有效性。",
+      "conclusion_cn": "该工作证明了专家间路由能有效提升零样本泛化，为多专家路由提供了新思路。",
+      "matched_requirement_id": "req-1",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems"
+    },
+    {
+      "paper_id": "openreview-icml-2025-ynpyb376zf",
+      "score": 8.0,
+      "evidence_en": "Fleet of Agents coordinates multiple agents via dynamic tree search and genetic-type particle filtering for cost-quality balance",
+      "evidence_cn": "智能体舰队通过动态树搜索和遗传粒子滤波协调多个智能体，平衡成本与质量",
+      "canonical_evidence": "智能体舰队通过动态树搜索和遗传粒子滤波协调多个智能体，平衡成本与质量",
+      "tldr_en": "FoA spawns multiple agents to explore search space autonomously, then selects via heuristic resampling, dynamically adapting exploration for cost-quality trade-off.",
+      "tldr_cn": "针对多智能体推理中成本与质量的权衡问题，本文提出Fleet of Agents（FoA）框架。它利用LLM作为智能体，通过遗传粒子滤波方法进行动态树搜索，生成大量智能体自主探索，并根据启发式价值函数重采样以平衡探索与利用。该方法在多个推理任务上实现了成本与质量的优化。",
+      "title_zh": "智能体舰队：基于大语言模型的协同问题求解",
+      "motivation_cn": "现有方法难以有效平衡多智能体推理的成本与质量。",
+      "method_cn": "提出FoA框架，利用遗传粒子滤波实现多智能体动态树搜索和自适应分支。",
+      "result_cn": "在多个基准上，FoA在相同预算下获得更高质量的解决方案。",
+      "conclusion_cn": "这种动态多智能体协调方法为路由策略提供了实用框架。",
+      "matched_requirement_id": "req-6",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems"
+    },
+    {
+      "paper_id": "openreview-icml-2025-3cispy3qdz",
+      "score": 8.0,
+      "evidence_en": "training LLM to automatically build multi-agent systems, central to routing theme",
+      "evidence_cn": "训练LLM自动构建多智能体系统，与路由主题核心相关",
+      "canonical_evidence": "训练LLM自动构建多智能体系统，与路由主题核心相关",
+      "tldr_en": "Proposes MAS-GPT, which reframes multi-agent system construction as a generative task and trains an LLM to output executable code for MAS, directly enabling routing mechanism design.",
+      "tldr_cn": "针对现有多智能体系统设计依赖人工配置或多次调用高级LLM导致成本高、适应性差的问题，该工作将构建过程重新定义为生成式语言任务。通过一致性数据构建流水线创建高质量查询-MAS对，并训练开源中型LLM（MAS-GPT）根据用户查询直接生成可执行代码表示的多智能体系统。该方法显著降低了构建成本，使得路由与交互机制可以自动生成。",
+      "title_zh": "MAS-GPT：训练LLM构建基于LLM的多智能体系统",
+      "motivation_cn": "现有多智能体系统构建依赖人工或高级LLM多次调用，成本高且适应性差。",
+      "method_cn": "将MAS构建转为生成任务，统一表示为可执行代码，训练MAS-GPT直接生成。",
+      "result_cn": "MAS-GPT能根据查询生成有效的多智能体系统，降低推理成本。",
+      "conclusion_cn": "实现了多智能体系统的自动化构建，便于路由机制的灵活部署。",
+      "matched_requirement_id": "req-composite-mas-routing",
+      "matched_query_tag": "query:mas-routing:composite",
+      "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning."
+    },
+    {
+      "paper_id": "openreview-icml-2025-bmj3pyyxu2",
+      "score": 8.0,
+      "evidence_en": "multi-tree reasoning framework for optimal path selection in multi-hop inference",
+      "evidence_cn": "多树推理框架用于多跳推理中的最优路径选择",
+      "canonical_evidence": "多树推理框架用于多跳推理中的最优路径选择",
+      "tldr_en": "Forest-of-Thought integrates multiple reasoning trees with sparse activation to select relevant paths, directly addressing configuration choice for multi-hop reasoning.",
+      "tldr_cn": "现有推理方法如思维链和思维树通常执行单次推理，难以修正错误路径。Forest-of-Thought通过集成多个推理树并采用稀疏激活策略选择最相关的推理路径，提升了复杂逻辑问题的准确性和效率。该方法在多个推理任务上取得显著改进，为多跳推理中的最佳框架与资源配置提供了有效方案，可指导平衡准确率、时间和成本。",
+      "title_zh": "思维森林：扩展测试时计算以增强LLM推理",
+      "motivation_cn": "现有推理方法易陷入错误路径，缺乏多路径集成与选择机制。",
+      "method_cn": "提出Forest-of-Thought框架，集成多个推理树并采用稀疏激活选择最佳路径。",
+      "result_cn": "在复杂逻辑推理任务上提高了准确率和效率。",
+      "conclusion_cn": "为多跳推理的路径选择提供了可扩展的解决方案。",
+      "matched_requirement_id": "req-10",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning"
+    },
+    {
+      "paper_id": "openreview-icml-2024-utc9afxihg",
+      "score": 8.0,
+      "evidence_en": "models LLM agents as optimizable graphs with edge optimization for inter-agent communication routing",
+      "evidence_cn": "将LLM代理建模为可优化图，通过边优化实现代理间通信路由",
+      "canonical_evidence": "将LLM代理建模为可优化图，通过边优化实现代理间通信路由",
+      "tldr_en": "GPTSwarm unifies LLM agents as computational graphs with automatic node and edge optimization for multi-agent orchestration.",
+      "tldr_cn": "现有基于LLM的问题求解方法分散且缺乏统一形式。本文提出GPTSwarm，将LLM代理描述为可优化图——节点处理数据或查询LLM，边表示信息流。通过自动优化节点提示和边连接（即路由），GPTSwarm实现了多智能体协作的高效编排，实验证明其在多种复杂任务上优于手动设计方法，为动态多智能体路由提供了通用框架。",
+      "title_zh": "GPTSwarm：语言代理作为可优化图",
+      "motivation_cn": "现有LLM代理提示技术分散，缺乏统一框架来优化多代理间的协作与信息路由。",
+      "method_cn": "将LLM代理建模为计算图，提出节点优化（提示改进）和边优化（连接变更）两种自动优化器。",
+      "result_cn": "在多个基准上，GPTSwarm自动优化后的多代理系统超越了手动设计的提示工程方案。",
+      "conclusion_cn": "图视角使多代理路由和协作的自动优化变得可行，为复杂LLM系统设计提供了新方法论。",
       "matched_requirement_id": "req-5",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "multi-agent coordination routing"
     },
     {
-      "paper_id": "openreview-icml-2025-uckvhweh1g",
+      "paper_id": "openreview-icml-2025-bkim54qftz",
       "score": 8.0,
-      "evidence_en": "optimizes multi-agent topologies and prompt designs",
-      "evidence_cn": "优化多智能体拓扑和提示设计",
-      "canonical_evidence": "优化多智能体拓扑和提示设计",
-      "tldr_en": "Proposes MASS framework that searches over prompts and topologies (agent interaction structures) to optimize multi-agent system design, directly addressing routing mechanisms.",
-      "tldr_cn": "该论文针对多智能体系统中提示和拓扑设计复杂的问题，提出了MASS框架，通过搜索最优的提示和智能体交互拓扑来优化系统性能。拓扑结构决定了智能体间的路由与协作方式，实验表明MASS能显著提升多智能体任务完成质量，为自动化多智能体路由设计提供了有效解决方案。",
-      "title_zh": "多智能体设计：通过更好的提示和拓扑优化智能体",
-      "motivation_cn": "多智能体系统设计依赖于手动配置提示和拓扑，缺乏自动化方法。",
-      "method_cn": "提出多智能体系统搜索(MASS)，联合优化提示和交互拓扑。",
-      "result_cn": "MASS在多种任务上优于人工设计基线，证明了拓扑优化的有效性。",
-      "conclusion_cn": "提示与拓扑是MAS的关键，自动化搜索能生成更优的路由策略。",
+      "evidence_en": "studies resilience of different multi-agent system structures (e.g., A->B->C) as routing mechanisms under faulty agents",
+      "evidence_cn": "研究不同多智能体系统结构（如A->B->C）作为路由机制在有故障智能体下的韧性",
+      "canonical_evidence": "研究不同多智能体系统结构（如A->B->C）作为路由机制在有故障智能体下的韧性",
+      "tldr_en": "Investigates how different system topologies (routing patterns) affect multi-agent collaboration resilience under faulty agents; proposes AutoTransform and AutoInject to simulate faults.",
+      "tldr_cn": "当前基于LLM的多智能体系统缺乏对故障智能体影响的系统性研究。本文系统评估了不同系统结构（如链式A->B->C、双向A<->B<->C等）在故障智能体下的韧性表现，并提出了AutoTransform和AutoInject两种模拟故障的方法。实验揭示了结构选择对整体性能的关键影响，并展示了通过简单调整可提升系统韧性。该工作为设计鲁棒的多智能体路由拓扑提供了重要指导。",
+      "title_zh": "基于LLM的多智能体协作在故障智能体下的韧性研究",
+      "motivation_cn": "多智能体系统中故障智能体的影响尚不明确，缺乏对不同系统结构韧性的系统性理解。",
+      "method_cn": "提出AutoTransform和AutoInject两种方法在智能体响应中注入可控错误以模拟故障；在多种任务下评估不同系统结构的韧性。",
+      "result_cn": "不同系统结构对故障的韧性差异显著，链式结构在串联故障下脆弱，双向结构容忍度更高。",
+      "conclusion_cn": "系统结构（路由拓扑）是影响多智能体系统可靠性的关键设计因素，可通过结构优化提升韧性。",
       "matched_requirement_id": "req-3",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "multi-agent system routing mechanisms"
@@ -1692,141 +1896,192 @@
     {
       "paper_id": "openreview-icml-2025-voxad3hhpt",
       "score": 7.0,
-      "evidence_en": "automatically constructs multi-agent systems with finite state machines",
-      "evidence_cn": "基于有限状态机自动构建多智能体系统",
-      "canonical_evidence": "基于有限状态机自动构建多智能体系统",
-      "tldr_en": "MetaAgent automatically designs and optimizes multi-agent systems using finite state machines, adaptively routing tasks among agents based on task descriptions.",
-      "tldr_cn": "该论文提出MetaAgent框架，基于有限状态机自动构建多智能体系统。给定任务描述后，MetaAgent能设计智能体结构并优化其通信路由，无需人工预定义。实验表明该方法在多种任务上生成了高效的多智能体系统，实现了动态任务分配和路由，直接服务于多智能体路由研究。",
+      "evidence_en": "automatic construction of multi-agent systems with routing implications",
+      "evidence_cn": "自动构建多智能体系统，隐含路由机制",
+      "canonical_evidence": "自动构建多智能体系统，隐含路由机制",
+      "tldr_en": "Proposes MetaAgent, a finite state machine based framework to automatically generate multi-agent systems from task descriptions, enabling flexible agent interaction and routing through optimization.",
+      "tldr_cn": "现有手动设计的多智能体框架局限于预定义场景，而自动设计方法存在工具集成不足、通信结构僵化等问题。MetaAgent提出基于有限状态机的框架，根据任务描述自动生成并优化多智能体系统，部署后通过状态转换实现智能体间的灵活路由与协作。实验表明该方法能有效构建适应性强的多智能体系统，为动态路由机制提供了自动化基础。",
       "title_zh": "MetaAgent：基于有限状态机自动构建多智能体系统",
-      "motivation_cn": "现有手动设计多智能体框架局限于预定场景，且自动构造方法缺乏灵活路由。",
-      "method_cn": "使用有限状态机建模智能体行为，通过优化算法自动生成和调整路由。",
-      "result_cn": "生成的多智能体系统在多个基准任务上性能优于手工设计。",
-      "conclusion_cn": "自动构建多智能体系统可有效支持动态路由和任务分配。",
+      "motivation_cn": "现有手动和自动构建多智能体系统的方法存在场景局限、灵活性差等问题，亟需通用自动化框架。",
+      "method_cn": "提出基于有限状态机的MetaAgent框架，根据任务描述自动设计并优化多智能体系统的结构和交互路由。",
+      "result_cn": "MetaAgent能够自动生成适应多种任务的多智能体系统，并通过优化算法提升性能。",
+      "conclusion_cn": "自动化构建多智能体系统是可行的，为路由机制设计提供了新思路。",
       "matched_requirement_id": "req-composite-mas-routing",
       "matched_query_tag": "query:mas-routing:composite",
       "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning."
     },
     {
-      "paper_id": "openreview-icml-2025-tfbibcvxkg",
+      "paper_id": "openreview-icml-2025-aal89vnny1",
       "score": 7.0,
-      "evidence_en": "adaptive LLM routing with multiple responses",
-      "evidence_cn": "自适应大模型路由，生成多个响应选最优",
-      "canonical_evidence": "自适应大模型路由，生成多个响应选最优",
-      "tldr_en": "BEST-Route improves LLM query routing by generating multiple responses from a small model and selecting the best, outperforming single large-model responses and reducing cost.",
-      "tldr_cn": "针对大模型部署成本高的问题，BEST-Route提出一种自适应路由方法，通过从小模型生成多个响应并选择最佳输出，在保持质量的同时大幅降低成本。该方法克服了传统路由中单次小模型响应不如大模型的缺点，在多个基准上实现了更好的计算-质量权衡。",
-      "title_zh": "BEST-Route：自适应大模型路由与测试时最优计算",
-      "motivation_cn": "现有大模型路由方法多依赖单次响应，小模型响应质量不足",
-      "method_cn": "从低成本模型生成多个响应并选取最优，结合动态路由决策",
-      "result_cn": "在多个数据集上实现成本降低30%以上且质量不降",
-      "conclusion_cn": "多响应选择策略可有效提升路由效率与成本收益",
-      "matched_requirement_id": "req-2",
+      "evidence_en": "routing and cascading for LLMs in agentic systems",
+      "evidence_cn": "LLM在智能体系统中的路由与级联",
+      "canonical_evidence": "LLM在智能体系统中的路由与级联",
+      "tldr_en": "Proposes a unified optimal strategy for LLM routing and cascading to improve cost-performance tradeoff, with formal proofs and conditions for effectiveness.",
+      "tldr_cn": "针对现有LLM路由与级联策略缺乏最优性证明和组合能力的问题，本文提出了一种统一的最优策略，通过形式化推导证明了其最优性，并揭示了策略有效的条件。实验表明该策略在多种设置下显著改善了成本-性能权衡。该工作为LLM模型选择提供了理论基础和实用指导。",
+      "title_zh": "LLM路由与级联的统一方法",
+      "motivation_cn": "现有LLM路由和级联策略缺乏最优性理论，且无法结合两者优势以优化成本-性能。",
+      "method_cn": "推导出级联的最优策略，并提出统一框架结合路由与级联，给出形式化最优性证明。",
+      "result_cn": "在多个基准上验证了统一策略的优越性，相比单独路由或级联实现了更好的成本-性能平衡。",
+      "conclusion_cn": "统一路由与级联策略为LLM系统选择提供了理论保障和实践优势。",
+      "matched_requirement_id": "req-1",
       "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "large language model routing for multiple agents"
+      "matched_query_text": "multi-agent routing in large language model systems"
     },
     {
-      "paper_id": "openreview-icml-2025-3cispy3qdz",
-      "score": 7.0,
-      "evidence_en": "generates MAS code including agent routing configurations",
-      "evidence_cn": "生成包含智能体路由配置的MAS代码",
-      "canonical_evidence": "生成包含智能体路由配置的MAS代码",
-      "tldr_en": "Trains MAS-GPT to generate executable code for full multi-agent system configurations, including agent roles and interaction topologies, enabling automatic routing design.",
-      "tldr_cn": "本文简化了构建基于LLM的多智能体系统的流程，将其转化为生成任务。通过一致性数据构建管道，训练MAS-GPT模型直接根据用户查询输出可执行的MAS代码，其中隐式定义了智能体间的路由与交互。该方法降低了手动路由配置成本，实验表明生成系统性能接近甚至超越人工设计。",
-      "title_zh": "MAS-GPT：训练LLM构建基于LLM的多智能体系统",
-      "motivation_cn": "现有MAS构建依赖手动配置或调用高级LLM，成本高且适应性差。",
-      "method_cn": "将MAS构建视为生成任务，训练MAS-GPT输出可执行代码。",
-      "result_cn": "MAS-GPT能生成与查询匹配的MAS代码，性能可达到手动配置水平。",
-      "conclusion_cn": "生成式方法为多智能体路由设计提供了高效自动化途径。",
-      "matched_requirement_id": "req-7",
-      "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "research on routing in large language model based multi agent systems"
-    },
-    {
-      "paper_id": "openreview-icml-2025-vhktpw6vid",
+      "paper_id": "openreview-icml-2025-rqwexjucxm",
       "score": 6.0,
-      "evidence_en": "generates diverse teammates for multi-agent coordination",
-      "evidence_cn": "生成语义多样的队友以促进多智能体协调",
-      "canonical_evidence": "生成语义多样的队友以促进多智能体协调",
-      "tldr_en": "Proposes SemDiv, an LLM-assisted framework that generates semantically diverse teammate behaviors for efficient multi-agent coordination, improving agent generalizability.",
-      "tldr_cn": "该论文提出SemDiv框架，利用大语言模型自动发现和生成语义层面多样的协调行为，用于训练泛化性更强的智能体。与传统随机化方法相比，SemDiv生成的队友具有明确语义，显著提升了智能体在新环境中的适应能力。该工作为多智能体系统中的协调路由提供了新视角。",
-      "title_zh": "基于大语言模型的语义多样队友生成以实现高效多智能体协调",
-      "motivation_cn": "传统队友生成缺乏语义信息，导致协调效率低和适应差。",
-      "method_cn": "利用LLM迭代生成自然语言描述的协调行为并转化为策略。",
-      "result_cn": "在多个多智能体协调任务中提升了智能体的泛化性能。",
-      "conclusion_cn": "语义多样的队友生成能有效促进多智能体协调和适应。",
+      "evidence_en": "belief-driven multi-agent LLM reasoning via Bayesian Nash equilibrium for coordination",
+      "evidence_cn": "基于贝叶斯纳什均衡的多智能体协调推理",
+      "canonical_evidence": "基于贝叶斯纳什均衡的多智能体协调推理",
+      "tldr_en": "ECON recasts multi-LLM coordination as a game, seeking Bayesian Nash equilibrium where agents optimally respond to beliefs about others' strategies, enabling efficient distributed reasoning.",
+      "tldr_cn": "针对多LLM框架计算成本高且缺乏收敛保证的问题，本文提出ECON范式，将多智能体协调建模为不完全信息博弈，寻求贝叶斯纳什均衡。每个智能体根据对其他智能体策略的信念选择最优响应，实现分布式推理与集中式输出的结合。该方法为多智能体协调路由提供了理论框架。",
+      "title_zh": "从辩论到均衡：基于贝叶斯纳什均衡的信念驱动多智能体LLM推理",
+      "motivation_cn": "多LLM系统计算开销大且缺乏收敛保证，需要更高效的协调机制。",
+      "method_cn": "将多智能体协调建模为不完全信息博弈，通过层次化强化学习寻求贝叶斯纳什均衡。",
+      "result_cn": "实验表明ECON在多种推理任务上取得更高准确率，同时减少了计算开销。",
+      "conclusion_cn": "基于博弈论的均衡方法为多智能体协调路由提供了原则性方案。",
       "matched_requirement_id": "req-5",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "multi-agent coordination routing"
     },
     {
-      "paper_id": "openreview-icml-2025-u08muoggdm",
+      "paper_id": "openreview-icml-2025-clf25dahga",
       "score": 6.0,
-      "evidence_en": "confidence-based LLM routing",
-      "evidence_cn": "基于置信度的大模型路由",
-      "canonical_evidence": "基于置信度的大模型路由",
-      "tldr_en": "Self-REF teaches LLMs to express reliable confidence, enabling adaptive routing to experts or fallback for accuracy gains.",
-      "tldr_cn": "针对高敏感场景下大模型输出可靠性未知的问题，Self-REF通过轻量训练使模型能够表达对自身答案的置信度。基于置信度，系统可以智能地将问题路由到其他专家或执行安全回退。实验表明该方法在多项任务中提升了整体准确率，为构建自适应路由系统提供了实用工具。",
-      "title_zh": "学习使用置信度令牌路由大模型",
-      "motivation_cn": "高敏感场景下需要知道大模型输出何时不可靠",
-      "method_cn": "训练模型生成置信度令牌，结合误差反馈进行自我反思",
-      "result_cn": "在多个基准上路由决策提升了整体准确率",
-      "conclusion_cn": "置信度学习可有效指导大模型路由与故障恢复",
-      "matched_requirement_id": "req-2",
+      "evidence_en": "benchmark for choosing between RAG and long-context, applicable to task routing in multi-agent LLM systems",
+      "evidence_cn": "RAG与长上下文选择基准，适用于多智能体LLM系统中的任务路由",
+      "canonical_evidence": "RAG与长上下文选择基准，适用于多智能体LLM系统中的任务路由",
+      "tldr_en": "Introduces LaRA benchmark to guide optimal routing between retrieval-augmented generation and long-context LLMs, offering insights for efficient task routing in multi-agent architectures.",
+      "tldr_cn": "在LLM上下文窗口扩展的背景下，RAG与长上下文的选择存在争议。LaRA基准通过2326个测试案例、四种问答任务和三种长上下文类型，系统评估了11个LLM，揭示了最优选择取决于模型能力、上下文长度和任务类型等复杂因素。该工作为多智能体LLM架构中的高效任务路由（如选择检索或长上下文）提供了可操作指南。",
+      "title_zh": "LaRA：检索增强生成与长上下文LLM的基准测试——长上下文或RAG路由没有银弹",
+      "motivation_cn": "RAG与长上下文LLM的优劣对比不明，缺乏系统基准来指导任务路由决策。",
+      "method_cn": "构建LaRA基准，包含2326个测试案例，覆盖多种任务和上下文类型，评估11个LLM。",
+      "result_cn": "最优路由策略依赖于模型能力、上下文长度和任务特性等多种因素。",
+      "conclusion_cn": "为多智能体系统中的任务路由（如RAG vs 长上下文选择）提供了实用指导。",
+      "matched_requirement_id": "req-9",
       "matched_query_tag": "query:mas-routing",
-      "matched_query_text": "large language model routing for multiple agents"
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures"
     },
     {
-      "paper_id": "openreview-icml-2024-lpazlcgzj6",
-      "score": 5.0,
-      "evidence_en": "semantic router for conversational agents using DFA",
-      "evidence_cn": "基于确定有限自动机的对话语义路由器",
-      "canonical_evidence": "基于确定有限自动机的对话语义路由器",
-      "tldr_en": "Introduces DFA-RAG, a semantic router that uses a learned Deterministic Finite Automaton to guide LLM responses along predefined pathways, enhancing compliance in regulated scenarios.",
-      "tldr_cn": "该论文提出DFA-RAG框架，通过嵌入从训练对话中学到的确定有限自动机，充当语义路由器，使大语言模型能严格遵循预定响应路径。实验表明该方法在情感支持和客户服务等场景下有效提升合规性，为对话智能体提供了结构化的路由机制。",
-      "title_zh": "DFA-RAG：基于确定有限自动机的大语言模型对话语义路由器",
-      "motivation_cn": "大语言模型在需遵循预定规则的对话场景中难以生成合规响应。",
-      "method_cn": "嵌入确定性有限自动机作为语义路由器，结合检索增强生成。",
-      "result_cn": "在多个对话数据集上提升了响应合规性和一致性。",
-      "conclusion_cn": "结构化路由可增强LLM在约束场景下的可靠性。",
+      "paper_id": "openreview-icml-2024-njwv9bsghf",
+      "score": 6.0,
+      "evidence_en": "integrates Monte Carlo tree search with LLMs for reasoning and planning, relevant to multi-hop reasoning configuration optimization",
+      "evidence_cn": "将蒙特卡洛树搜索与LLM集成用于推理和规划，与多跳推理配置优化相关",
+      "canonical_evidence": "将蒙特卡洛树搜索与LLM集成用于推理和规划，与多跳推理配置优化相关",
+      "tldr_en": "Language Agent Tree Search (LATS) is the first general framework unifying reasoning, acting, and planning in LMs via Monte Carlo Tree Search, enabling LM agents to explore and adapt with external feedback.",
+      "tldr_cn": "现有语言模型在决策任务中依赖简单行为过程，限制了其作为自主代理的部署。本文提出语言代理树搜索（LATS），将蒙特卡洛树搜索与语言模型集成，统一了推理、行动和规划能力。通过树搜索和自反思，LATS显著提升了代理在复杂任务中的探索和适应能力，为多跳推理中的资源配置优化提供了框架性方法。",
+      "title_zh": "语言代理树搜索：统一语言模型中的推理、行动与规划",
+      "motivation_cn": "现有语言模型代理的简单行为过程限制了其自主部署，需要更统一的推理-规划-行动框架。",
+      "method_cn": "将蒙特卡洛树搜索集成到语言模型中，结合基于LM的价值函数和自反思进行探索式决策。",
+      "result_cn": "在多种决策任务中，LATS框架优于现有方法，实现了更有效的自适应问题求解。",
+      "conclusion_cn": "LATS通过树搜索统一了推理、行动与规划，为LLM代理的决策强化提供了新范式。",
+      "matched_requirement_id": "req-composite-mas-routing",
+      "matched_query_tag": "query:mas-routing:composite",
+      "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning."
+    },
+    {
+      "paper_id": "openreview-icml-2024-evgpdivonq",
+      "score": 6.0,
+      "evidence_en": "addresses asynchronous plan reasoning with graph-enhanced prompts to optimize time costs, relevant to multi-hop reasoning configuration",
+      "evidence_cn": "使用图增强提示解决异步计划推理以优化时间成本，与多跳推理配置相关",
+      "canonical_evidence": "使用图增强提示解决异步计划推理以优化时间成本，与多跳推理配置相关",
+      "tldr_en": "Proposes Plan Like a Graph (PLaG) combining graph representations with natural language prompts for asynchronous plan reasoning, achieving state-of-the-art results.",
+      "tldr_cn": "大语言模型在处理需并行化优化的异步计划推理时表现不佳。本文构建了AsyncHow基准，并提出PLaG方法——将图结构与自然语言提示结合，引导LLM进行顺序与并行推理。实验表明PLaG显著提升了LLM在异步规划上的性能，但模型仍存在特定退化问题，为多跳推理中的配置选择提供了经验性依据。",
+      "title_zh": "图增强大语言模型在异步规划推理中的应用",
+      "motivation_cn": "LLM在需要顺序和并行规划的异步任务中推理能力不足，缺乏有效提示策略。",
+      "method_cn": "提出Plan Like a Graph (PLaG)，将问题转为图结构并融入自然语言提示以增强LLM的异步规划能力。",
+      "result_cn": "在AsyncHow基准上PLaG达到最优性能，但LLM在规划细节上仍有显著退化。",
+      "conclusion_cn": "图提示可提升LLM异步规划能力，但模型对图结构的依赖和脆弱性仍需进一步研究。",
+      "matched_requirement_id": "req-10",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning"
+    },
+    {
+      "paper_id": "openreview-icml-2024-0zfwfevsad",
+      "score": 6.0,
+      "evidence_en": "proposes zero-shot routing mechanism (Arrow) for selecting expert adapters in LLM libraries, analogous to agent routing strategies",
+      "evidence_cn": "提出用于LLM适配器库的零样本路由机制Arrow，类比于代理路由策略",
+      "canonical_evidence": "提出用于LLM适配器库的零样本路由机制Arrow，类比于代理路由策略",
+      "tldr_en": "Builds a library of LoRA adapters and introduces Arrow, a zero-shot routing mechanism for dynamic adapter selection based on input.",
+      "tldr_cn": "随着大语言模型参数高效适配器数量激增，如何复用它们提升新任务性能成为问题。本文研究如何构建适配器库，并提出模型聚类MBC方法，以及零样本路由机制Arrow——动态选择最相关适配器来处理新输入。该方法在零样本和监督泛化中均表现优异，其路由思想可直接迁移至多智能体系统中的任务分发与专家路由。",
+      "title_zh": "通过构建和复用LoRA库走向模块化大语言模型",
+      "motivation_cn": "如何有效构建和复用大量LLM适配器以提升新任务性能是未解难题。",
+      "method_cn": "提出基于模型聚类的库构建方法MBC，以及零样本路由机制Arrow动态选择适配器。",
+      "result_cn": "在多个NLU任务上，Arrow路由策略在零样本和微调场景均优于现有基线。",
+      "conclusion_cn": "模块化适配器库结合智能路由可实现高效的任务泛化，为智能体路由提供了借鉴。",
       "matched_requirement_id": "req-4",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "agent routing strategies"
     },
     {
-      "paper_id": "openreview-icml-2025-bkim54qftz",
+      "paper_id": "openreview-icml-2024-lpazlcgzj6",
       "score": 4.0,
-      "evidence_en": "analysis of multi-agent system structures and resilience, relevant to routing topology",
-      "evidence_cn": "分析多智能体系统结构及其鲁棒性，与路由拓扑相关",
-      "canonical_evidence": "分析多智能体系统结构及其鲁棒性，与路由拓扑相关",
-      "tldr_en": "This paper studies resilience of LLM-based multi-agent systems under faulty agents, examining different system structures (e.g., A->B->C) which relate to routing topologies.",
-      "tldr_cn": "多智能体系统中故障智能体如何影响整体性能尚不清楚。本文研究不同系统结构（如链式、全连接）在故障智能体下的鲁棒性，并提出AutoTransform和AutoInject方法模拟故障。实验揭示了结构对鲁棒性的关键影响，为设计可靠的多智能体路由结构提供了指导。",
-      "title_zh": "基于LLM的多智能体协作在故障智能体下的鲁棒性研究",
-      "motivation_cn": "多智能体系统中故障智能体影响未知，不同结构的鲁棒性缺乏系统研究。",
-      "method_cn": "提出AutoTransform和AutoInject方法模拟故障，测试链式、全连接等多种系统结构。",
-      "result_cn": "揭示了不同结构对故障的容忍度差异，为设计鲁棒路由拓扑提供依据。",
-      "conclusion_cn": "该工作强调了系统结构在多智能体路由中的重要性，并为构建可靠系统提供了建议。",
+      "evidence_en": "uses a semantic router (DFA) to guide LLM responses, relevant to routing mechanisms in LLM systems",
+      "evidence_cn": "使用确定性有限自动机作为语义路由器引导LLM响应，与LLM系统中的路由机制相关",
+      "canonical_evidence": "使用确定性有限自动机作为语义路由器引导LLM响应，与LLM系统中的路由机制相关",
+      "tldr_en": "DFA-RAG embeds a Definite Finite Automaton as a semantic router within LLMs for regulated conversational response pathways.",
+      "tldr_cn": "传统大语言模型在需要遵守预定指南的场景（如情感支持）中难以生成合规回应。本文提出DFA-RAG框架，通过学习对话数据构建确定有限自动机，嵌入LLM作为语义路由器，引导回复沿确定性路径生成。该方法在保持对话流畅性的同时提高了回复规范性和符合性，展示了结构化的路由机制在LLM对话中的价值。",
+      "title_zh": "DFA-RAG：基于确定性有限自动机的对话语义路由器",
+      "motivation_cn": "LLM在需要遵循预定规则的特殊场景中难以生成合规回复，需要有效的路由机制。",
+      "method_cn": "从训练对话中学习确定有限自动机，并将其嵌入LLM作为语义路由器，结合检索增强生成实现路径引导。",
+      "result_cn": "实验表明DFA-RAG在情感支持和客服等场景下有效提升了回复的规范性和对话连贯性。",
+      "conclusion_cn": "结构化自动机可作为LLM语义路由的有效手段，为受控对话生成提供新思路。",
       "matched_requirement_id": "req-3",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "multi-agent system routing mechanisms"
     },
     {
-      "paper_id": "openreview-icml-2025-6k3ofs3lbl",
+      "paper_id": "openreview-icml-2025-vhktpw6vid",
       "score": 4.0,
-      "evidence_en": "multi-agent reflection involves inter-agent routing of solutions",
-      "evidence_cn": "多智能体反射涉及智能体间的解决方案路由",
-      "canonical_evidence": "多智能体反射涉及智能体间的解决方案路由",
-      "tldr_en": "Uses multi-agent reflection with RL to iteratively refine answers, where agents exchange and route solution information, touching on coordination routing.",
-      "tldr_cn": "本文针对LLM推理中验证-改进范式的反馈空间受限问题，提出DPSDP算法，将多轮改进建模为马尔可夫决策过程，训练演员-评论家系统。多智能体反射机制隐式涉及智能体间路由和协调，实验证明该方法在数学推理任务上显著提升准确性，为多智能体协同路由提供了新视角。",
-      "title_zh": "通过多智能体反射增强LLM推理",
-      "motivation_cn": "现有验证-改进方法反馈空间小且缺乏协调训练，效果受限。",
-      "method_cn": "提出DPSDP算法，将多智能体反射过程建模为MDP并优化。",
-      "result_cn": "在数学推理任务上，DPSDP显著优于现有自我改进方法。",
-      "conclusion_cn": "多智能体反射与强化学习结合能有效提升推理路由效率。",
+      "evidence_en": "generates semantically diverse teammates for multi-agent coordination using LLMs",
+      "evidence_cn": "利用LLM生成语义多样的队友以促进多智能体协调",
+      "canonical_evidence": "利用LLM生成语义多样的队友以促进多智能体协调",
+      "tldr_en": "SemDiv uses LLMs to generate novel coordination behaviors in natural language, enabling diverse teammate generation for robust multi-agent policies.",
+      "tldr_cn": "训练可泛化多智能体代理需要多样化队友，但传统方法缺乏语义信息导致效率低。本文提出SemDiv，利用大语言模型在语义层面发现并学习多样化的协调行为——每次迭代生成自然语言描述的协调策略并转化为可执行策略。该方法显著提高了队友多样性生成效率和代理的泛化能力，是多智能体协调中路由策略研究的重要支撑。",
+      "title_zh": "基于LLM的语义多样队友生成实现高效多智能体协调",
+      "motivation_cn": "现有多样化队友生成方法缺乏语义信息，导致生成效率低且代理泛化性差。",
+      "method_cn": "迭代利用LLM生成新的协调行为自然语言描述，并翻译为可执行策略来丰富队友池。",
+      "result_cn": "在多智能体协调任务中，SemDiv生成的队友多样性更高，训练出的代理泛化能力显著提升。",
+      "conclusion_cn": "LLM的语义理解能力能有效提升多智能体协调中队友的多样性及代理的适应性。",
       "matched_requirement_id": "req-5",
       "matched_query_tag": "query:mas-routing",
       "matched_query_text": "multi-agent coordination routing"
+    },
+    {
+      "paper_id": "openreview-icml-2025-nmdwqxosfs",
+      "score": 4.0,
+      "evidence_en": "proposes guided search strategies for multi-step reasoning tasks, addressing configuration choice for test-time search",
+      "evidence_cn": "提出引导搜索策略用于多步推理任务，涉及测试时搜索的配置选择",
+      "canonical_evidence": "提出引导搜索策略用于多步推理任务，涉及测试时搜索的配置选择",
+      "tldr_en": "Guided search strategies for non-serializable environments; uses diversity-based and state-exploration methods to improve multi-step reasoning consistency.",
+      "tldr_cn": "大型语言模型在多步推理中性能不稳定，现有搜索技术在不支持状态序列化的环境中受限。本文研究了两种互补的引导搜索策略：基于多样性和基于状态探索，并在软件工程智能体任务上验证了有效性。实验表明这些策略能显著提升平均性能，为多步推理的资源配置提供了实用方法。",
+      "title_zh": "非序列化环境中的引导搜索策略及其在软件工程智能体中的应用",
+      "motivation_cn": "多步推理任务中LLM性能不稳定，需要有效的测试时搜索策略。",
+      "method_cn": "提出了适用于非序列化环境的引导搜索策略，包括多样性引导和状态探索两种方式。",
+      "result_cn": "在软件工程智能体任务上，引导搜索策略显著提高了成功率。",
+      "conclusion_cn": "引导搜索是提升LLM多步推理性能的有效手段，可避免昂贵的状态恢复。",
+      "matched_requirement_id": "req-10",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning"
+    },
+    {
+      "paper_id": "openreview-icml-2025-nnwsny4yb4",
+      "score": 4.0,
+      "evidence_en": "uses learned policy to dynamically select reasoning paths, akin to routing in reasoning space",
+      "evidence_cn": "使用学习到的策略动态选择推理路径，类似于推理空间中的路由",
+      "canonical_evidence": "使用学习到的策略动态选择推理路径，类似于推理空间中的路由",
+      "tldr_en": "Policy-Guided Tree Search combines RL with tree exploration for efficient reasoning path selection.",
+      "tldr_cn": "现有树搜索方法依赖预定义启发式或穷举，效率低下。本文提出策略引导树搜索（PGTS），通过强化学习训练策略，动态决定树搜索中扩展、分支、回溯或终止等操作，无需手动设计启发式。在数学推理、逻辑推理和规划任务上的实验表明，该方法在准确率和效率上均优于基线。这种动态路径选择机制可迁移至多智能体系统作为内部路由策略。",
+      "title_zh": "策略引导树搜索增强LLM推理",
+      "motivation_cn": "现有树搜索依赖预定义启发式或穷举，效率低。",
+      "method_cn": "提出策略引导树搜索（PGTS），用RL训练策略动态决定搜索步骤。",
+      "result_cn": "在多个推理任务上比基线方法更高效且准确。",
+      "conclusion_cn": "动态策略引导可避免手动设计启发式，是一种通用的推理路径路由方法。",
+      "matched_requirement_id": "req-10",
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning"
     }
   ],
-  "llm_ranked_at": "2026-06-03T02:30:18.963164+00:00",
+  "llm_ranked_at": "2026-06-03T03:49:13.511811+00:00",
   "display_min_score": 4.0,
-  "pruned_at": "2026-06-03T02:30:19.000490+00:00"
+  "pruned_at": "2026-06-03T03:49:13.549624+00:00"
 }

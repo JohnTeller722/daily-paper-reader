@@ -5,17 +5,17 @@ authors: "Rui Ye, Shuo Tang, Rui Ge, Yaxin Du, Zhenfei Yin, Siheng Chen, Jing Sh
 date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=3CiSpY3QdZ"
 tags: ["query:mas-routing"]
-score: 7.0
-evidence: 生成包含智能体路由配置的MAS代码
-tldr: 本文简化了构建基于LLM的多智能体系统的流程，将其转化为生成任务。通过一致性数据构建管道，训练MAS-GPT模型直接根据用户查询输出可执行的MAS代码，其中隐式定义了智能体间的路由与交互。该方法降低了手动路由配置成本，实验表明生成系统性能接近甚至超越人工设计。
+score: 8.0
+evidence: 训练LLM自动构建多智能体系统，与路由主题核心相关
+tldr: 针对现有多智能体系统设计依赖人工配置或多次调用高级LLM导致成本高、适应性差的问题，该工作将构建过程重新定义为生成式语言任务。通过一致性数据构建流水线创建高质量查询-MAS对，并训练开源中型LLM（MAS-GPT）根据用户查询直接生成可执行代码表示的多智能体系统。该方法显著降低了构建成本，使得路由与交互机制可以自动生成。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 860, \"height\": 208, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 868, \"height\": 379, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1780, \"height\": 674, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 1710, \"height\": 471, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1716, \"height\": 480, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1781, \"height\": 1055, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1666, \"height\": 2324, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-3cispy3qdz/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1668, \"height\": 561, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1766, \"height\": 426, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 860, \"height\": 132, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 854, \"height\": 758, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 859, \"height\": 240, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 855, \"height\": 133, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1743, \"height\": 1443, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1780, \"height\": 403, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1735, \"height\": 880, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 1727, \"height\": 1765, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1227, \"height\": 170, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-3cispy3qdz/table-011.webp\", \"caption\": \"\", \"page\": 0, \"index\": 11, \"width\": 1585, \"height\": 1336, \"label\": \"Table\"}]"
-motivation: 现有MAS构建依赖手动配置或调用高级LLM，成本高且适应性差。
-method: 将MAS构建视为生成任务，训练MAS-GPT输出可执行代码。
-result: MAS-GPT能生成与查询匹配的MAS代码，性能可达到手动配置水平。
-conclusion: 生成式方法为多智能体路由设计提供了高效自动化途径。
+motivation: 现有多智能体系统构建依赖人工或高级LLM多次调用，成本高且适应性差。
+method: 将MAS构建转为生成任务，统一表示为可执行代码，训练MAS-GPT直接生成。
+result: MAS-GPT能根据查询生成有效的多智能体系统，降低推理成本。
+conclusion: 实现了多智能体系统的自动化构建，便于路由机制的灵活部署。
 ---
 
 ## Abstract

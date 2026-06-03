@@ -1,21 +1,21 @@
 ---
 title: Multi-agent Architecture Search via Agentic Supernet
-title_zh: 通过智能体超网络进行多智能体架构搜索
+title_zh: 通过智能体超网进行多智能体架构搜索
 authors: "Guibin Zhang, Luyang Niu, Junfeng Fang, Kun Wang, LEI BAI, Xiang Wang"
 date: 2025-05-01
 pdf: "https://openreview.net/pdf?id=imcyVlzpXh"
 tags: ["query:mas-routing"]
 score: 9.0
-evidence: 为多跳推理动态选择架构
-tldr: 该论文针对LLM多智能体系统的手工设计难题，提出MaAS框架。它放弃固定单一架构，转而优化一个概率性的智能体超网络，能够根据每个查询的难度和领域动态分配推理资源。实验表明，MaAS在多个多跳推理任务上实现了更好的准确率-成本权衡，直接满足了如何为开放式多跳推理选择最佳配置的需求。
+evidence: 通过智能体超网动态分配推理资源实现路由
+tldr: 现有自动化多智能体设计方法通常生成静态系统，无法根据查询难度动态分配推理资源。本文提出MaAS框架，通过优化一个概率和连续的智能体超网分布，为每个查询动态选择最优的智能体架构和路由路径。实验表明MaAS在平衡准确率和成本方面显著优于静态方法，为多智能体系统中的高效任务路由提供了全新范式。
 source: ICML-2025-Accepted
 selection_source: conference_retrieval
 figures_json: "[{\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1733, \"height\": 562, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 1741, \"height\": 632, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 833, \"height\": 407, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 856, \"height\": 869, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 838, \"height\": 1078, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 1739, \"height\": 556, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 858, \"height\": 317, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1432, \"height\": 1256, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-009.webp\", \"caption\": \"\", \"page\": 0, \"index\": 9, \"width\": 674, \"height\": 561, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-010.webp\", \"caption\": \"\", \"page\": 0, \"index\": 10, \"width\": 1772, \"height\": 1066, \"label\": \"Figure\"}, {\"url\": \"assets/figures/openreview/openreview-icml-2025-imcyvlzpxh/fig-011.webp\", \"caption\": \"\", \"page\": 0, \"index\": 11, \"width\": 680, \"height\": 565, \"label\": \"Figure\"}]"
 tables_json: "[{\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-001.webp\", \"caption\": \"\", \"page\": 0, \"index\": 1, \"width\": 1766, \"height\": 796, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-002.webp\", \"caption\": \"\", \"page\": 0, \"index\": 2, \"width\": 864, \"height\": 509, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-003.webp\", \"caption\": \"\", \"page\": 0, \"index\": 3, \"width\": 1764, \"height\": 437, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-004.webp\", \"caption\": \"\", \"page\": 0, \"index\": 4, \"width\": 861, \"height\": 350, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-005.webp\", \"caption\": \"\", \"page\": 0, \"index\": 5, \"width\": 1818, \"height\": 979, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-006.webp\", \"caption\": \"\", \"page\": 0, \"index\": 6, \"width\": 969, \"height\": 405, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-007.webp\", \"caption\": \"\", \"page\": 0, \"index\": 7, \"width\": 1207, \"height\": 479, \"label\": \"Table\"}, {\"url\": \"assets/tables/openreview/openreview-icml-2025-imcyvlzpxh/table-008.webp\", \"caption\": \"\", \"page\": 0, \"index\": 8, \"width\": 1205, \"height\": 233, \"label\": \"Table\"}]"
-motivation: 手动设计多智能体系统耗时且难以动态适应不同查询的难度和领域。
-method: 提出MaAS框架，优化一个概率分布的智能体超网络，实现按需动态架构选择。
-result: 在多个推理任务上，MaAS在准确率和推理成本之间取得了优于静态系统的平衡。
-conclusion: 动态架构搜索是优化多智能体推理性能和资源利用的有效途径。
+motivation: 现有自动化智能体工作流设计寻求静态系统，无法动态分配推理资源。
+method: 优化智能体超网，一个概率和连续的架构分布，为每个查询动态选择最佳架构。
+result: MaAS在多个任务上实现了更优的准确率-成本平衡，优于静态搜索方法。
+conclusion: 动态架构分配是提升多智能体系统效率的关键，MaAS提供了有效的自动化框架。
 ---
 
 ## Abstract
