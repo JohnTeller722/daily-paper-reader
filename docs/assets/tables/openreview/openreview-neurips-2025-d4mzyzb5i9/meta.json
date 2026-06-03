@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "extractor": "papercropper",
+  "tables": [
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-001.webp",
+      "caption": "",
+      "page": 0,
+      "index": 1,
+      "width": 1429,
+      "height": 590,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-002.webp",
+      "caption": "",
+      "page": 0,
+      "index": 2,
+      "width": 1394,
+      "height": 835,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-003.webp",
+      "caption": "",
+      "page": 0,
+      "index": 3,
+      "width": 944,
+      "height": 843,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-004.webp",
+      "caption": "",
+      "page": 0,
+      "index": 4,
+      "width": 459,
+      "height": 775,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-005.webp",
+      "caption": "",
+      "page": 0,
+      "index": 5,
+      "width": 1063,
+      "height": 619,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-006.webp",
+      "caption": "",
+      "page": 0,
+      "index": 6,
+      "width": 1048,
+      "height": 712,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-007.webp",
+      "caption": "",
+      "page": 0,
+      "index": 7,
+      "width": 1197,
+      "height": 951,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-008.webp",
+      "caption": "",
+      "page": 0,
+      "index": 8,
+      "width": 1093,
+      "height": 390,
+      "label": "Table"
+    },
+    {
+      "url": "assets/tables/openreview/openreview-neurips-2025-d4mzyzb5i9/table-009.webp",
+      "caption": "",
+      "page": 0,
+      "index": 9,
+      "width": 1371,
+      "height": 594,
+      "label": "Table"
+    }
+  ]
+}

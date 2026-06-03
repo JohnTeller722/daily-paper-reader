@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "papercropper",
+  "figures": [
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-001.webp",
+      "caption": "",
+      "page": 0,
+      "index": 1,
+      "width": 1302,
+      "height": 464,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-002.webp",
+      "caption": "",
+      "page": 0,
+      "index": 2,
+      "width": 1422,
+      "height": 468,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-003.webp",
+      "caption": "",
+      "page": 0,
+      "index": 3,
+      "width": 1448,
+      "height": 486,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-004.webp",
+      "caption": "",
+      "page": 0,
+      "index": 4,
+      "width": 1428,
+      "height": 519,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-005.webp",
+      "caption": "",
+      "page": 0,
+      "index": 5,
+      "width": 1428,
+      "height": 623,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-006.webp",
+      "caption": "",
+      "page": 0,
+      "index": 6,
+      "width": 1426,
+      "height": 617,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-007.webp",
+      "caption": "",
+      "page": 0,
+      "index": 7,
+      "width": 651,
+      "height": 544,
+      "label": "Figure"
+    },
+    {
+      "url": "assets/figures/openreview/openreview-neurips-2025-a9mfguhjf8/fig-008.webp",
+      "caption": "",
+      "page": 0,
+      "index": 8,
+      "width": 644,
+      "height": 545,
+      "label": "Figure"
+    }
+  ]
+}

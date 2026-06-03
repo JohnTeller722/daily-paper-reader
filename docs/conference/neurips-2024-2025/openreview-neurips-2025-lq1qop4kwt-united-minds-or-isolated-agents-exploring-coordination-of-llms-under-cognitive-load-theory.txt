@@ -1,0 +1,3073 @@
+Title: 6610_United_Minds_or_Isolated_.pdf
+
+URL Source: https://openreview.net/pdf?id=Lq1qoP4Kwt
+
+Number of Pages: 34
+
+Markdown Content:
+# United Minds or Isolated Agents? Exploring Coordination of LLMs under Cognitive Load Theory 
+
+Anonymous Author(s) 
+
+Affiliation Address 
+
+email 
+
+## Abstract 
+
+Large Language Models (LLMs) exhibit a notable performance ceiling on complex, 1
+
+multi-faceted tasks, as they often fail to integrate diverse information or adhere to 2
+
+multiple constraints. We posit that such limitation arises when the demands of a 3
+
+task exceed the LLM’s effective cognitive load capacity. This interpretation draws 4
+
+a strong analogy to Cognitive Load Theory (CLT) in cognitive science, which ex-5
+
+plains similar performance boundaries in the human mind, and is further supported 6
+
+by emerging evidence that reveals LLMs have bounded working memory character-7
+
+istics. Building upon this CLT-grounded understanding, we introduce CoThinker ,8
+
+a novel LLM-based multi-agent framework designed to mitigate cognitive overload 9
+
+and enhance collaborative problem-solving abilities. CoThinker operationalizes 10 
+
+CLT principles by distributing intrinsic cognitive load through agent specialization 11 
+
+and managing transactional load via structured communication and a collective 12 
+
+working memory. We empirically validate CoThinker on complex problem-solving 13 
+
+tasks and fabricated high cognitive load scenarios, demonstrating improvements 14 
+
+over existing multi-agent baselines in solution quality and efficiency. Our analysis 15 
+
+reveals characteristic interaction patterns, providing insights into the emergence 16 
+
+of collective cognition and effective load management, thus offering a principled 17 
+
+approach to overcoming LLM performance ceilings. 18 
+
+## 1 Introduction 19 
+
+The increasing prevalence and capability of Large Language Models (LLMs) are transforming diverse 20 
+
+domains, moving beyond basic text generation towards complex reasoning and problem-solving 21 
+
+applications [Chang et al., 2024, Zhao et al., 2024, Li et al., 2024a]. Aligning these powerful models 22 
+
+with human intent and fostering effective thinking pattern is paramount for unlocking their full 23 
+
+potential [Shen et al., 2023]. In-Context Learning (ICL) is increasingly employed for alignment, 24 
+
+offering adaptation via prompts without parameter updates [Brown et al., 2020]. In this work, we 25 
+
+adopt a broad definition of ICL, referring to the general strategy of guiding an LLM’s behavior 26 
+
+by providing any contextual information relevant to the task to perform the task [Lampinen et al., 27 
+
+2024]. Compared to traditional finetuning [Song et al., 2024, Lee et al., 2023], evidence suggests 28 
+
+both methods often operate through similar mechanisms—primarily modulating the model’s thinking 29 
+
+style rather than altering core knowledge [Lin et al., 2024, Zhao et al., 2025, Yang et al., 2024]; ICL’s 30 
+
+parameter-free nature, and adaptability make it a widely adopted paradigm for this purpose. 31 
+
+While ICL offers flexibility, it suffers from a notable performance ceiling when applied to multi-32 
+
+faceted tasks requiring integration of diverse information sources [He et al., 2024, Li et al., 2023b, 33 
+
+Kirk et al., 2023]. In such scenarios, LLM agents frequently exhibit degeneration of thought, lack 34 
+
+of diversity, or inability to follow multiple requirements [Liang et al., 2023, Huang et al., 2023, 35 
+
+Kamoi et al., 2024, Lu et al., 2024] when using ICL. Despite increasing empirical studies on ICL’s 36 
+
+Submitted to 39th Conference on Neural Information Processing Systems (NeurIPS 2025). Do not distribute. limitations, the root causes remain under-explored. Concurrently, recent efforts to overcome the 37 
+
+ceiling via agent-based solutions have yielded limited success, often relying on heuristics without 38 
+
+cognitive grounding [Liu et al., 2023, Zhang et al., 2024c]. 39 
+
+To address the first challenge—the lack of theoretical understanding behind performance ceiling—we 40 
+
+turn to cognitive science for explanatory insight. Similar patterns of performance degradation have 41 
+
+long been studied in cognitive science, where complex tasks involving high element interactivity 42 
+
+often induce [Sweller, 2011, 2003]. According to Cognitive Load Theory (CLT), cognitive overload 43 
+
+happens when working memory capacity is exceeded [Baddeley et al., 1986b]. Recent work suggests 44 
+
+LLMs also exhibit bounded working memory with human-like failure modes under overload [Zhang 45 
+
+et al., 2024b, Gong et al., 2024]. These shared characteristics allow us to draw an analogy that 46 
+
+explains the observed performance degradation in LLM agents: The performance ceiling observed in 47 
+
+LLM agents arises when their effective cognitive load capacity is exceeded, closely mirroring the 48 
+
+theoretical limits described by CLT. 49 
+
+Building on this analogical reasoning above—that the performance ceiling observed when applying 50 
+
+In-Context Learning (ICL) to complex tasks stems from cognitive overload—we present CoThinker ,51 
+
+a multi-agent ICL architecture that directly operationalizes insights from CLT to enhance the effec-52 
+
+tiveness of ICL and improve reasoning capacity through structured cooperation among LLM agents. 53 
+
+Specifically, CoThinker translates the concept of collective working memory [Kirschner et al., 2018] 54 
+
+into a practical architecture. Just as human groups distribute cognitive demands through division of 55 
+
+labor and shared memory structures [Wilson et al., 2004, Dunbar, 1998, Tomasello, 2009], CoThinker 56 
+
+employs specialized agents for parallel thinking and coordinates their outputs via a shared memory 57 
+
+mechanism. This collaborative architecture enables the LLM agents to offload and manage high 58 
+
+element interactivity, thereby mitigating the cognitive overload experienced by individual agents. To 59 
+
+demonstrate the effectiveness of leveraging CLT in this manner, we test CoThinker on a range of 60 
+
+complex general problem-solving tasks and specifically fabricated high cognitive load scenarios. In 61 
+
+sum, this paper makes the following key contributions: 62 
+
+• First, we are the first to explain the performance ceiling of using ICL in LLM agents by 63 
+
+drawing a strong analogy to Cognitive Load Theory, suggesting that these limitations stem 64 
+
+from exceeding the LLM’s effective cognitive load capacity. 65 
+
+• Second, based on these theoretical insights, we design and introduce CoThinker , a novel 66 
+
+multi-agent ICL architecture. CoThinker operationalizes CLT principles, through agent 67 
+
+specialization, transactive memory, and communication moderator to mitigate cognitive 68 
+
+overload and enhance complex cooperation. 69 
+
+• Third, we empirically validate CoThinker on complex tasks, demonstrating its ability to 70 
+
+surpass existing multi-agent baselines. Furthermore, our analysis uncovers characteristic 71 
+
+interaction patterns among agents, providing insights into the emergence of collective 72 
+
+cognition within the architecture. 73 
+
+## 2 Related Work 74 
+
+2.1 Multi-Agent LLM Collaboration 75 
+
+The development of LLMs has catalyzed significant research into multi-agent systems (MAS) where 76 
+
+LLMs function as collaborative agents, aiming to tackle more complex problems than single agents 77 
+
+can alone [Guo et al., 2024, Wang et al., 2024a, Qian et al., 2025]. Current approaches explore 78 
+
+various interaction structures including multi-agent debate, where agents exchange and critique 79 
+
+ideas [Liang et al., 2023, Lu et al., 2024, Wang et al., 2024b, Du et al., 2023], iterative reflection 80 
+
+mechanisms, enabling agents to self-correct [Shinn et al., 2023, Madaan et al., 2023, Yao et al., 2023]. 81 
+
+Role-playing and functional specialization are also prominent, assigning distinct tasks or personas 82 
+
+to different agents to divide labor, particularly in complex, multifaceted domains [Li et al., 2023a, 83 
+
+Qian et al., 2023, Hong et al., 2023]. Architecturally, research investigates optimal communication 84 
+
+topologies to enhance information flow [Li et al., 2024b], the dynamic formation and adaptation 85 
+
+of agent networks [Liu et al., 2023, Wu et al., 2023], diversity of mental set [Liu et al., 2025b], 86 
+
+and hierarchical structures for coordination [Zhang et al., 2024a]. However, while these systems 87 
+
+demonstrate advancing capabilities, their designs often draw from intuition or focus on communication 88 
+
+efficiencies, with less explicit grounding in cognitive theories that explain effective collaboration and 89 
+
+the management of processing limitations [Pan et al., 2025]. Specifically, the systematic integration 90 
+
+2of Cognitive Load Theory (CLT) [Sweller, 2011] remains largely underexplored in the design of 91 
+
+LLM MAS. Our work, CoThinker , directly addresses this gap by operationalizing CLT to mitigate 92 
+
+cognitive overload in LLMs and enhance collective problem-solving. 93 
+
+2.2 LLM for Human Simulation 94 
+
+The capacity of Large Language Models (LLMs) to exhibit human-like intelligence [Liu et al., 95 
+
+2025a] and emulate nuanced social behaviors [Zhou* et al., 2024] is foundational to their use as 96 
+
+artificial agents. Research has demonstrated LLMs’ ability to simulate human decision-making [Xie 97 
+
+et al., 2024], generate believable individual and collective behaviors in social simulations [Chuang 98 
+
+et al., 2024a], and adopt distinct personas [Chuang et al., 2024b] Critically, these parallels extend to 99 
+
+cognitive characteristics; recent studies suggest LLMs possess bounded working memory and exhibit 100 
+
+failure modes under cognitive overload akin to humans [Zhang et al., 2024b, Gong et al., 2024], 101 
+
+as discussed in our introduction. Furthermore, interactions between LLM agents can mirror social 102 
+
+psychological phenomena [Zhang et al., 2024c, Guo et al., 2024]. This confluence of human-like 103 
+
+cognitive traits, including limitations, and social capabilities provides a strong rationale for applying 104 
+
+principles from human cognitive science—particularly theories like Cognitive Load Theory (CLT) 105 
+
+that address cognitive limits—to the design of more effective LLM-based collaborative systems. 106 
+
+## 3 Cognitive Foundations for Enhanced LLM Performance 107 
+
+This section establishes the theoretical basis for our approach by drawing parallels between human 108 
+
+cognitive limitations and observed performance ceilings in LLMs. We begin (Section 3.1) by 109 
+
+discussing analogous constraints in working memory between humans and LLMs, a concept central 110 
+
+to Cognitive Load Theory (CLT). Building on this, we then (Section 3.2) use CLT to interpret LLM 111 
+
+performance degradation under complex task demands. Subsequently (Section 3.3), we examine how 112 
+
+humans overcome individual cognitive limitations by naturally forming collective cognitive systems, 113 
+
+and finally, we posit that these principles can inform the design of a more capable LLM architecture. 114 Analogous Processing Mechanism  Cognitive Load Theory 
+
+> Prefrontal
+> Cortex
+> Softmax
+> Attention
+> Selective
+> Attention
+> Cognitive
+> Overload
+> Working
+> Memory
+> Capacity Intrinsic
+> Extraneous
+> Cognitive load
+
+>
+
+> - Degeneration of thought
+> - Lack of diversity
+> - Inability to follow task
+> Working
+> Memory
+> Similar
+> Phenomenon
+> Collective Cognitive Load Theory
+> Collective
+> Working
+> Memory
+> Collective Mind
+> Parallel
+> Thinking
+> Organized
+> Communi cation
+> Sparse
+> Attention
+> Limited cognitive r esources
+> to hold c hunks of informtion
+
+Figure 1: Analogical reasoning on how to mirror Cognitive load in human to LLM Agent to explain the performance ceiling observed when applying In-Context Learning (ICL) to LLM Agents for complex tasks, and use Cognitive Load Theory (CLT) to resolve it. 
+
+3.1 Working Memory Analogies 115 
+
+Human cognition relies fundamentally on working memory, a capacity-limited cognitive system 116 
+
+associated with the prefrontal cortex, essential for temporarily holding and manipulating information 117 
+
+during complex cognitive tasks such as reasoning and learning [Baddeley et al., 1986a, Cowan, 2010]. 118 
+
+Human working memory can only hold a limited number of information chunks simultaneously, 119 
+
+typically around 4 to 7 [Miller et al., 1956]. This system employs selective attention to filter 120 
+
+and prioritize information [Roussy et al., 2021]. LLMs exhibit intriguing functional parallels; 121 
+
+their core attention mechanisms perform a form of sparse, selective focus on input data [Vaswani 122 
+
+et al., 2017]. Recent studies have begun to characterize a functional "working memory" in LLMs, 123 
+
+identifying capacity limits and failure modes under high informational demands that echo human 124 
+
+working memory phenomena [Zhang et al., 2024b, Gong et al., 2024]. Thus, a key analogy emerges: 125 
+
+both humans and LLMs operate with limited cognitive resources for the concurrent processing of 126 
+
+3information, providing a shared foundation for understanding their processing constraints. This 127 
+
+analogy sets the stage for applying cognitive theories developed for human reasoning to interpret 128 
+
+performance limits in LLMs (See details in Appendix). 129 
+
+3.2 Cognitive Load and Performance Limits 130 
+
+The finite nature of working memory is central to CLT [Sweller et al., 1998, Sweller, 2011]. CLT 131 
+
+distinguishes between intrinsic load , determined by the inherent complexity and element interactivity 132 
+
+of a task, and extraneous load , which can arise from how a task or its accompanying instructions are 133 
+
+presented. When the combined load exceeds working memory capacity, cognitive overload ensues in 134 
+
+humans [Paas et al., 2003, Sweller, 2011]. The provided guidance, meant to help, can paradoxically 135 
+
+hinder performance if it contributes to exceeding cognitive capacity. LLM agents demonstrate 136 
+
+analogous performance degradation when LLM agents are tasked with complex problems and guided 137 
+
+by In-Context Learning (ICL). This often causes agents to fail at tasks they are capable of solving. For 138 
+
+instance, tasks requiring extensive multi-step reasoning or the integration of numerous, potentially 139 
+
+conflicting, constraints via ICL can lead to degeneration of thought, lack of diversity, or inability to 140 
+
+follow multiple requirements [Liang et al., 2023, Huang et al., 2023, Kamoi et al., 2024, Lu et al., 141 
+
+2024] (further illustrated in Appendix). This often causes agents to fail at tasks they, in principle, 142 
+
+are capable of solving. Drawing upon the working memory analogies and these observed patterns, 143 
+
+we contend that such performance ceilings when applying ICL in LLMs can be understood as a 144 
+
+manifestation of cognitive overload, where total demands surpass their effective processing capacity. 145 
+
+To identify ways to alleviate this overload, we next examine how humans naturally overcome similar 146 
+
+limitations through collective cognition. 147 
+
+3.3 Human Collective Intelligence 148 
+
+To surmount individual cognitive limitations, humans exhibit a capacity for collaborative problem-149 
+
+solving, leading to the emergence of a collective intelligence or collective mind that is more powerful 150 
+
+than the sum of its individual constituents [Woolley et al., 2010, Malone et al., 2010, Shteynberg 151 
+
+et al., 2023]. This is not simply an aggregation of independent efforts but results from sophisticated 152 
+
+social-cognitive abilities, including shared intentionality, theory of mind, and nuanced communication 153 
+
+for establishing common ground [Tomasello et al., 2005, Frith and Frith, 2005]. Such collective 154 
+
+entities effectively expand cognitive resources by distributing processing. Key aspects include 155 
+
+the formation of a collective working memory , often through Transactive Memory Systems where 156 
+
+knowledge and responsibilities are shared [Wegner, 1987, Kirschner et al., 2018] and individuals have 157 
+
+meta-knowledge about who knows what [Hollingshead, 2001] so that they can rely on each other 158 
+
+for information sharing and retrieval [Hollingshead and Brandon, 2003]; the engagement in parallel 159 
+
+thinking through a division of cognitive labor, which reduces the intrinsic load on each individual 160 
+
+[Dunbar, 2003]; and the use of organized communication to integrate diverse information and 161 
+
+maintain a shared attentional focus [Hutchins, 1995]. These spontaneously formed group structures 162 
+
+allow humans to manage complexities that would overwhelm an individual, demonstrating a natural 163 
+
+solution to cognitive overload. 164 
+
+Inspired by these human collective cognitive strategies and human-LLM cognitive similarity discussed 165 
+
+above, the subsequent section introduces CoThinker , a multi-agent ICL architecture designed to 166 
+
+operationalize these principles to overcome LLM performance ceilings whe using ICL. 167 
+
+## 4 CoThinker 168 
+
+CoThinker is a multi-agent ICL architecture designed to enhance collaborative problem-solving by 169 
+
+systematically managing cognitive load. Simply aggregating outputs from LLM agents often proves 170 
+
+insufficient for complex tasks, as naive collaboration can introduce significant transactional costs—the 171 
+
+cognitive effort required to coordinate, communicate, and integrate—without a corresponding increase 172 
+
+in solution quality [Pan et al., 2025]. As Cognitive Load Theory (CLT) suggests, these transactional 173 
+
+costs can quickly lead to extraneous cognitive overload, negating the benefits of parallel thinking 174 
+
+[Kirschner et al., 2009, 2018]. To overcome these challenges within the ICL paradigm, CoThinker 175 
+
+operationalizes the principles of human collective intelligence discussed in Section 3, aiming to create 176 
+
+a "collective mind" that distributes cognitive load. We leverage the insights from CLT to design an 177 
+
+architecture that mirrors how human groups effectively solve complex problems. 178 
+
+4Thinking Style  
+
+> Orchestrator
+> Small-world
+> network
+> Agent Parallel Thinking
+> High CL
+> Task
+> Awareness
+> Shared Knowledge
+> Specialization
+> Transactive Memory System
+> Low CL
+> Sparse
+> Homogeneous
+> Heterogeneous
+> Trade-off Setting
+> Dense
+> Communciation Moderator
+> Small mean-path
+> Large cluster coef.
+> Base style
+> Thinking Style
+> Inventory
+> Diverse group
+> enable parallel
+> thinking
+> Holistic Planner
+> Critical Decomposer
+> Creative Proposer
+> Group
+> Configuration
+> Retrieve Update
+> Synthesizer
+> OR
+> In-group Agent
+> External Agent
+> TMS Think as
+> a whole
+> ...
+
+# {{Figure 2: The CoThinker Architecture. A high Cognitive Load (CL) task is initially processed by diverse agents via Agent Parallel Thinking. The Transactive Memory System (TMS) facilitates shared understanding by updating and allowing retrieval of collective knowledge. The Communication Moderator manages inter-agent information flow, leveraging a trade-off to form a cognitive small-world network, which then feeds into the Synthesizer to produce a final solution, resulting in a lower effective CL for the overall system. To operationalize these insights, the CoThinker architecture (Figure 2) comprises four main modules: 179 
+
+Agent Parallel Thinking (Section 4.1), Transactive Memory System (Section 4.2), Communication 180 
+
+Moderator (Section 4.3), and Synthesizer (Section 4.4). Each module is directly guided by CLT 181 
+
+principles to emulate aspects of the human collective mind. Agent Parallel Thinking fosters initial 182 
+
+cognitive diversity, potentially splitting the intrinsic load of the task. The Transactive Memory System 183 
+
+boosts inter-agent understanding and tracks consensus, reducing cognitive load from redundant 184 
+
+processing. The Communication Moderator balances intrinsic and extraneous loads by structuring 185 
+
+information exchange. Finally, the Synthesizer integrates refined collective insights. Let A =186 
+
+{A1, . . . , A M } be the set of M agents. Let Tmax be the total number of generation rounds. Agent 187 
+
+Ai’s output at the end of round t is denoted x(t) 
+
+> i
+
+.188 
+
+4.1 Agent Parallel Thinking 189 
+
+This module promotes a division of cognitive labor and parallel thinking by assigning diverse 190 
+
+thinking styles. Unlike assigning pre-defined roles, which require domain-specific foresight and 191 
+
+impose extraneous cognitive load from role adherence, CoThinker uses an adaptive approach. A 192 
+
+Thinking Style Orchestrator generates a task-specific style ϕi for each agent Ai based on a general 193 
+
+base thinking style inventory ψ [Sternberg, 1997] and the task D:194 
+
+{ϕi}Mi=1 = Orch( D, ψ ) (1) This yields diverse thinking styles {ϕi}Mi=1 , employed in subsequent stages. Further details on the 195 
+
+prompting strategy for style generation and thinking style inventory are in the Appendix. 196 
+
+4.2 Transactive Memory System (TMS) 197 
+
+Human groups effectively manage complex information by developing Transactive Memory Systems 198 
+
+(TMS), which involve a shared understanding of who knows what, how to access information held by 199 
+
+others, and a collective agreement on the information itself [Wegner, 1987, Hollingshead, 2001]. This 200 
+
+distributed cognitive system allows individuals to specialize and rely on others, reducing individual 201 
+
+cognitive load and enhancing group problem-solving [Lewis, 2003]. To emulate these benefits 202 
+
+and foster a collective working memory in CoThinker , we implement a structured mechanism for 203 
+
+maintaining and accessing shared knowledge. At each round t, an evolving representation of the 204 
+
+5group’s collective knowledge, denoted μ(t), is updated based on contributions from all agents: 205 
+
+μ(t+1) = UpdateMem( μ(t), {x(t) 
+
+> j
+
+}Mj=1 ) (2) This aims to enhance shared awareness and efficient integration of distributed knowledge. The 206 
+
+specific prompt-based emulation of TMS components is detailed in the Appendix. 207 
+
+4.3 Communication Moderator 208 
+
+Effective inter-agent communication is crucial, yet it incurs transactional costs—the cognitive effort 209 
+
+for message processing and integration—which can impose extraneous cognitive load, a key concern 210 
+
+in Collaborative Cognitive Load Theory [Kirschner et al., 2009, 2018]. To mitigate these costs, 211 
+
+the Communication Moderator structures information exchange by selecting N reference messages 212 
+
+P(t−1)  
+
+> i
+
+for each agent Ai. This process navigates the critical trade-offs between Network Density 213 
+
+vs. Sparsity (high exposure and cost vs. low cost and potential information loss) and Information 214 
+
+Homogeneity vs. Heterogeneity . The latter involves balancing the ease of integrating cognitively 215 
+
+similar inputs (low extraneous load but risk of echo chambers [Runkel, 1956]) against the benefits of 216 
+
+diverse perspectives for distributing intrinsic load [Aral and Van Alstyne, 2011]). 217 
+
+Communication Topology and Algorithm: The selection of references defines a directed commu-218 
+
+nication graph G(t−1) = ( A, E (t−1) ) for each round, where an edge (Au, A v ) ∈ E(t−1) exists if 219 
+
+agent Av receives a message from agent Au generated in round t − 1. Motivated by how small-world 220 
+
+networks efficiently balance local clustering with global connectivity [Watts and Strogatz, 1998], our 221 
+
+moderator employs the following algorithm to construct this graph: 222 
+
+a. Set Fixed In-Degree ( N ): Each agent Ai (node Av ) has an in-degree of N , capping its processing 223 
+
+load and respecting LLM working memory [Zhang et al., 2024b, Gong et al., 2024]. 224 
+
+b. Define Cognitive Distance between Agent Outputs: The cognitive distance d(x(t−1)  
+
+> u
+
+, x (t−1)  
+
+> v
+
+) = 225 
+
+1 − sim( x(t−1)  
+
+> u
+
+, x (t−1)  
+
+> v
+
+) is based on the semantic similarity of previous outputs. 226 
+
+c. Connection Establishment via Probabilistic Rewiring ( β): For each agent Ai, its N incoming 227 
+
+edges (references P(t−1)  
+
+> i
+
+) are established by primarily choosing messages from cognitively 228 
+
+similar peers (low distance), but with a probability β, "rewiring" some connections to randomly 229 
+
+chosen, diverse peers. 230 
+
+Resulting Network Properties and Cognitive Balance: This rewiring process fosters dynamic 231 
+
+communication networks G(t−1) with small-world properties. Such networks exhibit high local 232 
+
+clustering (facilitating efficient refinement of similar ideas, reducing extraneous load locally) and 233 
+
+short average path lengths (enabling rapid global propagation of diverse insights, aiding intrinsic load 234 
+
+distribution). This structure offers a principled balance between focused collaboration and broad 235 
+
+information access, managing cognitive load more effectively than purely random or regular lattice 236 
+
+networks. Further details are in the Appendix. 237 
+
+4.4 Synthesizer 238 
+
+The Synthesizer consolidates information into a final solution after Tmax rounds. It can be an External 239 
+
+Agent (dedicated LLM) or an In-group Agent (team member) [Lu et al., 2024, Shinn et al., 2023]. 240 
+
+This draws from Collaborative Cognitive Load Theory [Kirschner et al., 2018] and Observational 241 
+
+Learning [Bandura and Walters, 1977] (See details in Appendix) 242 
+
+CoThinker Process Flow 243 
+
+The process for task D with M agents over T rounds: 244 
+
+Initialization: 245 
+
+{ϕi}Mi=1 = Orch( D, ψ i), x(0)  
+
+> i
+
+= Agent( D, ϕ i), μ(0) = UpdateMem( {x(0)  
+
+> i
+
+}Mi=1 ) (3) 
+
+Iterative Refinement: For each agent Ai and round t:246 
+
+P(t) 
+
+> i
+
+= SelectRefs  {x(t) 
+
+> k
+
+}k∈A\{ Ai}, x (t) 
+
+> i
+
+, N, β  (4) 
+
+x(t+1)  
+
+> i
+
+= Agent  D, ϕ i, μ (t), x (t) 
+
+> i
+
+, P(t)
+
+> i
+
+ (5) 
+
+μ(t+1) = UpdateMem  μ(t), {x(t+1)  
+
+> i
+
+}Mi=1 
+
+ (6) 6Final Synthesis: 247 
+
+yfinal = Synth  {x(T −1)  
+
+> i
+
+}Mi=1 , μ (T −1) , D  (7) 
+
+## 5 Experiments and Results 248 
+
+This section details our experimental methodology and presents the empirical evaluation of CoThinker .249 
+
+We first outline the experimental setup, including the base LLMs, benchmarks, and baselines. We 250 
+
+then present the main results on LiveBench and CommonGen-Hard, followed by ablation studies and 251 
+
+a discussion of our findings through the lens of Cognitive Load Theory (CLT). 252 
+
+5.1 Experimental Setup 253 
+
+Models and Configuration. We use three Gemini models [Team et al., 2024] with varying capaci-254 
+
+ties: gemini-1.5-flash-8b (lightweight), gemini-1.5-flash (mid-tier), and gemini-1.5-pro 255 
+
+(high-capacity). All models run with the initial generation temperature set to 0.25 to encourage 256 
+
+diverse outputs. In multi-agent settings, subsequent rounds use temperature 0.0 and a frequency 257 
+
+penalty of 0.5 to reduce repetition. By default, multi-agent methods use M =6 agents interacting over 258 
+
+T =3 rounds. For CoThinker , we set N =3 references and exploration parameter β=0 .3.259 
+
+Evaluation Benchmarks. We evaluate on two challenging benchmarks: (1) LiveBench [White 260 
+
+et al., 2025], a recent diverse suite drawing from Big-Bench Hard [Suzgun et al., 2023], AMPS 261 
+
+[Hendrycks et al., 2021], and IFEval [Zhou et al., 2023], covering domains such as mathematics, 262 
+
+coding, language, instruction following, and data analysis; and (2) CommonGen-Hard [Madaan 263 
+
+et al., 2023], a cognitively demanding variant of CommonGen [Lin et al., 2020], which evaluates 264 
+
+multi-sentence generation under high element interactivity. We adopt a 10-dimensional metric for 265 
+
+CommonGen-Hard evaluation [Li et al., 2018]. See full details in the Appendix. 266 
+
+Baselines. We compare CoThinker with both single-agent and multi-agent approaches. (i) Single 267 
+
+Agent (IO) is a standard mode of prompting. (ii) Single Agent (CoT) incorporates Chain-of-Thought 268 
+
+prompting [Wei et al., 2022]. (iii) Single Agent (Self-Refine) uses iterative self-critique and revision 269 
+
+[Madaan et al., 2023]. (iv) Multi-Agent Debate (MAD): employs interactive agent discussion with 270 
+
+consensus formation [Du et al., 2023, Liang et al., 2023]. (v) Diverse MAD (DMAD): introduces 271 
+
+heterogeneous prompting to avoid fixed mental sets [Liu et al., 2025b]. See details in the Appendix. 272 
+
+5.2 Main Results on LiveBench 273 
+
+Table (1) presents the performance of CoThinker and baseline methods across the LiveBench suit 274 
+
+for gemini-1.5-flash-8b , gemini-1.5-flash , and gemini-1.5-pro . Scores are reported as 275 
+
+relative improvements over the respective gemini-8b-flash ’s IO (Standard Prompt) baseline. An 276 
+
+average score is calculated as the arithmetic mean of these relative scores across the main LiveBench 277 
+
+categories (Math, Reasoning, Instruction, Data, Language). 278                                                                                                                                 
+
+> gemini-1.5-flash-8b gemini-1.5-flash gemini-1.5-pro
+> Method Math Data Reas. Lang. Instr. Avg. Math Data Reas. Lang. Instr. Avg. Math Data Reas. Lang. Instr. Avg.
+> IO 1.00 1.00 1.00 1.00 1.00 1.00 1.47 2.03 1.63 1.41 1.10 1.53 2.00 2.92 1.87 1.43 1.03 1.85 CoT 1.04 0.90 1.11 1.09 1.02 1.03 1.47 2.07 1.74 1.30 1.10 1.54 1.86 2.72 1.82 1.54 1.02 1.79 SR 0.92 0.34 0.80 0.89 0.81 0.75 1.45 0.90 1.55 1.06 0.87 1.17 1.93 1.33 1.80 1.22 0.72 1.40 MAD 1.13 0.58 1.21 1.03 0.87 0.97 1.51 1.46 1.92 1.46 1.01 1.47 2.29 3.15 1.78 1.58 0.77 1.92 DMAD 1.13 0.64 0.85 1.02 0.89 0.91 1.49 2.51 1.94 1.44 1.06 1.69 2.31 3.32 1.88 1.74 1.02 2.05
+> CoThinker 1.11 1.32 1.22 0.98 0.80 1.07 1.57 2.44 1.97 1.52 0.99 1.70 2.40 3.39 1.95 1.76 0.95 2.09
+
+Table 1: LiveBench[White et al., 2025] performance with all scores normalized by 
+
+gemini-1.5-flash-8b-io baseline. The abbreviations corresponded to Math, Data Analysis, Reasoning Language, and Instruction Following 
+
+Analysis of LiveBench Results. CoThinker consistently achieves strong average performance across 279 
+
+all base model families, with particularly notable gains in complex categories like Data Analysis, 280 
+
+Reasoning, and often Math, but low performance on Instruction Following. We posit this perfor-281 
+
+mance pattern reflects two distinct task categories: those with high intrinsic cognitive load and 282 
+
+those with low intrinsic load. The former, characterized by tasks like Data Analysis and Reason-283 
+
+ing, demonstrates a clear scaling in baseline performance as model capability increases (e.g., from 284 
+
+7gemini-1.5-flash-8b to gemini-1.5-pro ), indicating that greater raw cognitive power inher-285 
+
+ently improves outcomes. For these high-load tasks, CoThinker excels by effectively decomposing 286 
+
+complex problems and orchestrating collaborative agent contributions, therefore, splitting the intrinsic 287 
+
+load to enhance performance. 288 
+
+Conversely, tasks with low intrinsic load, such as instruction following (Instr.), show minimal or 289 
+
+inconsistent performance gains when moving from weaker to stronger base models; for instance, 290 
+
+the gemini-1.5-pro IO baseline on Instruction Following does not substantially outperform that 291 
+
+of gemini-1.5-flash-8b . This suggests the primary bottleneck is not cognitive load. In such 292 
+
+scenarios, the added communication overhead inherent in CoThinker can outweigh the benefits of 293 
+
+collaboration. For tasks demanding straightforward adherence rather than sophisticated reasoning, this 294 
+
+introduced more extraneous cognitive load, explaining why CoThinker may not show an advantage 295 
+
+or can even underperform on these low-load, execution-focused tasks. 296 
+
+5.3 Main Results on CommonGen-Hard 297 
+
+In CommonGen-Hard, which emphasizes managing high element interactivity, CoThinker demon-298 
+
+strates notable performance improvements. Figure 3 presents these results, with Figure 3a illustrating 299 
+
+its balanced strengths across evaluation dimensions and Figure 3b showing performance trends over 300 
+
+interaction rounds. 301  
+
+> (a) (b)
+
+Figure 3: CoThinker performance on CommonGen-Hard using gemini-1.5-flash . (a) The radar plot illustrates a multi-dimensional performance profile, where CoThinker typically shows well-rounded and superior strengths compared to baselines. (b) The rounds plot depicts the total score trend across interaction rounds ( T ), often indicating an optimal number of rounds before performance plateaus or declines. 
+
+Analysis of CommonGen-Hard Results. 302 
+
+CoThinker demonstrates strong overall performance on CommonGen-Hard (Figure 3), effectively 303 
+
+managing its high element interactivity. The multi-dimensional profile (Figure 3a) typically shows 304 
+
+CoThinker excelling in key areas like coherence and concept integration, albeit with occasional 305 
+
+trade-offs in aspects such as conciseness. This aligns with Cognitive Load Theory (CLT); the 306 
+
+high intrinsic load of the task is managed by CoThinker ’s distributed processing and transactive 307 
+
+memory. Notably, its performance trajectory versus interaction rounds (Figure 3b) highlights a key 308 
+
+advantage: CoThinker achieves sustained constructive refinement over several rounds, effectively 309 
+
+managing cognitive load. This contrasts with the multi-agent baseline where performance degrades 310 
+
+due to rapidly accumulating extraneous load from inefficient coordination or information overload. 311 
+
+CoThinker ’s architecture appears more adept at balancing these loads, delaying diminishing returns. 312 
+
+5.4 Ablation Studies on LiveBench Subsets 313 
+
+Ablation studies were conducted on gemini-1.5-flash-8b using averaged scores from selected 314 
+
+LiveBench subtask categories (Math, Reasoning, Data Analysis, and Instruction). These studies 315 
+
+investigated the impact of CoThinker ’s reference set size ( N ), exploration rate ( β), and the number 316 
+
+of agents ( M ). Unless otherwise specified, default parameters were T = 3 . For N ablation, 317 
+
+8M = 6 , β = 0 .3. For β ablation, N = 2 , M = 6 . For M ablation, N = 3 , β = 0 .3. All scores are 318 
+
+normalized by the I/O baseline performance for each subtask before category averaging. 319 
+
+Figure 4: Ablation studies on CoThinker parameters ( N, β, M ) using gemini-1.5-flash-8b . Per-formance is shown for four LiveBench task categories (Math, Reasoning, Data Analysis, Instruction), normalized by IO baseline performance (1.0). Top row : Effect of Reference Set Size ( N ), varying 
+
+N ∈ { 0, 2, 3, 4, 5} with M = 6 , β = 0 .3, T = 3 . Middle row : Effect of Exploration Rate ( β), varying β ∈ { 0.1, 0.3, 0.6, 1.0} with N = 2 , M = 6 , T = 3 . Bottom row : Effect of Number of Agents ( M ), varying M ∈ { 6, 12 , 18 } with N = 3 , β = 0 .3, T = 3 . Optimal parameter settings are task-dependent, indicating varying sensitivities to peer input diversity and information overload. 
+
+Analysis of Ablation Studies. 320 
+
+Figure 4 demonstrates CoThinker ’s hyperparameter sensitivity, offering insights into cognitive load 321 
+
+management as theorized in Section 3. The reference set size ( N , top row) directly impacts extraneous 322 
+
+cognitive load. An optimal N (e.g., 2-3) balances diverse peer input against cognitive overload, 323 
+
+respecting LLM working memory limits. Too few references limit collaboration; too many overwhelm. 324 
+
+The exploration rate ( β, middle row) governs the trade-off between exploiting similar ideas (low β,325 
+
+lower extraneous load for integration) and exploring diverse ones (high β, high extraneous load). Task-326 
+
+dependent optima, like higher β for Reasoning, reflect this balance, managed by the Communication 327 
+
+Moderator’s cognitive small-world network. The number of agents ( M , bottom row) shows that while 328 
+
+more agents can distribute intrinsic load, increasing M also elevates transactional (extraneous) load 329 
+
+from coordination. Non-monotonic performance indicates that beyond a point, these transactional 330 
+
+costs negate the benefits of parallelism, aligning with CLT’s predictions for group overload. These 331 
+
+findings affirm that CoThinker ’s parameters are crucial for managing cognitive load, enabling the 332 
+
+emergence of an effective "collective mind" by mitigating overload. 333 
+
+## 6 Conclusion 334 
+
+This work addresses the performance limitations of LLMs on complex tasks, particularly when 335 
+
+employing In-Context Learning (ICL), by drawing an analogy to Cognitive Load Theory (CLT). We 336 
+
+posit that observed performance ceilings arise from exceeding an LLM’s effective cognitive load 337 
+
+capacity when processing intricate task details and extensive in-context guidance. We introduced 338 
+
+CoThinker , a multi-agent architecture that operationalizes CLT principles. Through agent specializa-339 
+
+tion, a transactive memory system, and moderated communication, CoThinker mitigates overload 340 
+
+and enhances collaborative problem-solving, especially for tasks that challenge single agents using 341 
+
+ICL. Empirical evaluations on benchmarks like LiveBench and CommonGen-Hard demonstrated 342 
+
+CoThinker ’s superior performance over existing baselines on high-load tasks. Analyses validated 343 
+
+CoThinker ’s effective management of cognitive load, fostering a more robust "collective mind." By 344 
+
+grounding multi-agent LLM design in CLT, this research offers a principled path towards overcoming 345 
+
+performance bottlenecks encountered when applying ICL to demanding problems, contributing to 346 
+
+more powerful collaborative AI systems through the lens of cognitive science. 347 
+
+9References 348 
+
+Rishabh Agarwal, Avi Singh, Lei Zhang, Bernd Bohnet, Luis Rosias, Stephanie Chan, Biao Zhang, 349 
+
+Ankesh Anand, Zaheer Abbas, Azade Nova, et al. Many-shot in-context learning. Advances in 350 
+
+Neural Information Processing Systems , 37:76930–76966, 2024. 351 
+
+Sinan Aral and Marshall Van Alstyne. The diversity-bandwidth trade-off. American journal of 352 
+
+sociology , 117(1):90–171, 2011. 353 
+
+Alan Baddeley, Robert Logie, Sergio Bressi, S Della Sala, and Hans Spinnler. Dementia and working 354 
+
+memory. The Quarterly Journal of Experimental Psychology Section A , 38(4):603–618, 1986a. 355 
+
+Alan Baddeley, Robert Logie, Sergio Bressi, S Della Sala, and Hans Spinnler. Dementia and working 356 
+
+memory. The Quarterly Journal of Experimental Psychology Section A , 38(4):603–618, 1986b. 357 
+
+Albert Bandura and Richard H Walters. Social learning theory , volume 1. Prentice hall Englewood 358 
+
+Cliffs, NJ, 1977. 359 
+
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal, 360 
+
+Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. Language models are 361 
+
+few-shot learners. Advances in neural information processing systems , 33:1877–1901, 2020. 362 
+
+Ronald S Burt. Structural holes and good ideas. American journal of sociology , 110(2):349–399, 363 
+
+2004. 364 
+
+Yupeng Chang, Xu Wang, Jindong Wang, Yuan Wu, Linyi Yang, Kaijie Zhu, Hao Chen, Xiaoyuan 365 
+
+Yi, Cunxiang Wang, Yidong Wang, et al. A survey on evaluation of large language models. ACM 366 
+
+transactions on intelligent systems and technology , 15(3):1–45, 2024. 367 
+
+Yun-Shiuan Chuang, Agam Goyal, Nikunj Harlalka, Siddharth Suresh, Robert Hawkins, Sijia Yang, 368 
+
+Dhavan Shah, Junjie Hu, and Timothy Rogers. Simulating opinion dynamics with networks of 369 
+
+LLM-based agents. In Kevin Duh, Helena Gomez, and Steven Bethard, editors, Findings of the 370 
+
+Association for Computational Linguistics: NAACL 2024 , pages 3326–3346, Mexico City, Mexico, 371 
+
+June 2024a. Association for Computational Linguistics. doi: 10.18653/v1/2024.findings-naacl.211. 372 
+
+URL https://aclanthology.org/2024.findings-naacl.211/ .373 
+
+Yun-Shiuan Chuang, Krirk Nirunwiroj, Zach Studdiford, Agam Goyal, Vincent V. Frigo, Sijia Yang, 374 
+
+Dhavan V. Shah, Junjie Hu, and Timothy T. Rogers. Beyond demographics: Aligning role-playing 375 
+
+LLM-based agents using human belief networks. In Yaser Al-Onaizan, Mohit Bansal, and Yun-376 
+
+Nung Chen, editors, Findings of the Association for Computational Linguistics: EMNLP 2024 ,377 
+
+pages 14010–14026, Miami, Florida, USA, November 2024b. Association for Computational 378 
+
+Linguistics. doi: 10.18653/v1/2024.findings-emnlp.819. URL https://aclanthology.org/ 379 
+
+2024.findings-emnlp.819/ .380 
+
+Nelson Cowan. The magical mystery four: How is working memory capacity limited, and why? 381 
+
+Current directions in psychological science , 19(1):51–57, 2010. 382 
+
+Yilun Du, Shuang Li, Antonio Torralba, Joshua B Tenenbaum, and Igor Mordatch. Improving 383 
+
+factuality and reasoning in language models through multiagent debate. In Forty-first International 384 
+
+Conference on Machine Learning , 2023. 385 
+
+Robin IM Dunbar. The social brain hypothesis. Evolutionary Anthropology: Issues, News, and 386 
+
+Reviews: Issues, News, and Reviews , 6(5):178–190, 1998. 387 
+
+Robin IM Dunbar. The social brain: mind, language, and society in evolutionary perspective. Annual 388 
+
+review of Anthropology , 32(1):163–181, 2003. 389 
+
+Chris Frith and Uta Frith. Theory of mind. Current biology , 15(17):R644–R645, 2005. 390 
+
+Dongyu Gong, Xingchen Wan, and Dingmin Wang. Working memory capacity of chatgpt: An 391 
+
+empirical study. In Proceedings of the AAAI conference on artificial intelligence , volume 38, pages 392 
+
+10048–10056, 2024. 393 
+
+Mark Granovetter. The strength of weak ties: A network theory revisited. Sociological theory , pages 394 
+
+201–233, 1983. 395 
+
+10 Taicheng Guo, Xiuying Chen, Yaqi Wang, Ruidi Chang, Shichao Pei, Nitesh V Chawla, Olaf 396 
+
+Wiest, and Xiangliang Zhang. Large language model based multi-agents: a survey of progress 397 
+
+and challenges. In Proceedings of the Thirty-Third International Joint Conference on Artificial 398 
+
+Intelligence , pages 8048–8057, 2024. 399 
+
+Qianyu He, Jie Zeng, Qianxi He, Jiaqing Liang, and Yanghua Xiao. From complex to simple: 400 
+
+Enhancing multi-constraint complex instruction following ability of large language models. In 401 
+
+Findings of the Association for Computational Linguistics: EMNLP 2024 , pages 10864–10882, 402 
+
+2024. 403 
+
+Dan Hendrycks, Collin Burns, Saurav Kadavath, Akul Arora, Steven Basart, Eric Tang, Dawn Song, 404 
+
+and Jacob Steinhardt. Measuring mathematical problem solving with the math dataset. NeurIPS ,405 
+
+2021. 406 
+
+Andrea B Hollingshead. Cognitive interdependence and convergent expectations in transactive 407 
+
+memory. Journal of personality and social psychology , 81(6):1080, 2001. 408 
+
+Andrea B Hollingshead and David P Brandon. Potential benefits of communication in transactive 409 
+
+memory systems. Human communication research , 29(4):607–615, 2003. 410 
+
+Sirui Hong, Mingchen Zhuge, Jonathan Chen, Xiawu Zheng, Yuheng Cheng, Jinlin Wang, Ceyao 411 
+
+Zhang, Zili Wang, Steven Ka Shing Yau, Zijuan Lin, et al. Metagpt: Meta programming for 412 
+
+a multi-agent collaborative framework. In The Twelfth International Conference on Learning 413 
+
+Representations , 2023. 414 
+
+Jie Huang, Xinyun Chen, Swaroop Mishra, Huaixiu Steven Zheng, Adams Wei Yu, Xinying Song, 415 
+
+and Denny Zhou. Large language models cannot self-correct reasoning yet. CoRR , 2023. 416 
+
+Edwin Hutchins. Cognition in the Wild . MIT press, 1995. 417 
+
+Ryo Kamoi, Yusen Zhang, Nan Zhang, Jiawei Han, and Rui Zhang. When can llms actually correct 418 
+
+their own mistakes? a critical survey of self-correction of llms. Transactions of the Association for 419 
+
+Computational Linguistics , 12:1417–1440, 2024. 420 
+
+Robert Kirk, Ishita Mediratta, Christoforos Nalmpantis, Jelena Luketina, Eric Hambro, Edward 421 
+
+Grefenstette, and Roberta Raileanu. Understanding the effects of rlhf on llm generalisation and 422 
+
+diversity. In NeurIPS 2023 Workshop on Instruction Tuning and Instruction Following , 2023. 423 
+
+Femke Kirschner, Fred Paas, and Paul A Kirschner. A cognitive load approach to collaborative 424 
+
+learning: United brains for complex tasks. Educational psychology review , 21:31–42, 2009. 425 
+
+Paul A Kirschner, John Sweller, Femke Kirschner, and Jimmy Zambrano R. From cognitive load 426 
+
+theory to collaborative cognitive load theory. International journal of computer-supported collabo-427 
+
+rative learning , 13:213–233, 2018. 428 
+
+Andrew Kyle Lampinen, Stephanie CY Chan, Aaditya K Singh, and Murray Shanahan. The broader 429 
+
+spectrum of in-context learning. arXiv preprint arXiv:2412.03782 , 2024. 430 
+
+Harrison Lee, Samrat Phatale, Hassan Mansoor, Kellie Ren Lu, Thomas Mesnard, Johan Ferret, 431 
+
+Colton Bishop, Ethan Hall, Victor Carbune, and Abhinav Rastogi. Rlaif: Scaling reinforcement 432 
+
+learning from human feedback with ai feedback. arXiv preprint arXiv:2309.00267, 2023. 433 
+
+Kyle Lewis. Measuring transactive memory systems in the field: scale development and validation. 434 
+
+Journal of applied psychology , 88(4):587, 2003. 435 
+
+Guohao Li, Hasan Hammoud, Hani Itani, Dmitrii Khizbullin, and Bernard Ghanem. Camel: Com-436 
+
+municative agents for" mind" exploration of large language model society. Advances in Neural 437 
+
+Information Processing Systems , 36:51991–52008, 2023a. 438 
+
+Huao Li, Yu Chong, Simon Stepputtis, Joseph P Campbell, Dana Hughes, Charles Lewis, and Katia 439 
+
+Sycara. Theory of mind for multi-agent collaboration via large language models. In Proceedings 440 
+
+of the 2023 Conference on Empirical Methods in Natural Language Processing , pages 180–192, 441 
+
+2023b. 442 
+
+11 Yuanchun Li, Hao Wen, Weijun Wang, Xiangyu Li, Yizhen Yuan, Guohong Liu, Jiacheng Liu, 443 
+
+Wenxing Xu, Xiang Wang, Yi Sun, et al. Personal llm agents: Insights and survey about the 444 
+
+capability, efficiency and security. arXiv preprint arXiv:2401.05459 , 2024a. 445 
+
+Yunxuan Li, Yibing Du, Jiageng Zhang, Le Hou, Peter Grabowski, Yeqing Li, and Eugene Ie. 446 
+
+Improving multi-agent debate with sparse communication topology. In Findings of the Association 447 
+
+for Computational Linguistics: EMNLP 2024 , pages 7281–7294, 2024b. 448 
+
+Zhongyang Li, Xiao Ding, and Ting Liu. Generating reasonable and diversified story ending using 449 
+
+sequence to sequence model with adversarial training. In Proceedings of the 27th International 450 
+
+Conference on Computational Linguistics , pages 1033–1043, 2018. 451 
+
+Tian Liang, Zhiwei He, Wenxiang Jiao, Xing Wang, Yan Wang, Rui Wang, Yujiu Yang, Shuming Shi, 452 
+
+and Zhaopeng Tu. Encouraging divergent thinking in large language models through multi-agent 453 
+
+debate. arXiv preprint arXiv:2305.19118 , 2023. 454 
+
+Bill Yuchen Lin, Wangchunshu Zhou, Ming Shen, Pei Zhou, Chandra Bhagavatula, Yejin Choi, and 455 
+
+Xiang Ren. Commongen: A constrained text generation challenge for generative commonsense 456 
+
+reasoning. In Findings of the Association for Computational Linguistics: EMNLP 2020 , pages 457 
+
+1823–1840, 2020. 458 
+
+Bill Yuchen Lin, Abhilasha Ravichander, Ximing Lu, Nouha Dziri, Melanie Sclar, Khyathi Chandu, 459 
+
+Chandra Bhagavatula, and Yejin Choi. The unlocking spell on base llms: Rethinking alignment 460 
+
+via in-context learning. In International Conference on Learning Representations , 2024. URL 461 
+
+https://arxiv.org/abs/2312.01552 .462 
+
+Xuan Liu, Jie Zhang, Haoyang Shang, Song Guo, Chengxu Yang, and Quanyan Zhu. Exploring 463 
+
+prosocial irrationality for LLM agents: A social cognition view. In The Thirteenth International 464 
+
+Conference on Learning Representations , 2025a. URL https://openreview.net/forum?id= 465 
+
+u8VOQVzduP .466 
+
+Yexiang Liu, Jie Cao, Zekun Li, Ran He, and Tieniu Tan. Breaking mental set to improve reasoning 467 
+
+through diverse multi-agent debate. In The Thirteenth International Conference on Learning 468 
+
+Representations , 2025b. 469 
+
+Zijun Liu, Yanzhe Zhang, Peng Li, Yang Liu, and Diyi Yang. Dynamic llm-agent network: An 470 
+
+llm-agent collaboration framework with agent team optimization. CoRR , 2023. 471 
+
+Li-Chun Lu, Shou-Jen Chen, Tsung-Min Pai, Chan-Hung Yu, Hung-yi Lee, and Shao-Hua Sun. 472 
+
+Llm discussion: Enhancing the creativity of large language models via discussion framework and 473 
+
+role-play. In First Conference on Language Modeling , 2024. 474 
+
+Aman Madaan, Niket Tandon, Prakhar Gupta, Skyler Hallinan, Luyu Gao, Sarah Wiegreffe, Uri 475 
+
+Alon, Nouha Dziri, Shrimai Prabhumoye, Yiming Yang, et al. Self-refine: Iterative refinement 476 
+
+with self-feedback. Advances in Neural Information Processing Systems , 36:46534–46594, 2023. 477 
+
+Thomas W Malone, Robert Laubacher, and Chrysanthos Dellarocas. The collective intelligence 478 
+
+genome. MIT Sloan management review , 2010. 479 
+
+George A Miller et al. The magical number seven, plus or minus two. Psychological review , 63(2): 480 
+
+81–97, 1956. 481 
+
+Fred Paas, Alexander Renkl, and John Sweller. Cognitive load theory and instructional design: 482 
+
+Recent developments. Educational psychologist , 38(1):1–4, 2003. 483 
+
+Melissa Z Pan, Mert Cemri, Lakshya A Agrawal, Shuyi Yang, Bhavya Chopra, Rishabh Tiwari, 484 
+
+Kurt Keutzer, Aditya Parameswaran, Kannan Ramchandran, Dan Klein, et al. Why do multiagent 485 
+
+systems fail? In ICLR 2025 Workshop on Building Trust in Language Models and Applications ,486 
+
+2025. 487 
+
+Bradley R Postle. Working memory as an emergent property of the mind and brain. Neuroscience ,488 
+
+139(1):23–38, 2006. 489 
+
+12 Chen Qian, Wei Liu, Hongzhang Liu, Nuo Chen, Yufan Dang, Jiahao Li, Cheng Yang, Weize 490 
+
+Chen, Yusheng Su, Xin Cong, Juyuan Xu, Dahai Li, Zhiyuan Liu, and Maosong Sun. Chatdev: 491 
+
+Communicative agents for software development. arXiv preprint arXiv:2307.07924 , 2023. URL 492 
+
+https://arxiv.org/abs/2307.07924 .493 
+
+Chen Qian, Zihao Xie, YiFei Wang, Wei Liu, Kunlun Zhu, Hanchen Xia, Yufan Dang, Zhuoyun Du, 494 
+
+Weize Chen, Cheng Yang, Zhiyuan Liu, and Maosong Sun. Scaling large language model-based 495 
+
+multi-agent collaboration. In The Thirteenth International Conference on Learning Representations ,496 
+
+2025. URL https://openreview.net/forum?id=K3n5jPkrU6 .497 
+
+Megan Roussy, Diego Mendoza-Halliday, and Julio C Martinez-Trujillo. Neural substrates of visual 498 
+
+perception and working memory: two sides of the same coin or two different coins? Frontiers in 499 
+
+neural circuits , 15:764177, 2021. 500 
+
+Philip J Runkel. Cognitive similarity in facilitating communication. Sociometry , 19(3):178–191, 501 
+
+1956. 502 
+
+Tianhao Shen, Renren Jin, Yufei Huang, Chuang Liu, Weilong Dong, Zishan Guo, Xinwei Wu, Yan 503 
+
+Liu, and Deyi Xiong. Large language model alignment: A survey. arXiv preprint arXiv:2309.15025 ,504 
+
+2023. 505 
+
+Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. Reflexion: 506 
+
+Language agents with verbal reinforcement learning. Advances in Neural Information Processing 507 
+
+Systems , 36:8634–8652, 2023. 508 
+
+Garriy Shteynberg, Jacob B Hirsh, Wouter Wolf, John A Bargh, Erica J Boothby, Andrew M Colman, 509 
+
+Gerald Echterhoff, and Maya Rossignac-Milon. Theory of collective mind. Trends in Cognitive 510 
+
+Sciences , 27(11):1019–1031, 2023. 511 
+
+Feifan Song, Bowen Yu, Minghao Li, Haiyang Yu, Fei Huang, Yongbin Li, and Houfeng Wang. 512 
+
+Preference ranking optimization for human alignment. In Proceedings of the AAAI Conference on 513 
+
+Artificial Intelligence , volume 38, pages 18990–18998, 2024. 514 
+
+Robert J Sternberg. Thinking styles . Cambridge university press, 1997. 515 
+
+Mirac Suzgun, Nathan Scales, Nathanael Schärli, Sebastian Gehrmann, Yi Tay, Hyung Won Chung, 516 
+
+Aakanksha Chowdhery, Quoc Le, Ed Chi, Denny Zhou, et al. Challenging big-bench tasks and 517 
+
+whether chain-of-thought can solve them. In Findings of the Association for Computational 518 
+
+Linguistics: ACL 2023 , pages 13003–13051, 2023. 519 
+
+John Sweller. Evolution of human cognitive architecture. Psychology of learning and motivation , 43: 520 
+
+216–266, 2003. 521 
+
+John Sweller. Cognitive load theory. In Psychology of learning and motivation , volume 55, pages 522 
+
+37–76. Elsevier, 2011. 523 
+
+John Sweller, Jeroen JG Van Merrienboer, and Fred GWC Paas. Cognitive architecture and instruc-524 
+
+tional design. Educational psychology review , 10:251–296, 1998. 525 
+
+Gemini Team, Petko Georgiev, Ving Ian Lei, Ryan Burnell, Libin Bai, Anmol Gulati, Garrett 526 
+
+Tanzer, Damien Vincent, Zhufeng Pan, Shibo Wang, et al. Gemini 1.5: Unlocking multimodal 527 
+
+understanding across millions of tokens of context. arXiv preprint arXiv:2403.05530 , 2024. 528 
+
+Michael Tomasello. Why we cooperate . MIT press, 2009. 529 
+
+Michael Tomasello, Malinda Carpenter, Josep Call, Tanya Behne, and Henrike Moll. Understanding 530 
+
+and sharing intentions: The origins of cultural cognition. Behavioral and brain sciences , 28(5): 531 
+
+675–691, 2005. 532 
+
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz 533 
+
+Kaiser, and Illia Polosukhin. Attention is all you need. Advances in neural information processing 534 
+
+systems , 30, 2017. 535 
+
+13 Elena Voita, David Talbot, Fedor Moiseev, Rico Sennrich, and Ivan Titov. Analyzing multi-head 536 
+
+self-attention: Specialized heads do the heavy lifting, the rest can be pruned. arXiv preprint 537 
+
+arXiv:1905.09418 , 2019. 538 
+
+Lei Wang, Chen Ma, Xueyang Feng, Zeyu Zhang, Hao Yang, Jingsen Zhang, Zhiyuan Chen, Jiakai 539 
+
+Tang, Xu Chen, Yankai Lin, et al. A survey on large language model based autonomous agents. 540 
+
+Frontiers of Computer Science , 18(6):186345, 2024a. 541 
+
+Qineng Wang, Zihao Wang, Ying Su, Hanghang Tong, and Yangqiu Song. Rethinking the bounds of 542 
+
+llm reasoning: Are multi-agent discussions the key? In Proceedings of the 62nd Annual Meeting of 543 
+
+the Association for Computational Linguistics (Volume 1: Long Papers) , pages 6106–6131, 2024b. 544 
+
+Duncan J Watts and Steven H Strogatz. Collective dynamics of ‘small-world’networks. nature , 393 545 
+
+(6684):440–442, 1998. 546 
+
+Daniel M Wegner. Transactive memory: A contemporary analysis of the group mind. In Theories of 547 
+
+group behavior , pages 185–208. Springer, 1987. 548 
+
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten Bosma, Fei Xia, Ed Chi, Quoc V Le, Denny 549 
+
+Zhou, et al. Chain-of-thought prompting elicits reasoning in large language models. Advances in 550 
+
+neural information processing systems , 35:24824–24837, 2022. 551 
+
+Colin White, Samuel Dooley, Manley Roberts, Arka Pal, Benjamin Feuer, Siddhartha Jain, Ravid 552 
+
+Shwartz-Ziv, Neel Jain, Khalid Saifullah, Sreemanti Dey, Shubh-Agrawal, Sandeep Singh Sandha, 553 
+
+Siddartha Venkat Naidu, Chinmay Hegde, Yann LeCun, Tom Goldstein, Willie Neiswanger, and 554 
+
+Micah Goldblum. Livebench: A challenging, contamination-free LLM benchmark. In The 555 
+
+Thirteenth International Conference on Learning Representations , 2025. 556 
+
+David Sloan Wilson, John J Timmel, and Ralph R Miller. Cognitive cooperation: when the going 557 
+
+gets tough, think as a group. Human Nature , 15:225–250, 2004. 558 
+
+Anita Williams Woolley, Christopher F Chabris, Alex Pentland, Nada Hashmi, and Thomas W 559 
+
+Malone. Evidence for a collective intelligence factor in the performance of human groups. science ,560 
+
+330(6004):686–688, 2010. 561 
+
+Qingyun Wu, Gagan Bansal, Jieyu Zhang, Yiran Wu, Beibin Li, Erkang Zhu, Li Jiang, Xiaoyun Zhang, 562 
+
+Shaokun Zhang, Jiale Liu, et al. Autogen: Enabling next-gen llm applications via multi-agent 563 
+
+conversation. arXiv preprint arXiv:2308.08155 , 2023. 564 
+
+Chengxing Xie, Canyu Chen, Feiran Jia, Ziyu Ye, Shiyang Lai, Kai Shu, Jindong Gu, Adel Bibi, 565 
+
+Ziniu Hu, David Jurgens, et al. Can large language model agents simulate human trust behavior? 566 
+
+In The Thirty-eighth Annual Conference on Neural Information Processing Systems , 2024. 567 
+
+Haoran Yang, Yumeng Zhang, Jiaqi Xu, Hongyuan Lu, Pheng-Ann Heng, and Wai Lam. Unveiling the 568 
+
+generalization power of fine-tuned large language models. In Proceedings of the 2024 Conference 569 
+
+of the North American Chapter of the Association for Computational Linguistics: Human Language 570 
+
+Technologies (Volume 1: Long Papers) , pages 884–899, 2024. 571 
+
+Shunyu Yao, Dian Yu, Jeffrey Zhao, Izhak Shafran, Tom Griffiths, Yuan Cao, and Karthik Narasimhan. 572 
+
+Tree of thoughts: Deliberate problem solving with large language models. Advances in neural 573 
+
+information processing systems , 36:11809–11822, 2023. 574 
+
+Youngjin Yoo and Prasert Kanawattanachai. Developments of transactive memory systems and 575 
+
+collective mind in virtual teams. The International Journal of Organizational Analysis , 9(2): 576 
+
+187–208, 2001. 577 
+
+Ceyao Zhang, Kaijie Yang, Siyi Hu, Zihao Wang, Guanghe Li, Yihang Sun, Cheng Zhang, Zhaowei 578 
+
+Zhang, Anji Liu, Song-Chun Zhu, et al. Proagent: building proactive cooperative agents with large 579 
+
+language models. In Proceedings of the AAAI Conference on Artificial Intelligence , volume 38, 580 
+
+pages 17591–17599, 2024a. 581 
+
+Chunhui Zhang, Yiren Jian, Zhongyu Ouyang, and Soroush Vosoughi. Working memory identifies 582 
+
+reasoning limits in language models. In Proceedings of the 2024 Conference on Empirical Methods 583 
+
+in Natural Language Processing , pages 16896–16922, 2024b. 584 
+
+14 Jintian Zhang, Xin Xu, Ningyu Zhang, Ruibo Liu, Bryan Hooi, and Shumin Deng. Exploring 585 
+
+collaboration mechanisms for llm agents: A social psychology view. In Proceedings of the 62nd 586 
+
+Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers) , pages 587 
+
+14544–14607, 2024c. 588 
+
+Haiyan Zhao, Hanjie Chen, Fan Yang, Ninghao Liu, Huiqi Deng, Hengyi Cai, Shuaiqiang Wang, 589 
+
+Dawei Yin, and Mengnan Du. Explainability for large language models: A survey. ACM 590 
+
+Transactions on Intelligent Systems and Technology , 15(2):1–38, 2024. 591 
+
+Hao Zhao, Maksym Andriushchenko, Francesco Croce, and Nicolas Flammarion. Is in-context 592 
+
+learning sufficient for instruction following in llms? In International Conference on Learning 593 
+
+Representations , 2025. URL https://arxiv.org/abs/2405.19874 . To appear in ICLR 2025. 594 
+
+Preprint arXiv:2405.19874. 595 
+
+Jeffrey Zhou, Tianjian Lu, Swaroop Mishra, Siddhartha Brahma, Sujoy Basu, Yi Luan, Denny 596 
+
+Zhou, and Le Hou. Instruction-following evaluation for large language models. arXiv preprint 597 
+
+arXiv:2311.07911 , 2023. 598 
+
+Xuhui Zhou*, Hao Zhu*, Leena Mathur, Ruohong Zhang, Zhengyang Qi, Haofei Yu, Louis-Philippe 599 
+
+Morency, Yonatan Bisk, Daniel Fried, Graham Neubig, and Maarten Sap. Sotopia: Interactive 600 
+
+evaluation for social intelligence in language agents. In ICLR , 2024. URL https://openreview. 601 
+
+net/forum?id=mM7VurbA4r .602 
+
+15 Appendix 603 
+
+## A Cognitive Foundations: Elaborations 604 
+
+A.1 Human Working Memory and Attentional Control 605 
+
+Human working memory (WM) is a core cognitive faculty for actively holding and manipulating a 606 
+
+limited amount of information relevant to ongoing tasks, operating through attentional mechanisms 607 
+
+that select and maintain internal representations, often associated with sustained neural activity in 608 
+
+regions like the prefrontal cortex [Baddeley et al., 1986a, Cowan, 2010, Postle, 2006]. Given that 609 
+
+Large Language Models exhibit emergent sparse attention—where specific attention heads specialize 610 
+
+in processing distinct patterns rather than diffusely attending to all input tokens [Vaswani et al., 2017, 611 
+
+Voita et al., 2019]—it prompts an intriguing question: does this selective information processing 612 
+
+within a finite context window imply the existence of a functional analogue to human WM in LLMs? 613 
+
+This emergent selectivity, where not all information in the context is equally weighted or actively 614 
+
+processed at any given step, forms a crucial part of the analogy we draw to understand potential 615 
+
+capacity limitations and cognitive load phenomena in these models, particularly when handling tasks 616 
+
+with high element interactivity through In-Context Learning. 617 
+
+A.2 Using Cognitive Load Theory to Explain Phenomena in LLM Performance 618 
+
+Cognitive Load Theory (CLT) offers a valuable lens to interpret puzzling LLM performance issues, 619 
+
+positing that LLMs, like humans, have finite processing capacity. Exceeding this capacity leads to 620 
+
+performance degradation. This section concisely analyzes several such cases through CLT. 621 
+
+1. Degradation of Thought in Self-Reflection: Liang et al. [2023] found LLMs may rigidly stick 622 
+
+to incorrect initial answers during self-reflection, failing to correct meaningfully. 623 
+
+• CLT Explanation: Self-reflection (holding problem, solution, critique, and revision process 624 
+
+concurrently) is highly demanding. If initial analysis already consumes most capacity, the 625 
+
+LLM may lack resources for genuine re-evaluation, defaulting to superficial agreement due to 626 
+
+cognitive overload. 627 
+
+2. Performance Degradation with More In-Context Examples (Many-Shot ICL): Agarwal 628 
+
+et al. [2024] noted LLM performance can degrade with more in-context examples, especially on 629 
+
+complex tasks (e.g., MATH). 630 
+
+• CLT Explanation: While few examples scaffold, excessive examples increase total cognitive load 631 
+
+beyond capacity. The LLM struggles to synthesize all information, akin to CLT’s "redundancy 632 
+
+effect" where too much information, even relevant, overwhelms working memory. 633 
+
+3. Performance Degradation Despite Increasing "Confidence" (NLL Trends): Agarwal et al. 634 
+
+[2024] also found that performance degradation in many-shot ICL wasn’t always explained by 635 
+
+NLL (confidence) trends; NLL could improve as performance worsened. 636 
+
+• CLT Explanation: Under cognitive overload, LLMs (like humans) may resort to heuristics. 637 
+
+Overwhelmed by many examples, an LLM might latch onto superficial patterns, yielding outputs 638 
+
+that are stylistically plausible (good NLL) but incorrect. This "overconfidence" in a flawed 639 
+
+heuristic stems from an inability to allocate resources for deeper reasoning. 640 
+
+4. Reduced Diversity after RLHF for Instruction Following: Kirk et al. [2023] and others 641 
+
+observed that RLHF, while improving instruction following, can reduce output diversity. 642 
+
+• CLT Explanation: Intense RLHF training on narrow preferences imposes a high "germane load" 643 
+
+for conformance. To manage this, and the extraneous load of deviating from rewarded paths, 644 
+
+the model may operate in a constrained output space, reducing the cognitive effort of exploring 645 
+
+diverse (potentially unrewarded) responses. The "cost" of diversity becomes too high. 646 
+
+These instances suggest CLT is a powerful analogical framework for understanding LLM limitations 647 
+
+under demanding informational or processing conditions. 648 
+
+16 B CoThinker Architecture: Implementation and Prompting 649 
+
+B.1 Prompt Architecture for Agent Parallel Thinking 650 
+
+The Agent Parallel Thinking module in CoThinker aims to foster a beneficial division of cognitive 651 
+
+labor by assigning diverse thinking styles to agents. This approach is grounded in theories of thinking 652 
+
+styles, such as Sternberg’s Theory of Mental Self-Government [Sternberg, 1997], which posits 653 
+
+that styles are preferred ways of using one’s abilities, not abilities themselves. This distinction is 654 
+
+crucial: CoThinker leverages thinking styles as preferential orientations for LLM agents, assuming 655 
+
+the base model possesses a broad set of underlying capabilities. The assigned style guides how these 656 
+
+capabilities are applied to the task, rather than attempting to imbue a new, fixed skill or enforce a rigid 657 
+
+behavioral script as a predefined "role" might. This aligns with findings that In-Context Learning 658 
+
+often modulates an LLM’s thinking style rather than altering its core knowledge [Lin et al., 2024, 659 
+
+Zhao et al., 2025]. 660 
+
+Adherence to a flexible thinking style is hypothesized to impose less extraneous cognitive load on an 661 
+
+LLM agent compared to maintaining a complex, predefined role persona. This allows more of the 662 
+
+agent’s cognitive resources to be dedicated to the primary task. Furthermore, while core thinking 663 
+
+styles are often seen as relatively stable, they are also understood to be somewhat malleable and can 664 
+
+be adapted to specific task demands [Sternberg, 1997]. CoThinker operationalizes this adaptability 665 
+
+through a two-stage prompting strategy: 666 
+
+1. Style Orchestration ( Orch function): The Thinking Style Orchestrator (itself an LLM) is 667 
+
+provided with the overall task description D and a Thinking Style Inventory. This inventory consists 668 
+
+of base thinking styles derived from Sternberg’s theory, encompassing dimensions such as Functions 669 
+
+(Legislative, Executive, Judicial), Forms (e.g., Monarchic, Hierarchic), Levels (Global, Local), Scope 670 
+
+(Internal, External), and Leanings (Liberal, Conservative). The Orchestrator’s objective is to generate 671 
+
+a diverse yet task-relevant set of M specific thinking styles {ϕ1, . . . , ϕ M }, one for each agent Ai.672 
+
+For each agent, the Orchestrator takes one or a combination of Sternberg’s dimensions as a base style 673 
+
+ψi and adapts it to the given task D. The Orchestrator is guided to ensure the resulting set of styles 674 
+
+{ϕi} promotes varied perspectives on the problem, reflecting the value of different styles for different 675 
+
+task facets. 676 
+
+An example prompt for the Orchestrator, given a base combination from Sternberg (e.g., ψi =677 
+
+"Legislative-Global style"): 678 
+
+Given the primary task: "{Task D}" 679 
+
+And the base thinking style profile (from Sternberg’s Theory of 680 
+
+Mental Self-Government): "{Base Style profile psi_i, e.g., 681 
+
+Legislative function with a Global level preference}" 682 683 
+
+Generate a concise (1-2 sentences) task-specific adaptation 684 
+
+of this thinking style profile that would be most beneficial 685 
+
+for an agent contributing to this primary task. The agent 686 
+
+should focus its reasoning and output according to this 687 
+
+adapted style. 688 
+
+Task-Specific Style for an agent: 689 
+
+This process results in M distinct, task-contextualized thinking styles {ϕ1, . . . , ϕ M }. By dynamically 690 
+
+adapting general styles to the specific task, CoThinker aims to harness the benefits of stylistic 691 
+
+diversity while mitigating risks such as pigeonholing or oversimplification associated with static style 692 
+
+assignments. 693 
+
+2. Agent Instruction ( Agent function - style incorporation): Each agent Ai then receives its 694 
+
+specific thinking style ϕi as part of its instruction prompt, guiding its approach throughout the 695 
+
+problem-solving process. An excerpt of an agent’s prompt showing style incorporation: 696 
+
+You are Agent {num}. Your assigned thinking style for this 697 
+
+task is: "{Style phi_i generated by Orchestrator}". 698 
+
+The overall task is: "{Task D}". 699 
+
+[Other contextual information, e.g., from TMS mu^(t), 700 
+
+references P_i^(t-1), own previous thought x_i^(t-1)] 701 
+
+17 702 
+
+Keeping your assigned thinking style in mind, please provide 703 
+
+your thoughts/solution: 704 
+
+This method encourages agents to approach the problem from varied cognitive angles, promoting 705 
+
+comprehensive exploration of the solution space and distributing the intrinsic cognitive load of the 706 
+
+task, without the cognitive burden of strict role-playing. 707 
+
+B.2 Prompt Architecture for Transactive Memory System (TMS) Emulation 708 
+
+As introduced in Section 4.2, CoThinker incorporates a mechanism to emulate a human Transactive 709 
+
+Memory System (TMS). A TMS is a collective cognitive resource developed by groups, encompass-710 
+
+ing a shared understanding of who knows what (metamemory or expertise directory), how to access 711 
+
+and integrate this distributed knowledge, and a level of trust in the information provided by different 712 
+
+members [Wegner, 1987, Hollingshead, 2001, Lewis, 2003]. Effective TMS functioning involves 713 
+
+processes of knowledge encoding (assigning information to members or recognizing expertise), stor-714 
+
+age (individuals retaining specialized knowledge), and retrieval (accessing and using the distributed 715 
+
+knowledge), facilitated by member specialization , perceived credibility , and inter-agent coordination 716 
+
+[Yoo and Kanawattanachai, 2001]. This systematic division and integration of cognitive labor allows 717 
+
+groups to handle more complex information and solve problems more effectively than individuals or 718 
+
+less coordinated groups. 719 
+
+CoThinker’s emulation of TMS centers on the generation and presentation of the collective memory 720 
+
+state, μ(t), at each round t. This is not merely an aggregation of past messages but a structured 721 
+
+synthesis designed to reflect key TMS components. Specifically, an auxiliary LLM agent (the 722 
+
+"TMS Manager") is tasked with populating a predefined "TMS Template" based on all agent outputs 723 
+
+{x(t−1)  
+
+> j
+
+}Mj=1 from the previous round and the existing memory state μ(t−1) , to produce the updated 724 
+
+μ(t). This template explicitly guides the TMS Manager to synthesize information reflecting: 725 
+
+1. Expertise Directory ("Who Knows What"): The template prompts the TMS Manager to list 726 
+
+the key contributions from each agent Aj in the previous round, often implicitly linking these 727 
+
+contributions back to their assigned thinking style ϕj or emergent problem-solving role. For 728 
+
+example, μ(t) might state: "Agent A (Analytical Thinker) identified three inconsistencies in the 729 
+
+data, while Agent B (Creative Ideator) proposed two novel solutions based on X." This helps all 730 
+
+agents maintain an updated awareness of which peer is focusing on, or has provided significant 731 
+
+input regarding, specific facets of the task. This corresponds to the encoding of expertise and 732 
+
+facilitates targeted retrieval cues. 733 
+
+2. Shared Knowledge Store (Consensus and Artifacts): The template requires the TMS Manager 734 
+
+to identify and articulate points of emerging consensus, established facts, or partial solutions that 735 
+
+the group has collectively built. For instance: "Consensus: The primary bottleneck is resource 736 
+
+allocation. Established: The budget cannot exceed Y." This component of μ(t) serves as the 737 
+
+repository of stored , validated collective knowledge, reducing the need for agents to re-derive 738 
+
+information and providing a foundation for subsequent reasoning. 739 
+
+3. Differential Insights and Unresolved Issues (Focus for Coordination): A crucial part of the 740 
+
+TMS template prompts the TMS Manager to highlight discrepancies between agent outputs, 741 
+
+unresolved questions, conflicting perspectives, or aspects of the problem that remain unaddressed. 742 
+
+Example: "Divergence: Agent C suggests strategy Alpha, while Agent D advocates for Beta. 743 
+
+Unresolved: The feasibility of implementing X within the given timeframe." This explicitly flags 744 
+
+areas requiring further discussion, debate, or focused problem-solving in the next round, thereby 745 
+
+guiding inter-agent coordination and ensuring that cognitive effort is directed towards the most 746 
+
+critical, unresolved aspects of the task assigned to most relavent agents. 747 
+
+The structure of μ(t), as generated by this templated process, is then presented to each agent Ai at the 748 
+
+beginning of round t as part of its input prompt. An excerpt illustrating this presentation is: 749 
+
+[Agent’s assigned thinking style: {Style_phi_i}] 750 
+
+[Overall Task: {Task_D}] 751 752 
+
+Collective Summary from Previous Round (reflecting shared understanding mu^(t)): 753 
+
+"{Text of mu^(t) generated by the TMS Manager using the TMS Template}" 754 
+
+18 755 
+
+Your Previous Output (x_i^(t-1)): 756 
+
+"{Text of x_i^(t-1)}" 757 758 
+
+Reference Outputs from Peers (P_i^(t-1)): 759 
+
+Reference 1 (from Agent A_k): "{Text of x_k^(t-1)}" 760 
+
+Reference 2 (from Agent A_l): "{Text of x_l^(t-1)}" 761 
+
+... 762 763 
+
+Based on all the above, and keeping your thinking style in mind, 764 
+
+provide your refined thoughts/contribution for the current round: 765 
+
+This deliberate structuring of μ(t) to reflect an expertise directory, a shared knowledge store, and a 766 
+
+pointer to unresolved issues distinguishes CoThinker’s approach from simple multi-agent cooperation 767 
+
+or discussion. While basic cooperation might involve information sharing, it often lacks the systematic 768 
+
+assignment of knowledge domains, explicit tracking of expertise, and focused mechanisms for 769 
+
+integrating specialized insights that a TMS provides. CoThinker’s TMS emulation aims to create a 770 
+
+more efficient and powerful "group mind" by embedding these principles directly into the information 771 
+
+environment of the agents, thereby reducing redundant effort and enhancing the quality of collective 772 
+
+problem-solving. 773 
+
+B.3 Communication Moderator: Cultivating an Efficient Network via Strong and Weak Ties 774 
+
+The Communication Moderator in CoThinker (Section 4.3) strategically structures inter-agent com-775 
+
+munication by implicitly leveraging principles from social and complex network theories. This design 776 
+
+fosters a network optimized for managing cognitive load and enhancing collective intelligence. 777 
+
+Local Cohesion via Strong Cognitive Ties and High Clustering The primary reference selection 778 
+
+mechanism (with probability 1 − β) connects agent Ai to peers whose prior outputs x(t−1)  
+
+> k
+
+are 779 
+
+most cognitively similar to Ai’s own x(t−1)  
+
+> i
+
+. This promotes the formation of local clusters where 780 
+
+agents process highly related information. From a social network perspective, these connections 781 
+
+are analogous to strong ties [Granovetter, 1983], fostering cohesive subgroups. In network science, 782 
+
+this behavior inherently leads to a high local clustering coefficient , indicating dense intra-group 783 
+
+connectivity. 784 
+
+• Rationale: Such local clustering facilitates focused refinement of shared ideas and reduces the 785 
+
+extraneous cognitive load associated with integrating highly similar information. 786 
+
+Global Integration via Weak Cognitive Ties and Small-World Properties Exclusive reliance 787 
+
+on strong ties (i.e., β = 0 ) could lead to network fragmentation, where clusters become isolated 788 
+
+"echo chambers." This corresponds to a lack of "bridging capital" across structural holes in social 789 
+
+network theory [Burt, 2004], and a long average path length in network science, hindering the global 790 
+
+distribution of diverse insights and the effective management of overall intrinsic cognitive load. 791 
+
+The probabilistic "rewiring" mechanism (with probability β) counteracts this by compelling agents to 792 
+
+also reference randomly chosen peers, irrespective of immediate cognitive similarity. 793 
+
+• Mechanism and Analogy: These random connections function as weak ties [Granovetter, 1983], 794 
+
+which are crucial for bridging disparate network segments and transmitting novel information. 795 
+
+• Network Outcome: Introducing such weak ties into a highly clustered network is a hallmark of 796 
+
+small-world networks [Watts and Strogatz, 1998]. These networks advantageously combine high 797 
+
+local clustering with short global average path lengths. 798 
+
+• Rationale: In CoThinker , these β-driven connections ensure efficient propagation of diverse 799 
+
+perspectives across cognitive clusters. This shortens the information path length, promotes the 800 
+
+synthesis of varied knowledge, helps distribute the intrinsic cognitive load of the overall task, and 801 
+
+prevents premature convergence. 802 
+
+In essence, the Communication Moderator dynamically cultivates a network with small-world 803 
+
+characteristics. By balancing the formation of strong-tie local clusters for specialized processing with 804 
+
+weak-tie bridges for global integration, it supports both deep, focused collaboration and the broad 805 
+
+synthesis of diverse insights, crucial for effective collective problem-solving. 806 
+
+19 B.4 Synthesizer Module: Consolidation and Cognitive Grounding 807 
+
+The Synthesizer module (Section 4.4) consolidates outputs from all agents ( {x(T −1)  
+
+> i
+
+}Mi=1 ) and the 808 
+
+final Transactive Memory System state ( μ(T −1) ) into a single solution for the task D. The design 809 
+
+choice for the Synthesizer can vary, with different cognitive implications: 810 
+
+1. External Agent Synthesizer (Observational Learning): This involves a dedicated LLM instance, 811 
+
+distinct from the collaborating agents, to produce the final output. This agent receives all final 812 
+
+individual perspectives and the collective memory summary. 813 
+
+• Cognitive Analogy: This setup mirrors Observational Learning [Bandura and Walters, 1977]. 814 
+
+The External Synthesizer observes the diverse problem-solving behaviors and refined outputs 815 
+
+of the specialist agents. By analyzing these varied "models" of thought and their collective 816 
+
+synthesis ( μ(T −1) ), it can construct a comprehensive solution, potentially integrating insights in 817 
+
+a novel way without having been part of the iterative load distribution. 818 
+
+2. In-group Agent Synthesizer (Collaborative Leading/Shared Regulation): One of the existing 819 
+
+collaborating agents (e.g., an agent identified as a leader or one with a consistently high-quality 820 
+
+output, or a randomly chosen one) can be tasked with synthesizing the final solution. This agent 821 
+
+uses its own understanding, the collective memory μ(T −1) , and the final outputs of its peers. align 822 
+
+• Cognitive Analogy: This aligns with principles from Collaborative Cognitive Load Theory 823 
+
+(CCLT) [Kirschner et al., 2018], specifically aspects of shared regulation and distributed 824 
+
+leadership. The synthesizing agent, having participated in the collaborative process, leverages 825 
+
+its deep contextual understanding and the established collective working memory ( μ(T −1) )826 
+
+to guide the final integration. Its synthesis is an act of "collaborative leading" by taking 827 
+
+responsibility for the final product based on the group’s efforts. 828 
+
+Sample Prompt for an External Agent Synthesizer ( Synth ): 829 
+
+Original Task: "[Task Description D] "830 
+
+After collaborative thinking, the final individual 831 
+
+perspectives from M= [Number of Agents] agents are: 832 
+
+Agent 1: "[x(T −1) 1 ] "833 
+
+... 834 
+
+Agent M: " [x(T −1)  
+
+> M
+
+] "835 
+
+The final collective understanding synthesized during their 836 
+
+collaboration is: 837 
+
+"[μ(T −1) ] "838 
+
+Based on all this information, please generate a 839 
+
+comprehensive, high-quality, and coherent final solution to 840 
+
+the original task. 841 
+
+This prompt structure ensures the Synthesizer has all necessary context to perform its role effectively. 842 
+
+## C Experimental Setup: In-Depth Information 843 
+
+C.1 Detailed Benchmark Descriptions 844 
+
+LiveBench [White et al., 2025] LiveBench serves as a dynamic and robust benchmark for eval-845 
+
+uating LLM capabilities, characterized by its frequent updates (monthly) to minimize test data 846 
+
+contamination and its focus on objectively scorable, challenging tasks. It draws from established hard 847 
+
+benchmarks like Big-Bench Hard and AMPS, as well as introducing novel problems. The tasks span 848 
+
+a broad range of domains, including: 849 
+
+• Mathematics: Encompassing competitive programming problems, olympiad-level mathe-850 
+
+matics, and algebraic simplification. 851 
+
+• Reasoning: Covering logical deduction and spatial reasoning. 852 
+
+• Language: Focusing on nuanced understanding and manipulation. 853 
+
+• Instruction Following: Testing adherence to complex instructions 854 
+
+• Data Analysis: Requiring structured data manipulation 855 
+
+20 CommonGen-Hard [Madaan et al., 2023] CommonGen-Hard, an extension of the CommonGen 856 
+
+dataset [Lin et al., 2020], is specifically designed to impose high cognitive load by increasing element 857 
+
+interactivity. The core task is to generate a coherent, multi-sentence paragraph incorporating a 858 
+
+small set of 3-5 target concepts. The difficulty is amplified by including a large number (approx-859 
+
+imately 30) of irrelevant distractor concepts from which the model must select and use only the 860 
+
+targets, while maintaining narrative coherence and commonsense plausibility. Given its generative 861 
+
+nature, evaluation employs an LLM-based evaluator ( gemini-1.5-pro ) guided by a detailed rubric 862 
+
+assessing ten dimensions. These dimensions are: (1) Relevance to Query (appropriateness and 863 
+
+focus, highest weight); (2) Conciseness (brevity without losing essential content); (3) Clarity & 864 
+
+Understandability (ease of comprehension); (4) Readability & Fluency (natural language flow, 865 
+
+grammatical correctness); (5) Comprehensiveness & Completeness (addressing all prompt aspects); 866 
+
+(6) Demonstrated Knowledge (accurate commonsense or domain knowledge); (7) Logic & Coher-867 
+
+ence (internal consistency and logical structure); (8) Originality & Creativity (novelty in ideas or 868 
+
+framing); (9) Engagement & Interest (compelling nature of the response); (10) Insightfulness & 869 
+
+Depth (analytical richness beyond surface content, lowest weight). Each dimension is scored (e.g., 870 
+
+1-10), and an aggregated total score is used. This setup directly tests the model’s ability to manage 871 
+
+high element interactivity and filter relevant information, key aspects related to cognitive load. 872 
+
+C.2 Detailed Baseline Method Descriptions 873 
+
+The baseline methods used for comparison are implemented as follows: 874 
+
+• Single Agent (Standard Prompt - IO): The base LLM is given the task instruction directly, 875 
+
+without any specialized prompting techniques, serving as a fundamental measure of its raw 876 
+
+capability. 877 
+
+• Single Agent (CoT): Chain-of-Thought prompting [Wei et al., 2022] is employed, where the 878 
+
+LLM is prompted to "think step by step" or provided with few-shot examples demonstrating 879 
+
+a reasoning process before arriving at the final answer. 880 
+
+• Single Agent (Self-Refine - SR) [Madaan et al., 2023]: This method involves an iterative 881 
+
+process ( T = 3 iterations). The LLM first generates an initial solution. Subsequently, it is 882 
+
+prompted to critique its previous output and then to generate an improved version based on 883 
+
+that critique. 884 
+
+• Multi-Agent Debate (MAD) [Liang et al., 2023, Du et al., 2023]: Multiple LLM agents 885 
+
+(M = 6 ) initially generate individual solutions. In subsequent iterative rounds ( T = 3 total 886 
+
+generations), each agent receives the solutions from all other agents from the previous round 887 
+
+and is prompted to consider these peer solutions, critique them if necessary, and refine its 888 
+
+own solution. The final answer is typically derived from the best-performing agent’s output 889 
+
+after the debate rounds. 890 
+
+• Diverse Multi-Agent Debate (DMAD) [Liu et al., 2025b]: DMAD extends MAD by 891 
+
+promoting diverse reasoning methods from the outset. Each agent is assigned a distinct 892 
+
+prompting strategy (e.g., standard IO, Chain-of-Thought, Step-Back Prompting) to generate 893 
+
+its initial solution, aiming to break "fixed mental sets." These diverse initial solutions are 894 
+
+then shared and refined through iterative debate rounds, similar to MAD. 895 
+
+C.3 General Implementation Details 896 
+
+Experiments were conducted using Python and Google’s Generative AI SDK. LLM API Parameters: 897 
+
+For all baseline methods (IO, CoT, SR) and the initial generation round ( t = 0 ) of multi-agent methods 898 
+
+(MAD, DMAD, CoThinker ), the API temperature was set to "0.25" to encourage some diversity. For 899 
+
+subsequent iterative rounds ( t > 0) in CoThinker , MAD, and DMAD, the temperature was set to 900 
+
+"0.0" and "frequency_penalty" to "0.5" to promote focused refinement and reduce repetition. Other 901 
+
+API parameters (e.g., "top_p", "top_k") were left at their default values. Maximum output tokens 902 
+
+were set appropriately for each task. 903 
+
+CoThinker Default Configuration: Unless specified otherwise in ablation studies, CoThinker used 904 
+
+M = 6 agents, Tmax = 3 interaction rounds (initial generation + 2 refinement rounds), a reference 905 
+
+set size N = 3 (each agent receives messages from 3 peers), and an exploration rate β = 0 .3.906 
+
+21 D Detailed Experimental Results and Ablation Studies 907 
+
+This appendix provides supplementary experimental results, including comprehensive raw scores 908 
+
+for all subtasks across various model families and prompting methodologies. Furthermore, it details 909 
+
+ablation studies conducted to investigate the sensitivity of model performance to key hyperparameters. 910 
+
+D.1 Raw Subtask Performance Scores 911 
+
+The subsequent tables (Table 2 through Table 4) itemize the raw performance scores achieved on each 912 
+
+subtask. Scores are reported to two decimal places. A hyphen (-) signifies missing or non-numeric 913 
+
+data. Each table is dedicated to a distinct base model family. 914 
+
+Table 2: Raw scores for each subtask for gemini-1.5-flash-8b models across different prompting methods. 
+
+Subtask IO CoT SR MAD DMAD CoThinker 
+
+Connections 13.50 18.17 17.33 17.67 17.00 19.33 CTA 54.00 50.00 30.00 48.00 52.00 54.00 Math Comp. 26.09 23.91 21.74 28.26 30.43 26.09 Olympiad 23.82 27.64 23.84 28.25 25.87 29.00 Paraphrase 74.27 72.82 38.42 65.22 66.55 46.02 Simplify 70.33 70.70 62.78 63.88 61.08 70.25 Spatial 34.00 28.00 18.00 34.00 22.00 28.00 Story Gen. 73.08 68.75 62.92 66.75 67.00 65.08 Summarize 69.35 71.27 50.43 58.32 62.62 42.32 Table Join 5.44 4.10 0.00 2.00 1.78 12.02 Table Reformat 80.00 82.00 36.00 38.00 50.00 60.00 Zebra Puzzle 16.00 22.25 17.25 22.75 17.00 25.75 Table 3: Raw scores for each subtask for gemini-1.5-flash models across different prompting methods. 
+
+Subtask IO CoT SR MAD DMAD CoThinker 
+
+Connections 28.17 24.00 22.83 33.17 28.50 33.67 CTA 56.00 56.00 36.00 56.00 54.00 52.00 Math Comp. 41.30 39.13 39.13 41.30 41.30 41.30 Olympiad 32.20 34.37 33.35 34.41 33.27 36.89 Paraphrase 80.70 78.17 52.22 80.58 82.22 72.35 Simplify 75.83 77.68 67.57 72.07 74.40 69.00 Spatial 50.00 50.00 36.00 58.00 52.00 52.00 Story Gen. 76.25 77.50 57.92 60.75 80.75 79.50 Summarize 77.55 75.92 54.05 68.47 74.33 68.97 Table Join 21.64 22.78 8.12 15.00 32.60 31.20 Table Reformat 86.00 80.00 44.00 48.00 44.00 50.00 Zebra Puzzle 28.50 32.00 32.50 34.25 37.50 38.50 
+
+D.2 Subtask Descriptions 915 
+
+The evaluation benchmark comprises a diverse array of subtasks, each designed to assess specific 916 
+
+reasoning and generation capabilities of the models. Concise descriptions for each subtask category 917 
+
+are provided below: 918 
+
+Connections : Assesses the model’s aptitude for identifying and comprehending relationships (e.g., 919 
+
+logical, causal, shared attributes) between disparate textual elements or conceptual ideas. 920 
+
+CTA (Call to Action) : Evaluates the model’s effectiveness in generating or interpreting persuasive or 921 
+
+directive language aimed at eliciting a targeted response or action. 922 
+
+22 Table 4: Raw scores for each subtask for gemini-1.5-pro models across different prompting methods. 
+
+Subtask IO CoT SR MAD DMAD CoThinker 
+
+Connections 31.17 36.50 35.17 44.67 44.50 46.00 CTA 56.00 58.00 36.00 56.00 60.00 58.00 Math Comp. 47.83 36.96 45.65 54.35 56.52 56.52 Olympiad 51.79 54.77 50.16 59.63 58.46 62.72 Paraphrase 75.37 73.78 34.18 48.50 73.88 65.17 Simplify 74.77 75.72 54.48 55.43 72.88 66.37 Spatial 44.00 48.00 36.00 34.00 38.00 38.00 Story Gen. 69.72 68.05 42.55 56.85 67.30 73.05 Summarize 68.92 67.17 46.23 52.83 69.05 65.72 Table Join 35.98 32.56 16.16 43.82 42.32 44.18 Table Reformat 88.00 88.00 28.00 28.00 86.00 78.00 Zebra Puzzle 39.00 35.75 40.75 41.00 42.25 44.50 
+
+Math Comp. (Mathematical Computation) : Measures the model’s proficiency in executing mathe-923 
+
+matical calculations and resolving problems necessitating computational procedures. 924 
+
+Olympiad : Challenges the model with highly complex mathematical problems, characteristic of 925 
+
+mathematics Olympiads, which demand profound reasoning and multi-step solution strategies. 926 
+
+Paraphrase : Tests the model’s ability to accurately rephrase given text while preserving its original 927 
+
+semantic content, thereby demonstrating linguistic understanding and versatility. 928 
+
+Simplify : Assesses the model’s capacity to transform complex textual information into a more readily 929 
+
+understandable format, typically by employing simpler vocabulary and sentence structures without 930 
+
+loss of core meaning. 931 
+
+Spatial : Evaluates the model’s spatial reasoning faculties, including its ability to understand and 932 
+
+reason about objects in two or three-dimensional space, their interrelations, positions, and transfor-933 
+
+mations. 934 
+
+Story Generation : Measures the model’s creative ability to produce coherent, engaging, and contex-935 
+
+tually relevant narratives derived from specified prompts or constraints. 936 
+
+Summarize : Assesses the model’s proficiency in condensing extended passages of text into succinct 937 
+
+summaries that encapsulate the principal points and essential information. 938 
+
+Table Join : Evaluates the model’s comprehension of relational data structures by requiring it to 939 
+
+identify appropriate mechanisms for combining or linking multiple data tables based on common 940 
+
+columns or keys. 941 
+
+Table Reformat : Tests the model’s capability to manipulate tabular data by converting a table from 942 
+
+one structural or data representation format to another, adhering to provided instructions. 943 
+
+Zebra Puzzle : Assesses the model’s deductive reasoning and constraint satisfaction abilities through 944 
+
+logic puzzles (such as Einstein’s Puzzle) that necessitate deriving a solution from a given set of clues. 945 
+
+D.3 Ablation Study: Impact of Reference Set Size (N) 946 
+
+This study investigates the influence of varying the reference set size (hyperparameter N) on model 947 
+
+performance across selected subtasks. N dictates the number of prior examples or "thoughts" 948 
+
+considered by the model during generation. Values of N from 0 (representing a baseline, e.g., 949 
+
+standard CoT where N/A) to 5 were evaluated using the gemini-1.5-flash-8b model. The results 950 
+
+are illustrated in Figure 5. 951 
+
+Analysis of Figure 5: 952 
+
+• The general trend in performance on these reasoning-intensive (’olympiad’, ’spatial’, ’ze-953 
+
+bra_puzzle’) and language-based (’connections’) tasks is examined to determine if it im-954 
+
+proves, plateaus, or reveals an optimal N value. 955 
+
+• Performance at N=0 (baseline) is contrasted with N>0 configurations to ascertain whether 956 
+
+the introduction of a reference set confers a tangible advantage for these specific tasks. 957 
+
+23 Figure 5: Effect of Reference Set Size (N) on performance for selected subtasks (’connections’, ’olympiad’, ’zebra_puzzle’, ’spatial’) using the gemini-1.5-flash-8b model. Subtasks are color-coded by their primary category. • The differential sensitivity of subtasks to variations in N is analyzed, particularly for compu-958 
+
+tationally demanding tasks like ’olympiad’ (Math) or ’zebra_puzzle’ (Reasoning) relative to 959 
+
+’connections’ or ’spatial’. 960 
+
+• The investigation seeks to identify if a particular N value (e.g., N=2 or N=3) consistently 961 
+
+yields superior scores or an advantageous performance-cost balance across these subtasks. 962 
+
+• Evidence for diminishing returns is sought, where increasing N beyond a certain point might 963 
+
+lead to marginal gains or even performance degradation, potentially due to the introduction 964 
+
+of noise or distracting elements from an overly large reference set. 965 
+
+Contextual Note: Reasoning and mathematical tasks are often hypothesized to benefit from a moder-966 
+
+ately sized, diverse reference set. While N=0 or N=1 might provide insufficient context, excessively 967 
+
+large N values could introduce irrelevant information. 968 
+
+D.4 Ablation Study: Impact of Exploration Rate (Beta) 969 
+
+This ablation study explores the effect of the exploration rate (hyperparameter Beta) on model 970 
+
+performance for selected subtasks, maintaining a fixed reference set size of N=2. Beta influences the 971 
+
+diversity of thoughts or solutions generated by the model. The gemini-1.5-flash-8b model was 972 
+
+employed for this analysis (Figure 6). 973 
+
+Analysis of Figure 6: 974 
+
+• The analysis aims to identify an optimal or effective range for Beta where performance peaks 975 
+
+for the selected subtasks, which include data analysis (’tablejoin’), instruction following 976 
+
+(’story_generation’, ’simplify’), and mathematical computation (’math_comp’). 977 
+
+• The impact of extreme Beta values (both very low, indicating minimal exploration, and 978 
+
+very high, indicating extensive exploration) on performance is examined for potential 979 
+
+suboptimality. 980 
+
+• Differential responses to Beta across subtasks are investigated, for instance, whether cre-981 
+
+ative tasks like ’story_generation’ benefit from a different Beta regime compared to more 982 
+
+structured tasks such as ’math_comp’ or ’tablejoin’. 983 
+
+24 Figure 6: Effect of Exploration Rate (Beta) on performance for selected subtasks (’tablejoin’, ’story_generation’, ’math_comp’, ’simplify’) using gemini-1.5-flash-8b with N=2. Subtasks are color-coded by their primary category. • The stability of performance across the spectrum of Beta values is assessed, noting any 984 
+
+significant fluctuations versus relatively consistent scores within particular ranges. 985 
+
+Contextual Note: A moderate Beta value (e.g., 0.3-0.6 in analogous systems) often represents a 986 
+
+balance. Excessively low Beta values might risk premature convergence on suboptimal solutions, 987 
+
+while overly high values could lead to an excessively diverse, and potentially lower-quality, set of 988 
+
+outputs. 989 
+
+D.5 Ablation Study: Impact of Number of Agents (M) 990 
+
+This study assesses the influence of the number of agents (hyperparameter M) on performance across 991 
+
+all subtasks, with the reference set size fixed at N=3. M denotes the number of independent reasoning 992 
+
+paths or "thinkers" utilized by the model. The gemini-1.5-flash-8b model was used for this 993 
+
+evaluation (Figure 7). 994 
+
+Analysis of Figure 7: 995 
+
+• The overall impact of increasing M on performance is analyzed to determine if it generally 996 
+
+leads to improvements across most subtasks or if the effects are heterogeneous. 997 
+
+• A cost-benefit perspective is considered, as higher M values, while potentially enhancing 998 
+
+performance, also incur increased computational overhead. The study seeks an M value that 999 
+
+offers a good trade-off. 1000 
+
+• Subtasks that derive particular benefit from a larger number of agents are identified; for 1001 
+
+example, complex reasoning tasks or those requiring diverse perspectives might exhibit 1002 
+
+more substantial gains. 1003 
+
+• The analysis looks for a saturation point where the benefits of increasing M diminish or 1004 
+
+where performance might even degrade for some (or all) tasks. 1005 
+
+Contextual Note: Employing a greater number of agents can enhance the robustness and breadth 1006 
+
+of exploration. However, an excessive number might not yield significant incremental value or 1007 
+
+could potentially introduce noise if the aggregation of outputs from multiple agents is not optimally 1008 
+
+managed. 1009 
+
+25 Figure 7: Effect of Number of Agents (M) on performance across all subtasks for 
+
+gemini-1.5-flash-8b with N=3. Each facet corresponds to a subtask, color-coded by its pri-mary category. 
+
+D.6 Ablation Study: Performance for Specific M/N 1010 
+
+This analysis evaluates performance across three distinct (M, N) configurations for the 1011 
+
+gemini-1.5-flash-8b model: M6_N3, M12_N6, and M18_N3. These evaluations are conducted 1012 
+
+under the "With Style" configuration, with Beta fixed at 0.3 and T (temperature or trials) at 3. Results 1013 
+
+are presented in Figure 8. 1014 
+
+Figure 8: Subtask performance for specific M/N configurations (M6_N3, M12_N6, M18_N3) using 
+
+gemini-1.5-flash-8b under the configuration (Beta=0.3, T=3). Faceted by subtask. 
+
+Analysis of Figure 8: 1015 
+
+• The investigation aims to identify which of the tested (M, N) pairs yields the most favorable 1016 
+
+performance, either broadly across subtasks or for specific, critical subtasks. 1017 
+
+• The trade-off between computational cost and performance gain is considered, as the 1018 
+
+configurations (M6_N3, M12_N6, M18_N3) entail different computational demands. 1019 
+
+• The interaction between M and N is observed by comparing configurations; for instance, 1020 
+
+whether simultaneous increases in M and N (e.g., M6_N3 to M12_N6) lead to consistent 1021 
+
+26 improvements. The M18_N3 configuration provides insight into a different scaling strategy 1022 
+
+(higher M, moderate N). 1023 
+
+• Consistency in the ranking of these (M, N) configurations across different subtasks is 1024 
+
+examined. 1025 
+
+Contextual Note: This study assists in identifying potentially effective fixed configurations by explor-1026 
+
+ing varied scaling strategies for the hyperparameters M and N within the "With Style" framework. 1027 
+
+## E Limitations and Future Work 1028 
+
+While CoThinker demonstrates promising results in managing cognitive load and enhancing collabo-1029 
+
+rative LLM performance, this work has several limitations that also point towards avenues for future 1030 
+
+research. 1031 
+
+Limitations include the scope of LLM evaluation, which primarily utilized models from the Gemini 1032 
+
+family. The generalizability of specific performance benefits and optimal hyperparameter settings 1033 
+
+across a wider range of LLM architectures requires further exploration. Additionally, while we 1034 
+
+argue that CoThinker manages transactional costs associated with multi-agent collaboration, a more 1035 
+
+fine-grained quantitative analysis of these costs versus the gains in solution quality would offer a 1036 
+
+more complete efficiency profile. The "thinking styles" currently rely on an LLM orchestrator and 1037 
+
+base styles; the true emergent specialization and their direct impact on distributing intrinsic load 1038 
+
+warrant deeper investigation. 1039 
+
+Future Work could explore several promising directions. Developing adaptive CoThinker archi-1040 
+
+tectures that dynamically adjust parameters (number of agents, communication topology) based on 1041 
+
+real-time task assessment is a key area. Deeper integration of CLT principles , such as explicitly 1042 
+
+modeling and minimizing extraneous load from prompt design or fostering germane load via so-1043 
+
+phisticated scaffolding, could further enhance performance. Creating methods for explainability of 1044 
+
+collective cognition within CoThinker —tracing information flow, identifying critical contributions, 1045 
+
+and characterizing shared understanding evolution—would improve transparency. Extending the 1046 
+
+framework for human-AI collaboration , incorporating human users as specialized agents, could lead 1047 
+
+to powerful human-LLM group cognition. Finally, the prospect of such fused intelligence necessitates 1048 
+
+proactive examination of its societal implications , including equity, potential for misuse, account-1049 
+
+ability, and ethical considerations, demanding robust frameworks for responsible development and 1050 
+
+governance. Addressing these limitations and pursuing these future directions will further advance 1051 
+
+our understanding of how to build truly collaborative and cognitively capable LLM-based systems. 1052 
+
+27 NeurIPS Paper Checklist 1053 
+
+1. Claims 1054 
+
+Question: Do the main claims made in the abstract and introduction accurately reflect the 1055 
+
+paper’s contributions and scope? 1056 
+
+Answer:[Yes] 1057 
+
+Justification: The abstract and introduction clearly state the main contributions: (1) ex-1058 
+
+plaining LLM performance ceilings via an analogy to CLT, (2) introducing CoThinker as a 1059 
+
+CLT-operationalizing multi-agent architecture, and (3) empirically validating CoThinker .1060 
+
+These claims are reflected in the theoretical discussions (Section 3, 4) and experimental 1061 
+
+results (Section 5). 1062 
+
+Guidelines: 1063 
+
+• The answer NA means that the abstract and introduction do not include the claims 1064 
+
+made in the paper. 1065 
+
+• The abstract and/or introduction should clearly state the claims made, including the 1066 
+
+contributions made in the paper and important assumptions and limitations. A No or 1067 
+
+NA answer to this question will not be perceived well by the reviewers. 1068 
+
+• The claims made should match theoretical and experimental results, and reflect how 1069 
+
+much the results can be expected to generalize to other settings. 1070 
+
+• It is fine to include aspirational goals as motivation as long as it is clear that these goals 1071 
+
+are not attained by the paper. 1072 
+
+2. Limitations 1073 
+
+Question: Does the paper discuss the limitations of the work performed by the authors? 1074 
+
+Answer: [Yes] 1075 
+
+Justification: We have include a section talking about our limitation and future work in the 1076 
+
+appendix E 1077 
+
+Guidelines: 1078 
+
+• The answer NA means that the paper has no limitation while the answer No means that 1079 
+
+the paper has limitations, but those are not discussed in the paper. 1080 
+
+• The authors are encouraged to create a separate "Limitations" section in their paper. 1081 
+
+• The paper should point out any strong assumptions and how robust the results are to 1082 
+
+violations of these assumptions (e.g., independence assumptions, noiseless settings, 1083 
+
+model well-specification, asymptotic approximations only holding locally). The authors 1084 
+
+should reflect on how these assumptions might be violated in practice and what the 1085 
+
+implications would be. 1086 
+
+• The authors should reflect on the scope of the claims made, e.g., if the approach was 1087 
+
+only tested on a few datasets or with a few runs. In general, empirical results often 1088 
+
+depend on implicit assumptions, which should be articulated. 1089 
+
+• The authors should reflect on the factors that influence the performance of the approach. 1090 
+
+For example, a facial recognition algorithm may perform poorly when image resolution 1091 
+
+is low or images are taken in low lighting. Or a speech-to-text system might not be 1092 
+
+used reliably to provide closed captions for online lectures because it fails to handle 1093 
+
+technical jargon. 1094 
+
+• The authors should discuss the computational efficiency of the proposed algorithms 1095 
+
+and how they scale with dataset size. 1096 
+
+• If applicable, the authors should discuss possible limitations of their approach to 1097 
+
+address problems of privacy and fairness. 1098 
+
+• While the authors might fear that complete honesty about limitations might be used by 1099 
+
+reviewers as grounds for rejection, a worse outcome might be that reviewers discover 1100 
+
+limitations that aren’t acknowledged in the paper. The authors should use their best 1101 
+
+judgment and recognize that individual actions in favor of transparency play an impor-1102 
+
+tant role in developing norms that preserve the integrity of the community. Reviewers 1103 
+
+will be specifically instructed to not penalize honesty concerning limitations. 1104 
+
+3. Theory assumptions and proofs 1105 
+
+28 Question: For each theoretical result, does the paper provide the full set of assumptions and 1106 
+
+a complete (and correct) proof? 1107 
+
+Answer: [NA] 1108 
+
+Justification: The paper’s theoretical contribution is primarily an analogical framework (CLT 1109 
+
+applied to LLMs) and a conceptual architecture ( CoThinker ) rather than formal mathematical 1110 
+
+theorems or proofs. The justification for the architecture’s design is rooted in established 1111 
+
+cognitive science principles (Section 3). 1112 
+
+Guidelines: 1113 
+
+• The answer NA means that the paper does not include theoretical results. 1114 
+
+• All the theorems, formulas, and proofs in the paper should be numbered and cross-1115 
+
+referenced. 1116 
+
+• All assumptions should be clearly stated or referenced in the statement of any theorems. 1117 
+
+• The proofs can either appear in the main paper or the supplemental material, but if 1118 
+
+they appear in the supplemental material, the authors are encouraged to provide a short 1119 
+
+proof sketch to provide intuition. 1120 
+
+• Inversely, any informal proof provided in the core of the paper should be complemented 1121 
+
+by formal proofs provided in appendix or supplemental material. 1122 
+
+• Theorems and Lemmas that the proof relies upon should be properly referenced. 1123 
+
+4. Experimental result reproducibility 1124 
+
+Question: Does the paper fully disclose all the information needed to reproduce the main ex-1125 
+
+perimental results of the paper to the extent that it affects the main claims and/or conclusions 1126 
+
+of the paper (regardless of whether the code and data are provided or not)? 1127 
+
+Answer: [Yes] 1128 
+
+Justification: Section 5.1 and section C.3 in appendix details the base LLMs, benchmarks, 1129 
+
+baselines, and all configuration parameters (temperature, agent count, rounds, CoThinker 1130 
+
+parameters N, β ). The CoThinker architecture and process flow are described in Section 4. 1131 
+
+Further details on detailed prompts will be included in the Supplementary Material. 1132 
+
+Guidelines: 1133 
+
+• The answer NA means that the paper does not include experiments. 1134 
+
+• If the paper includes experiments, a No answer to this question will not be perceived 1135 
+
+well by the reviewers: Making the paper reproducible is important, regardless of 1136 
+
+whether the code and data are provided or not. 1137 
+
+• If the contribution is a dataset and/or model, the authors should describe the steps taken 1138 
+
+to make their results reproducible or verifiable. 1139 
+
+• Depending on the contribution, reproducibility can be accomplished in various ways. 1140 
+
+For example, if the contribution is a novel architecture, describing the architecture fully 1141 
+
+might suffice, or if the contribution is a specific model and empirical evaluation, it may 1142 
+
+be necessary to either make it possible for others to replicate the model with the same 1143 
+
+dataset, or provide access to the model. In general. releasing code and data is often 1144 
+
+one good way to accomplish this, but reproducibility can also be provided via detailed 1145 
+
+instructions for how to replicate the results, access to a hosted model (e.g., in the case 1146 
+
+of a large language model), releasing of a model checkpoint, or other means that are 1147 
+
+appropriate to the research performed. 1148 
+
+• While NeurIPS does not require releasing code, the conference does require all submis-1149 
+
+sions to provide some reasonable avenue for reproducibility, which may depend on the 1150 
+
+nature of the contribution. For example 1151 
+
+(a) If the contribution is primarily a new algorithm, the paper should make it clear how 1152 
+
+to reproduce that algorithm. 1153 
+
+(b) If the contribution is primarily a new model architecture, the paper should describe 1154 
+
+the architecture clearly and fully. 1155 
+
+(c) If the contribution is a new model (e.g., a large language model), then there should 1156 
+
+either be a way to access this model for reproducing the results or a way to reproduce 1157 
+
+the model (e.g., with an open-source dataset or instructions for how to construct 1158 
+
+the dataset). 1159 
+
+29 (d) We recognize that reproducibility may be tricky in some cases, in which case 1160 
+
+authors are welcome to describe the particular way they provide for reproducibility. 1161 
+
+In the case of closed-source models, it may be that access to the model is limited in 1162 
+
+some way (e.g., to registered users), but it should be possible for other researchers 1163 
+
+to have some path to reproducing or verifying the results. 1164 
+
+5. Open access to data and code 1165 
+
+Question: Does the paper provide open access to the data and code, with sufficient instruc-1166 
+
+tions to faithfully reproduce the main experimental results, as described in supplemental 1167 
+
+material? 1168 
+
+Answer: [No] 1169 
+
+Justification: At the time of submission, the code for CoThinker and specific experimental 1170 
+
+scripts are not publicly released. However, the paper provides detailed descriptions of 1171 
+
+the architecture (Section 4) and experimental setup (Section 5.1) to facilitate conceptual 1172 
+
+replication. The datasets used (LiveBench, CommonGen-Hard) are publicly available. 1173 
+
+Guidelines: 1174 
+
+• The answer NA means that paper does not include experiments requiring code. 1175 
+
+• Please see the NeurIPS code and data submission guidelines ( https://nips.cc/ 1176 
+
+public/guides/CodeSubmissionPolicy ) for more details. 1177 
+
+• While we encourage the release of code and data, we understand that this might not be 1178 
+
+possible, so “No” is an acceptable answer. Papers cannot be rejected simply for not 1179 
+
+including code, unless this is central to the contribution (e.g., for a new open-source 1180 
+
+benchmark). 1181 
+
+• The instructions should contain the exact command and environment needed to run to 1182 
+
+reproduce the results. See the NeurIPS code and data submission guidelines ( https: 1183 
+
+//nips.cc/public/guides/CodeSubmissionPolicy ) for more details. 1184 
+
+• The authors should provide instructions on data access and preparation, including how 1185 
+
+to access the raw data, preprocessed data, intermediate data, and generated data, etc. 1186 
+
+• The authors should provide scripts to reproduce all experimental results for the new 1187 
+
+proposed method and baselines. If only a subset of experiments are reproducible, they 1188 
+
+should state which ones are omitted from the script and why. 1189 
+
+• At submission time, to preserve anonymity, the authors should release anonymized 1190 
+
+versions (if applicable). 1191 
+
+• Providing as much information as possible in supplemental material (appended to the 1192 
+
+paper) is recommended, but including URLs to data and code is permitted. 1193 
+
+6. Experimental setting/details 1194 
+
+Question: Does the paper specify all the training and test details (e.g., data splits, hyper-1195 
+
+parameters, how they were chosen, type of optimizer, etc.) necessary to understand the 1196 
+
+results? 1197 
+
+Answer: [Yes] 1198 
+
+Justification: ection 5.1 specifies the base LLMs, temperature settings, agent count ( M = 6 ), 1199 
+
+interaction rounds ( T = 3 ), and CoThinker -specific hyperparameters ( N = 3 , β = 0 .3) for 1200 
+
+the main experiments. Ablation studies (Section 5.4) explore variations of these. Details on 1201 
+
+data (benchmarks used) are also provided, with further specifics referenced to the Appendix. 1202 
+
+Guidelines: 1203 
+
+• The answer NA means that the paper does not include experiments. 1204 
+
+• The experimental setting should be presented in the core of the paper to a level of detail 1205 
+
+that is necessary to appreciate the results and make sense of them. 1206 
+
+• The full details can be provided either with the code, in appendix, or as supplemental 1207 
+
+material. 1208 
+
+7. Experiment statistical significance 1209 
+
+Question: Does the paper report error bars suitably and correctly defined or other appropriate 1210 
+
+information about the statistical significance of the experiments? 1211 
+
+30 Answer: [No] 1212 
+
+Justification: The current version of the paper reports point estimates for performance on 1213 
+
+benchmarks. Error bars or statistical significance tests are not included, primarily due to the 1214 
+
+deterministic nature of the current experimental setup with fixed temperatures (after initial 1215 
+
+generation) and the focus on demonstrating architectural efficacy across diverse tasks rather 1216 
+
+than fine-grained statistical variations. 1217 
+
+Guidelines: 1218 
+
+• The answer NA means that the paper does not include experiments. 1219 
+
+• The authors should answer "Yes" if the results are accompanied by error bars, confi-1220 
+
+dence intervals, or statistical significance tests, at least for the experiments that support 1221 
+
+the main claims of the paper. 1222 
+
+• The factors of variability that the error bars are capturing should be clearly stated (for 1223 
+
+example, train/test split, initialization, random drawing of some parameter, or overall 1224 
+
+run with given experimental conditions). 1225 
+
+• The method for calculating the error bars should be explained (closed form formula, 1226 
+
+call to a library function, bootstrap, etc.) 1227 
+
+• The assumptions made should be given (e.g., Normally distributed errors). 1228 
+
+• It should be clear whether the error bar is the standard deviation or the standard error 1229 
+
+of the mean. 1230 
+
+• It is OK to report 1-sigma error bars, but one should state it. The authors should 1231 
+
+preferably report a 2-sigma error bar than state that they have a 96% CI, if the hypothesis 1232 
+
+of Normality of errors is not verified. 1233 
+
+• For asymmetric distributions, the authors should be careful not to show in tables or 1234 
+
+figures symmetric error bars that would yield results that are out of range (e.g. negative 1235 
+
+error rates). 1236 
+
+• If error bars are reported in tables or plots, The authors should explain in the text how 1237 
+
+they were calculated and reference the corresponding figures or tables in the text. 1238 
+
+8. Experiments compute resources 1239 
+
+Question: For each experiment, does the paper provide sufficient information on the com-1240 
+
+puter resources (type of compute workers, memory, time of execution) needed to reproduce 1241 
+
+the experiments? 1242 
+
+Answer: [Yes] 1243 
+
+Justification: The paper specifies the LLMs used (Gemini family via API access) but does 1244 
+
+not detail exact execution times per task, as these can vary based on API load and are less 1245 
+
+directly controlled. Specific compute hardware and memory on the user’s side are minimal 1246 
+
+as computation is offloaded. Token usage, which is a key cost factor, will be detailed in the 1247 
+
+supplementary material/Appendix for transparency regarding resource consumption. 1248 
+
+Guidelines: 1249 
+
+• The answer NA means that the paper does not include experiments. 1250 
+
+• The paper should indicate the type of compute workers CPU or GPU, internal cluster, 1251 
+
+or cloud provider, including relevant memory and storage. 1252 
+
+• The paper should provide the amount of compute required for each of the individual 1253 
+
+experimental runs as well as estimate the total compute. 1254 
+
+• The paper should disclose whether the full research project required more compute 1255 
+
+than the experiments reported in the paper (e.g., preliminary or failed experiments that 1256 
+
+didn’t make it into the paper). 1257 
+
+9. Code of ethics 1258 
+
+Question: Does the research conducted in the paper conform, in every respect, with the 1259 
+
+NeurIPS Code of Ethics https://neurips.cc/public/EthicsGuidelines ?1260 
+
+Answer: [Yes] 1261 
+
+Justification: The research focuses on developing a multi-agent LLM architecture for 1262 
+
+improved problem-solving and does not involve human subjects, direct data collection from 1263 
+
+individuals, or applications with immediate high-risk ethical concerns. We have reviewed 1264 
+
+the NeurIPS Code of Ethics and believe our work conforms to it. 1265 
+
+31 Guidelines: 1266 
+
+• The answer NA means that the authors have not reviewed the NeurIPS Code of Ethics. 1267 
+
+• If the authors answer No, they should explain the special circumstances that require a 1268 
+
+deviation from the Code of Ethics. 1269 
+
+• The authors should make sure to preserve anonymity (e.g., if there is a special consid-1270 
+
+eration due to laws or regulations in their jurisdiction). 1271 
+
+10. Broader impacts 1272 
+
+Question: Does the paper discuss both potential positive societal impacts and negative 1273 
+
+societal impacts of the work performed? 1274 
+
+Answer: [Yes] 1275 
+
+Justification: Justification: Section E (Future Work subsection) discusses the broader societal 1276 
+
+impacts. It outlines the potential for "Human-LLM Fused Group Cognition" to dramatically 1277 
+
+enhance problem-solving for societal grand challenges (positive impact). It also explicitly 1278 
+
+addresses potential negative impacts and ethical considerations, including equity of access, 1279 
+
+new forms of manipulation, amplified biases, accountability in distributed decision-making, 1280 
+
+and the ethics of deeply integrating AI into human deliberative processes, calling for 1281 
+
+responsible development and governance. 1282 
+
+Guidelines: 1283 
+
+• The answer NA means that there is no societal impact of the work performed. 1284 
+
+• If the authors answer NA or No, they should explain why their work has no societal 1285 
+
+impact or why the paper does not address societal impact. 1286 
+
+• Examples of negative societal impacts include potential malicious or unintended uses 1287 
+
+(e.g., disinformation, generating fake profiles, surveillance), fairness considerations 1288 
+
+(e.g., deployment of technologies that could make decisions that unfairly impact specific 1289 
+
+groups), privacy considerations, and security considerations. 1290 
+
+• The conference expects that many papers will be foundational research and not tied 1291 
+
+to particular applications, let alone deployments. However, if there is a direct path to 1292 
+
+any negative applications, the authors should point it out. For example, it is legitimate 1293 
+
+to point out that an improvement in the quality of generative models could be used to 1294 
+
+generate deepfakes for disinformation. On the other hand, it is not needed to point out 1295 
+
+that a generic algorithm for optimizing neural networks could enable people to train 1296 
+
+models that generate Deepfakes faster. 1297 
+
+• The authors should consider possible harms that could arise when the technology is 1298 
+
+being used as intended and functioning correctly, harms that could arise when the 1299 
+
+technology is being used as intended but gives incorrect results, and harms following 1300 
+
+from (intentional or unintentional) misuse of the technology. 1301 
+
+• If there are negative societal impacts, the authors could also discuss possible mitigation 1302 
+
+strategies (e.g., gated release of models, providing defenses in addition to attacks, 1303 
+
+mechanisms for monitoring misuse, mechanisms to monitor how a system learns from 1304 
+
+feedback over time, improving the efficiency and accessibility of ML). 1305 
+
+11. Safeguards 1306 
+
+Question: Does the paper describe safeguards that have been put in place for responsible 1307 
+
+release of data or models that have a high risk for misuse (e.g., pretrained language models, 1308 
+
+image generators, or scraped datasets)? 1309 
+
+Answer: [NA] 1310 
+
+Justification: The paper introduces an architecture ( CoThinker ) that utilizes existing pre-1311 
+
+trained LLMs (Gemini family). It does not release new pre-trained models or large-scale 1312 
+
+datasets that would pose a high risk for misuse requiring specific safeguards beyond those 1313 
+
+implemented by the original LLM providers. 1314 
+
+Guidelines: 1315 
+
+• The answer NA means that the paper poses no such risks. 1316 
+
+• Released models that have a high risk for misuse or dual-use should be released with 1317 
+
+necessary safeguards to allow for controlled use of the model, for example by requiring 1318 
+
+32 that users adhere to usage guidelines or restrictions to access the model or implementing 1319 
+
+safety filters. 1320 
+
+• Datasets that have been scraped from the Internet could pose safety risks. The authors 1321 
+
+should describe how they avoided releasing unsafe images. 1322 
+
+• We recognize that providing effective safeguards is challenging, and many papers do 1323 
+
+not require this, but we encourage authors to take this into account and make a best 1324 
+
+faith effort. 1325 
+
+12. Licenses for existing assets 1326 
+
+Question: Are the creators or original owners of assets (e.g., code, data, models), used in 1327 
+
+the paper, properly credited and are the license and terms of use explicitly mentioned and 1328 
+
+properly respected? 1329 
+
+Answer: [Yes] 1330 
+
+Justification: The base LLMs used (Gemini family) are products of Google and are used via 1331 
+
+their API, respecting their terms of service. The benchmarks LiveBench [White et al., 2025] 1332 
+
+and CommonGen-Hard [Madaan et al., 2023] are publicly available datasets and are cited 1333 
+
+appropriately (Section 5.1). Specific licenses for these benchmarks could be detailed further 1334 
+
+in an Appendix. 1335 
+
+Guidelines: 1336 
+
+• The answer NA means that the paper does not use existing assets. 1337 
+
+• The authors should cite the original paper that produced the code package or dataset. 1338 
+
+• The authors should state which version of the asset is used and, if possible, include a 1339 
+
+URL. 1340 
+
+• The name of the license (e.g., CC-BY 4.0) should be included for each asset. 1341 
+
+• For scraped data from a particular source (e.g., website), the copyright and terms of 1342 
+
+service of that source should be provided. 1343 
+
+• If assets are released, the license, copyright information, and terms of use in the 1344 
+
+package should be provided. For popular datasets, paperswithcode.com/datasets 1345 
+
+has curated licenses for some datasets. Their licensing guide can help determine the 1346 
+
+license of a dataset. 1347 
+
+• For existing datasets that are re-packaged, both the original license and the license of 1348 
+
+the derived asset (if it has changed) should be provided. 1349 
+
+• If this information is not available online, the authors are encouraged to reach out to 1350 
+
+the asset’s creators. 1351 
+
+13. New assets 1352 
+
+Question: Are new assets introduced in the paper well documented and is the documentation 1353 
+
+provided alongside the assets? 1354 
+
+Answer: [NA] 1355 
+
+Justification: The paper introduces a new architecture ( CoThinker ) but does not release new 1356 
+
+datasets, code, or pre-trained models as standalone assets at this time. The architecture itself 1357 
+
+is documented within the paper (Section 4). 1358 
+
+Guidelines: 1359 
+
+• The answer NA means that the paper does not release new assets. 1360 
+
+• Researchers should communicate the details of the dataset/code/model as part of their 1361 
+
+submissions via structured templates. This includes details about training, license, 1362 
+
+limitations, etc. 1363 
+
+• The paper should discuss whether and how consent was obtained from people whose 1364 
+
+asset is used. 1365 
+
+• At submission time, remember to anonymize your assets (if applicable). You can either 1366 
+
+create an anonymized URL or include an anonymized zip file. 1367 
+
+14. Crowdsourcing and research with human subjects 1368 
+
+Question: For crowdsourcing experiments and research with human subjects, does the paper 1369 
+
+include the full text of instructions given to participants and screenshots, if applicable, as 1370 
+
+well as details about compensation (if any)? 1371 
+
+33 Answer: [NA] 1372 
+
+Justification: The research presented does not involve crowdsourcing experiments or direct 1373 
+
+research with human subjects. 1374 
+
+Guidelines: 1375 
+
+• The answer NA means that the paper does not involve crowdsourcing nor research with 1376 
+
+human subjects. 1377 
+
+• Including this information in the supplemental material is fine, but if the main contribu-1378 
+
+tion of the paper involves human subjects, then as much detail as possible should be 1379 
+
+included in the main paper. 1380 
+
+• According to the NeurIPS Code of Ethics, workers involved in data collection, curation, 1381 
+
+or other labor should be paid at least the minimum wage in the country of the data 1382 
+
+collector. 1383 
+
+15. Institutional review board (IRB) approvals or equivalent for research with human 1384 
+
+subjects 1385 
+
+Question: Does the paper describe potential risks incurred by study participants, whether 1386 
+
+such risks were disclosed to the subjects, and whether Institutional Review Board (IRB) 1387 
+
+approvals (or an equivalent approval/review based on the requirements of your country or 1388 
+
+institution) were obtained? 1389 
+
+Answer: [NA] 1390 
+
+Justification: The research presented does not involve crowdsourcing experiments or direct 1391 
+
+research with human subjects, so IRB approval was not applicable. 1392 
+
+Guidelines: 1393 
+
+• The answer NA means that the paper does not involve crowdsourcing nor research with 1394 
+
+human subjects. 1395 
+
+• Depending on the country in which research is conducted, IRB approval (or equivalent) 1396 
+
+may be required for any human subjects research. If you obtained IRB approval, you 1397 
+
+should clearly state this in the paper. 1398 
+
+• We recognize that the procedures for this may vary significantly between institutions 1399 
+
+and locations, and we expect authors to adhere to the NeurIPS Code of Ethics and the 1400 
+
+guidelines for their institution. 1401 
+
+• For initial submissions, do not include any information that would break anonymity (if 1402 
+
+applicable), such as the institution conducting the review. 1403 
+
+16. Declaration of LLM usage 1404 
+
+Question: Does the paper describe the usage of LLMs if it is an important, original, or 1405 
+
+non-standard component of the core methods in this research? Note that if the LLM is used 1406 
+
+only for writing, editing, or formatting purposes and does not impact the core methodology, 1407 
+
+scientific rigorousness, or originality of the research, declaration is not required. 1408 
+
+Answer: [Yes] 1409 
+
+Justification: LLMs are a central component of the core methods investigated; specifically, 1410 
+
+the CoThinker architecture is an LLM-based multi-agent system where LLMs (Gemini 1411 
+
+family) function as the agents (Sections 4, 5.1). The research studies these LLM agents 1412 
+
+within our novel framework. The conceptualization of this framework, the CLT analogy, 1413 
+
+and the research design itself are human-derived contributions, with LLMs being the subject 1414 
+
+and operational components of the proposed methodology. 1415 
+
+Guidelines: 1416 
+
+• The answer NA means that the core method development in this research does not 1417 
+
+involve LLMs as any important, original, or non-standard components. 1418 
+
+• Please refer to our LLM policy ( https://neurips.cc/Conferences/2025/LLM )1419 
+
+for what should or should not be described. 1420 
+
+34
