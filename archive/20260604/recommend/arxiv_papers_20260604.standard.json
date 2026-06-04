@@ -1,0 +1,329 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-04T21:06:42.564408+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 6,
+    "deep_cap": 6,
+    "deep_selected": 6,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2605.30136v1",
+      "source": "arxiv",
+      "title": "Enhancing Multi-Agent Communication through Attention Steering with Context Relevance",
+      "abstract": "LLM-based multi-agent systems have demonstrated remarkable performance on complex tasks through collaborative reasoning. However, these systems tend to rapidly accumulate extremely long conversation histories during interaction. As conversations lengthen, relevant information is increasingly diluted by irrelevant context, leading to degraded performance. In this work, we present Agent-Radar, a training-free context management method that dynamically steers each agent's attention toward relevant context with a novel temporal and spatial decay mechanism. Our experiments demonstrate that Agent-Radar outperforms state-of-the-art methods across five different benchmarks, yielding gains of up to 7.64 absolute points. Furthermore, our analysis shows that Agent-Radar remains effective and robust as the number of agents and interaction rounds increases. Finally, the ablation study shows that core components in Agent-Radar are crucial to performance and generalizable in different settings.",
+      "authors": [
+        "Hongxiang Zhang",
+        "Yuan Tian",
+        "Tianyi Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-05-28T16:02:52+00:00",
+      "link": "https://arxiv.org/pdf/2605.30136v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "dynamic attention steering for multi-agent communication",
+      "llm_evidence_cn": "多智能体通信中的动态注意力路由",
+      "llm_evidence": "多智能体通信中的动态注意力路由",
+      "canonical_evidence": "多智能体通信中的动态注意力路由",
+      "llm_tldr_en": "Proposes Agent-Radar, a training-free method to dynamically steer agent attention using temporal/spatial decay, improving multi-agent reasoning by mitigating context dilution.",
+      "llm_tldr_cn": "针对LLM多智能体系统在协作推理中对话历史过长导致相关信息被稀释的问题，提出Agent-Radar，一种无需训练的注意力引导方法，通过时空衰减机制动态引导每个智能体关注相关上下文。在五个不同基准上的实验表明，该方法优于现有方法，性能提升高达7.64个百分点，有效提升了多智能体系统的推理质量。",
+      "llm_tldr": "针对LLM多智能体系统在协作推理中对话历史过长导致相关信息被稀释的问题，提出Agent-Radar，一种无需训练的注意力引导方法，通过时空衰减机制动态引导每个智能体关注相关上下文。在五个不同基准上的实验表明，该方法优于现有方法，性能提升高达7.64个百分点，有效提升了多智能体系统的推理质量。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.03014v1",
+      "source": "arxiv",
+      "title": "MOSAIC: Efficient Mixture-of-Agent Scheduling via Adaptive Aggregation and Inference Concurrency",
+      "abstract": "Mixture-of-Agents (MoA) systems improve reasoning accuracy by routing each query to multiple expert LLMs and aggregating their outputs. Efficiently executing this workload on limited GPU resources has bottlenecks. Skill-based routing creates skewed expert demand, and combining instruction-tuned LLMs with long-reasoning models results in extreme variability in generation lengths. Consequently, traditional scheduling strategies suffer from significant GPU idling and throughput collapse due to load imbalances. We present MOSAIC, a scheduling framework to accelerate MoA workloads. First, we formulate an Integer Linear Program (ILP) based scheduler that jointly optimizes expert placement and per-worker prompt assignment from offline-profiled costs, replicating reasoning experts across workers while pinning lightweight ones. Second, MOSAIC uses confidence-aware adaptive aggregation, leveraging inter-expert agreement to bypass the heavy final aggregator LLM for consensus queries. In our 4-GPU system, MOSAIC achieves up to 2.5x expert-stage, 4.23x aggregator-stage and 1.7~2.3x end-to-end speedups over the baseline scheduler, while matching accuracy within 0.1pp.",
+      "authors": [
+        "Saptarshi Mitra",
+        "Yifan Zhang",
+        "Rachid Karami",
+        "Phyo Pyae Moe Aung",
+        "Nazmul Takbir",
+        "Sreetama Sarkar",
+        "Souvik Kundu",
+        "Sitao Huang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AR"
+      ],
+      "published": "2026-06-02T01:40:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.03014v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Scheduling framework for mixture-of-agents systems, optimizing query routing across expert LLMs",
+      "llm_evidence_cn": "用于混合智能体系统的调度框架，优化跨专家LLM的查询路由",
+      "llm_evidence": "用于混合智能体系统的调度框架，优化跨专家LLM的查询路由",
+      "canonical_evidence": "用于混合智能体系统的调度框架，优化跨专家LLM的查询路由",
+      "llm_tldr_en": "Presents MOSAIC, an ILP-based scheduler that jointly optimizes expert placement and prompt assignment for efficient routing in mixture-of-agents LLM systems.",
+      "llm_tldr_cn": "混合智能体（MoA）系统中，技能路由导致专家负载不均，推理长度差异大，造成GPU空闲和吞吐量下降。本文提出MOSAIC框架，通过整数线性规划联合优化专家放置和提示分配，并设计自适应聚合与推理并发机制。实验证明MOSAIC显著提高GPU利用率和吞吐量。",
+      "llm_tldr": "混合智能体（MoA）系统中，技能路由导致专家负载不均，推理长度差异大，造成GPU空闲和吞吐量下降。本文提出MOSAIC框架，通过整数线性规划联合优化专家放置和提示分配，并设计自适应聚合与推理并发机制。实验证明MOSAIC显著提高GPU利用率和吞吐量。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.03565v1",
+      "source": "arxiv",
+      "title": "Skill Is Not Document: A Query-Conditional Benchmark and Two-Stage Retriever for LLM Agent Skill Routing",
+      "abstract": "LLM agents complete complex tasks by composing multiple skills, and skill retrieval is a front-end stage for agents. Skill retrieval differs fundamentally from traditional document retrieval at the supervision level: top-K joint correctness depends not only on the semantic relevance of each individual query-skill pair, but also on whether the skills retrieved together can collaborate to fulfill the task under the given query. Such \"skill compatibility\" cannot be derived from independent relevance alone. Yet existing LLM-based data synthesis pipelines can produce a direct supervision signal for \"which skills should not be jointly retrieved under this query\" -- namely the LLM's own rejection decisions -- and this signal is routinely discarded as low-quality data. To address this gap, we propose Reject-as-Resource Retriever (R3) and construct R3-Skill, a bilingual (Chinese-English) skill retrieval benchmark targeting realistic agent skill routing. R3-Skill spans four language directions, features query phrasings close to real user requests, and is verified through multi-expert cross-checking. On R3-Skill, we build a two-stage retrieval system (R3-Embedding + R3-Reranker) with skill compatibility as an explicit training signal. Gradient analysis shows that the \"push-away\" signal is diluted by bilateral balancing in the bi-encoder but acts as lossless graded ranking supervision in the cross-encoder -- motivating its placement at the cross-encoder stage, as confirmed by ablations on two datasets. The R3-Embedding + R3-Reranker pipeline attains Hit@1 = 0.7714, NDCG@10 = 0.8327 and Set-Compat = 0.3525 on R3-Skill. The dataset, training code and model weights are released as open source for agent skill routing.",
+      "authors": [
+        "Zifei Wang",
+        "Wei Wen",
+        "Qiang Ji",
+        "Ruizhi Qiao",
+        "Xing Sun"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-06-02T12:30:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.03565v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "Query-conditional benchmark and retriever for agent skill routing",
+      "llm_evidence_cn": "基于查询条件的智能体技能路由基准与检索器",
+      "llm_evidence": "基于查询条件的智能体技能路由基准与检索器",
+      "canonical_evidence": "基于查询条件的智能体技能路由基准与检索器",
+      "llm_tldr_en": "Introduces a benchmark and two-stage retriever for LLM agent skill routing, emphasizing skill compatibility beyond semantic relevance.",
+      "llm_tldr_cn": "LLM智能体技能检索与传统文档检索不同，需要技能间兼容性以协作完成任务。本文构建了查询条件技能路由基准，并提出两阶段检索器，利用LLM的拒绝信号作为监督，优先考虑技能组合的协调性。实验证明该方法能显著提升任务完成质量。",
+      "llm_tldr": "LLM智能体技能检索与传统文档检索不同，需要技能间兼容性以协作完成任务。本文构建了查询条件技能路由基准，并提出两阶段检索器，利用LLM的拒绝信号作为监督，优先考虑技能组合的协调性。实验证明该方法能显著提升任务完成质量。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.30102v1",
+      "source": "arxiv",
+      "title": "When Cloud Agents Meet Device Agents: Lessons from Hybrid Multi-Agent Systems",
+      "abstract": "The design space of agentic AI inference spans two extremes: frontier large language models (LLMs), typically hosted in the cloud and offering strong performance across a wide range of tasks at substantially high cost, and more cost-efficient small language models (SLMs), which are amenable to on-device inference. Hybrid multi-agent systems (MASs) combining on-device and cloud models offer a promising middle ground, but they also introduce a complex and poorly understood design space in which task accuracy, monetary cost, and edge energy consumption are tightly coupled; in the absence of general design principles, hybrid components, although not the most prevalent choice, are typically introduced through ad hoc decisions tailored to specific domains. In this work, we examine this design space more systematically. We adapt two representative MAS architectures to support hybrid inference and study how individual design choices shift the operating point along the Pareto frontier of power, cost, and performance. Our findings paint a nuanced picture of hybrid MAS design: while SLMs can effectively benefit from LLM assistance, the optimal architecture is highly task-dependent, and greater frontier-level compute does not consistently translate to better performance.",
+      "authors": [
+        "Corrado Rainone",
+        "Davide Belli",
+        "Bence Major",
+        "Arash Behboodi"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI"
+      ],
+      "published": "2026-05-28T15:45:02+00:00",
+      "link": "https://arxiv.org/pdf/2605.30102v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "investigates routing between cloud and device agents for cost-accuracy tradeoff",
+      "llm_evidence_cn": "研究云和设备代理之间的路由以平衡成本与准确率",
+      "llm_evidence": "研究云和设备代理之间的路由以平衡成本与准确率",
+      "canonical_evidence": "研究云和设备代理之间的路由以平衡成本与准确率",
+      "llm_tldr_en": "Explores hybrid multi-agent systems combining cloud LLMs and on-device SLMs, revealing design principles for task routing to balance accuracy, cost, and energy.",
+      "llm_tldr_cn": "本文针对云大模型和设备小模型组成的混合多代理系统，分析了任务准确率、货币成本和边缘能耗之间的耦合关系，并提炼出通用设计原则，指导如何在不同代理间路由任务以实现高效权衡。",
+      "llm_tldr": "本文针对云大模型和设备小模型组成的混合多代理系统，分析了任务准确率、货币成本和边缘能耗之间的耦合关系，并提炼出通用设计原则，指导如何在不同代理间路由任务以实现高效权衡。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.03152v1",
+      "source": "arxiv",
+      "title": "Cost-Aware Optimization for Agentic Query Execution",
+      "abstract": "Classical query optimization searches over algebraically equivalent plans that differ only in cost. This assumption breaks once LLM-backed operators enter the picture: their placement, ordering, and granularity jointly determine both dollar cost and answer quality, and the right choice among the alternatives is often revealed only at runtime. We formalize this setting as agentic query execution, a query execution paradigm in which agent-based planning is interleaved with execution, and agent workflow optimization becomes the analogue of classical query optimization. We then present EnumGRPO, a self-improving optimizer for this setting. During a learning stage, EnumGRPO enumerates query plans over decisions such as execution paradigm, operator type, operator placement, selectivity scope, and projection width, then distills quality-cost feedback into reusable planning heuristics via in-context reinforcement learning. Across four databases in SWAN, EnumGRPO achieves 35.4% execution accuracy at $0.011 per query in LLM-operator cost, a ~317x cost reduction over the hybrid query baseline with an 18% relative improvement in answer accuracy.",
+      "authors": [
+        "Lunyiu Nie",
+        "Yilin Xia",
+        "Yiren Liu",
+        "Christopher Jermaine",
+        "Swarat Chaudhuri"
+      ],
+      "primary_category": "cs.DB",
+      "categories": [
+        "cs.DB"
+      ],
+      "published": "2026-06-02T04:52:26+00:00",
+      "link": "https://arxiv.org/pdf/2606.03152v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "cost-aware optimization for agentic query execution with operator placement routing",
+      "llm_evidence_cn": "面向智能查询执行的成本感知优化，涉及算子放置路由",
+      "llm_evidence": "面向智能查询执行的成本感知优化，涉及算子放置路由",
+      "canonical_evidence": "面向智能查询执行的成本感知优化，涉及算子放置路由",
+      "llm_tldr_en": "Formalizes agentic query execution and proposes EnumGRPO, a self-improving optimizer that enumerates query plans over decisions like operator placement, achieving cost-quality trade-offs.",
+      "llm_tldr_cn": "提出智能查询执行范式，其中LLM支持的算子放置、顺序和粒度共同影响成本和答案质量。为此提出EnumGRPO自改进优化器，通过学习阶段枚举查询计划中的执行范式、算子类型和放置等决策。在多个任务上实现了成本与质量的较好平衡，为包含LLM算子的查询优化提供了新思路。",
+      "llm_tldr": "提出智能查询执行范式，其中LLM支持的算子放置、顺序和粒度共同影响成本和答案质量。为此提出EnumGRPO自改进优化器，通过学习阶段枚举查询计划中的执行范式、算子类型和放置等决策。在多个任务上实现了成本与质量的较好平衡，为包含LLM算子的查询优化提供了新思路。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.04883v1",
+      "source": "arxiv",
+      "title": "Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean",
+      "abstract": "Large language models (LLMs) are increasingly used in workflows for generating formal proofs in Lean. These workflows often decompose problems into smaller lemmas, sample many proof attempts, and use compiler feedback to guide search. However, they can be prohibitively expensive, often spending substantial compute on attempts that ultimately fail. In this work, we address this problem with an action routing agent that consists of a data plane and a control plane. The data plane generates natural-language lemma decompositions, formalizes them in Lean, and samples proof attempts for the resulting theorem and lemma targets. The control plane observes previous failed Lean attempts, estimates both the likelihood of success and cost of another attempt, and decides whether to continue proving the current target or restart from a new breakdown. On a subset of PutnamBench, our agent decreases the cost by $25.8\\%$ over a fixed-step baseline on average, preserving performance while using substantially less compute. These results suggest that failed Lean trajectories provide actionable signals for cost-aware resource allocation in agentic theorem proving.",
+      "authors": [
+        "Kári Rögnvaldsson",
+        "Chenhao Sun",
+        "Jasper Dekoninck",
+        "Martin Vechev"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.LO"
+      ],
+      "published": "2026-06-03T13:46:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.04883v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "proposes action routing agent with data and control planes for LLM-based theorem proving",
+      "llm_evidence_cn": "提出带数据平面和控制平面的动作路由智能体用于LLM定理证明",
+      "llm_evidence": "提出带数据平面和控制平面的动作路由智能体用于LLM定理证明",
+      "canonical_evidence": "提出带数据平面和控制平面的动作路由智能体用于LLM定理证明",
+      "llm_tldr_en": "Introduces an action routing agent with data and control planes that balances cost and quality in LLM-based theorem proving by dynamically routing proof attempts based on success likelihood and cost estimates.",
+      "llm_tldr_cn": "该工作针对LLM定理证明中因大量失败尝试导致计算成本高昂的问题，提出了一个动作路由智能体，由数据平面负责生成引理分解和形式化证明，控制平面观测历史失败信息，估计成功概率与成本，动态路由下一步尝试。实验结果表明，该方法在保持高成功率的条件下显著降低了总推理成本，为LLM智能体中的高效任务路由提供了可迁移的框架。",
+      "llm_tldr": "该工作针对LLM定理证明中因大量失败尝试导致计算成本高昂的问题，提出了一个动作路由智能体，由数据平面负责生成引理分解和形式化证明，控制平面观测历史失败信息，估计成功概率与成本，动态路由下一步尝试。实验结果表明，该方法在保持高成功率的条件下显著降低了总推理成本，为LLM智能体中的高效任务路由提供了可迁移的框架。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.05158v1",
+      "source": "arxiv",
+      "title": "Streaming Communication in Multi-Agent Reasoning",
+      "abstract": "Multi-agent reasoning systems adopt a \"generate-then-transfer\" paradigm that forces end-to-end latency to scale linearly with pipeline depth. We introduce StreamMA, a multi-agent reasoning system that streams each reasoning step to downstream agents as soon as it is generated, pipelining adjacent agents and thus reducing latency. Surprisingly, this pipelining also improves effectiveness: because multi-step reasoning quality is non-uniform and early steps are more reliable than later ones, working with these reliable early steps instead of the full chain prevents error-prone late steps from misleading downstream agents. We formalize both advantages with the first closed-form joint analysis of stream, serial, and single protocols, deriving the effectiveness ordering, speedup upper bound, and cost ratio. Across eight reasoning benchmarks spanning mathematics, science, and code, two frontier LLMs (Claude Opus 4.6 and GPT-5.4), and three topologies (Chain, Tree, Graph), StreamMA outperforms both baselines (avg. +7.3 pp, max +22.4 pp on HMMT 2026; Claude Opus 4.6-high). Beyond these contributions, we discover a \"step-level scaling law\": increasing per-agent steps consistently improves both effectiveness and efficiency, a new scaling dimension orthogonal to and composable with agent-count scaling.",
+      "authors": [
+        "Zhen Yang",
+        "Xiaogang Xu",
+        "Wen Wang",
+        "Cong Chen",
+        "Xander Xu",
+        "Ying-Cong Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.MA"
+      ],
+      "published": "2026-06-03T17:57:04+00:00",
+      "link": "https://arxiv.org/pdf/2606.05158v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "streaming communication for multi-agent coordination",
+      "llm_evidence_cn": "流式通信用于多智能体协调路由",
+      "llm_evidence": "流式通信用于多智能体协调路由",
+      "canonical_evidence": "流式通信用于多智能体协调路由",
+      "llm_tldr_en": "StreamMA introduces streaming communication that pipelines reasoning steps across agents, reducing latency and improving accuracy.",
+      "llm_tldr_cn": "多智能体推理系统采用生成-传输范导致延迟与流水线深度线性增长。StreamMA提出流式通信，将推理步骤实时流式传输给下游智能体，实现相邻智能体流水并行。该方法不仅降低延迟，还因早期步骤更可靠而提升效果。属于多智能体协调路由的通信协议创新。",
+      "llm_tldr": "多智能体推理系统采用生成-传输范导致延迟与流水线深度线性增长。StreamMA提出流式通信，将推理步骤实时流式传输给下游智能体，实现相邻智能体流水并行。该方法不仅降低延迟，还因早期步骤更可靠而提升效果。属于多智能体协调路由的通信协议创新。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.04197v1",
+      "source": "arxiv",
+      "title": "Exploring the Topology and Memory of Consensus: How LLM Agents Agree, Fragment, or Settle When Forming Conventions",
+      "abstract": "How much should an LLM agent remember, and how should multi-agent systems be connected when trying to reach consensus? We show these two design choices interact in a way that flips the sign of memory's effect on coordination. Across 432 simulation runs of a networked Naming Game on eight fixed 16-agent topologies, we vary memory depth and network structure. Longer memory slows the time to reach steady state in decentralized networks but accelerates it in centralized ones; the same parameter pushes the system in opposite directions depending on topology. Critically, \"faster settling\" in centralized networks means locking in to a fragmented plateau more quickly, not reaching system-wide consensus, which can be used to generate diverging opinions. We further document a memory-mediated speed-unity trade-off: centralized networks consistently preserve more competing conventions than decentralized networks, but their settling speed depends sharply on memory. At the agent level, within-network analyses show that high-betweenness bridges suffer a brokerage penalty while agents in locally clustered neighborhoods achieve higher coordination success. Finally, in search of analytically tractable generative mechanisms, we find that agents' choices are well captured by Fictitious Play, indicating belief-based rather than reward-based adaptation. The practical implication: memory depth and communication topology should be co-designed, not optimized in isolation.",
+      "authors": [
+        "Aliakbar Mehdizadeh",
+        "Martin Hilbert"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.CL",
+        "cs.SI",
+        "physics.soc-ph"
+      ],
+      "published": "2026-06-02T20:31:54+00:00",
+      "link": "https://arxiv.org/pdf/2606.04197v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Study of communication topology and memory effects on multi-agent consensus, relevant to coordination routing",
+      "llm_evidence_cn": "研究通信拓扑和记忆对多智能体共识的影响，与协调路由相关",
+      "llm_evidence": "研究通信拓扑和记忆对多智能体共识的影响，与协调路由相关",
+      "canonical_evidence": "研究通信拓扑和记忆对多智能体共识的影响，与协调路由相关",
+      "llm_tldr_en": "Explores how memory depth and network topology interact in LLM multi-agent consensus, revealing non-intuitive effects relevant to routing design.",
+      "llm_tldr_cn": "在LLM多智能体系统中，记忆深度和网络拓扑如何影响共识尚不明确。本文通过432次模拟实验，发现记忆在不同拓扑下对收敛速度有相反影响：在去中心化网络中减慢，在中心化网络中加快。但中心化网络的快速收敛可能导致碎片化锁定。研究结果为多智能体通信路由设计提供了重要启示。",
+      "llm_tldr": "在LLM多智能体系统中，记忆深度和网络拓扑如何影响共识尚不明确。本文通过432次模拟实验，发现记忆在不同拓扑下对收敛速度有相反影响：在去中心化网络中减慢，在中心化网络中加快。但中心化网络的快速收敛可能导致碎片化锁定。研究结果为多智能体通信路由设计提供了重要启示。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

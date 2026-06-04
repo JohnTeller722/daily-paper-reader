@@ -1,0 +1,468 @@
+Title: Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean
+
+URL Source: https://arxiv.org/pdf/2606.04883v1
+
+Published Time: Thu, 04 Jun 2026 01:07:56 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+# Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+Kári Rögnvaldsson * 1 Chenhao Sun * 1 Jasper Dekoninck 1 Martin Vechev 1
+
+> https://github.com/eth-sri/optimizing-lean-agents
+
+## Abstract 
+
+Large language models (LLMs) are increasingly used in workflows for generating formal proofs in Lean. These workflows often decompose problems into smaller lemmas, sample many proof attempts, and use compiler feedback to guide search. However, they can be prohibitively expensive, often spending substantial compute on attempts that ultimately fail. In this work, we address this problem with an action routing agent that consists of a data plane and a control plane. The data plane generates natural-language lemma decompositions, formalizes them in Lean, and samples proof attempts for the resulting the-orem and lemma targets. The control plane ob-serves previous failed Lean attempts, estimates both the likelihood of success and cost of an-other attempt, and decides whether to continue proving the current target or restart from a new breakdown. On a subset of PutnamBench, our agent decreases the cost by 25 .8% over a fixed-step baseline on average, preserving performance while using substantially less compute. These re-sults suggest that failed Lean trajectories provide actionable signals for cost-aware resource alloca-tion in agentic theorem proving. 
+
+## 1. Introduction 
+
+Large language models (LLMs) have made rapid progress in automated theorem proving with Lean (de Moura et al., 2015), with recent specialized systems obtaining impres-sive results on challenging benchmarks (Chen et al., 2025c; Varambally et al., 2025; Liu et al., 2026). Compared to nat-ural language reasoning, formal theorem proving offers a unique opportunity to use LLMs, since the correctness of generated proofs can be automatically verified by a com-
+
+> *
+
+Equal contribution 1ETH Zurich, Switzerland. Correspon-dence to: Kári Rögnvaldsson <kari.roegnvaldsson@inf.ethz.ch>, Chenhao Sun <chenhao.sun@inf.ethz.ch>, Jasper Dekoninck <jasper.dekoninck@inf.ethz.ch>. 
+
+Preprint. 
+
+piler, removing the need for human experts. At the same time, formal theorem proving is extremely challenging be-cause proofs must be syntactically valid and every small step must be rigorously justified. To overcome this diffi-culty, recent works built agentic workflows that iteratively decompose problems into smaller lemmas, generate multi-ple proof attempts for each, and self-correct when neces-sary (Varambally et al., 2025; Liu et al., 2026). 
+
+Agentic theorem provers are expensive. The automatic verifiability of Lean proofs allows these workflows to scale to thousands of attempts per problem, which is critical for achieving high performance on difficult benchmarks. How-ever, they are also prohibitively expensive: Liu et al. (2026) spent $50 per problem to achieve a perfect score on Putnam 2025, and the top performance on PutnamBench reportedly used over $40 per problem (Tsoukalas et al., 2024). 
+
+Limitations of fixed-step policies. Existing agents typ-ically scale compute through fixed policies, where every input receives the same pre-specified budgets for decom-position, proof generation, and self-correction. This can waste significant compute on infeasible problems or on misformalized statements. The reliance of fixed-step poli-cies thus poses a fundamental efficiency tradeoff: while more attempts generally improve the probability of suc-cess, they also incur high costs that may not be justified by the marginal improvement in solve rate. Unfortunately, this efficiency perspective has largely been ignored in prior work, which has focused on improving performance rather than optimizing workflow costs. 
+
+This work: Routing for improved cost-quality trade-offs. To mitigate this, we adapt and extend existing works in the routing and cascading literature (Zhuge et al., 2024; Aggarwal et al., 2024; Ramírez et al., 2024) to the set-ting of Lean theorem proving with agentic workflows. To do so, we propose a novel agent architecture that uses a lightweight router to dynamically evaluate the expected cost, measured as LLM generation compute, and quality of future proof attempts based on the agent’s past trajectory. By learning to identify low-value attempts early, our agent can stop early or restart, significantly reducing unnecessary computation while preserving performance. 1
+
+> arXiv:2606.04883v1 [cs.CL] 3 Jun 2026
+
+Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean   
+
+> theorem exist_infinite_primes
+> Formal Breakdown
+
+✗
+
+> Attempt
+
+✗ 
+
+> Attempt
+> Restart
+> Formal Breakdown
+
+✓ 
+
+> Attempt
+> Lemma 1
+
+✗
+
+> Attempt
+
+✓ 
+
+> Attempt
+> Lemma 2
+
+✓ 
+
+> Attempt
+> Lemma 3
+
+✗
+
+> Attempt
+> Restart
+
+Agent history (s, a )
+
+Features x1 . . . x n
+
+Cost ˆc Quality ˆq
+
+Tradeoff ˆq − λˆc
+
+Attempt Restart 
+
+Figure 1. An overview of our approach. As shown on the left, our agent first decomposes the original problem into formal lemmas. It then attempts to prove the theorem, assuming the lemmas are correct. If the proof fails, the agent router (right) observes the trajectory of past attempts, extracts features, and estimates the cost and quality of future attempts. Based on a cost-quality tradeoff, it then decides whether to continue allocating compute to the current target or create a new breakdown. Once a breakdown is accepted, the agent attempts to prove each lemma, with the same router overseeing the proof trajectory and making dynamic routing decisions at each step. 
+
+Agent architecture. Our architecture conceptually sep-arates the agent into a proof-generation data plane (Fig-ure 1, left) and a cost-quality control plane (Figure 1, right). Inspired by Chen et al. (2025c), the data plane gener-ates lemma-style Lean proofs by decomposing the original problem into natural-language lemmas, formalizing those lemmas in Lean, and generating proof attempts for the re-sulting theorem and lemma targets. Meanwhile, the con-trol plane observes the prior proof trajectory and uses a lightweight model to estimate both the success probability and the cost of the next attempt. Based on a target cost-quality tradeoff, it then dynamically determines whether allocating further compute is worthwhile. 
+
+Experimental results. We evaluate our routing approach on an 85-problem subset of PutnamBench. We find that our dynamic approach significantly outperforms the fixed-step baseline across multiple cost-quality metrics. In particular, on average, our agent and reduces the required budget by 
+
+25 .8% at parity accuracy, and achieves a 7.8% improve-ment in accuracy at parity cost. These results demonstrate that fixed-step policies leave significant room for efficiency improvements and that our routing strategy effectively mit-igates unnecessary computational costs without sacrificing performance. 
+
+Key contributions. Our key contributions are: • We identify that fixed-step scaling in Lean agents is critically inefficient, and that reducing unnecessary at-tempts is key to achieving a better cost-quality trade-off. • We develop a lemma-style Lean prover equipped with an online cost-quality adaptive router (§3). • We empirically demonstrate that our proposed router successfully decreases wasted compute while main-taining competitive accuracy (§4). 
+
+## 2. Related Work 
+
+Lean benchmarks To evaluate theorem provers in Lean, researchers have developed several benchmarks. MiniF2F (Zheng et al., 2021) and PutnamBench (Tsoukalas et al., 2024) are two widely used evaluation suites for Lean the-orem proving, with PutnamBench focusing on problems from the Putnam undergraduate mathematics competition. More recent benchmarks have expanded the scope of evalu-ation to include research-level problems (Dekoninck et al., 2026; Jiang et al., 2025). 
+
+Lean prover models. To improve capabilities, several efforts have trained specialized models for Lean theorem proving (Polu et al., 2023; Shao et al., 2024; Lin et al., 2025a; Wang et al., 2025; Ren et al., 2025; Lin et al., 2025b). These models, including G OEDEL -P ROVER -V2 (Lin et al., 2025b), use reinforcement learning techniques on large datasets of proof trajectories to improve proof generation and instill reasoning capabilities. They per-form very well on easier benchmarks like MiniF2F, but still struggle with harder or more advanced benchmarks. 
+
+Agentic prover systems. To push the performance bar-rier, recent systems have adopted agentic workflows that make direct use of the exact verifiability of Lean to scale inference compute significantly. These agents recursively decompose problems into smaller lemmas, sample many proof attempts, and use Lean feedback to guide search (Zhou et al., 2025; Chen et al., 2025c; Varambally et al., 2025; Liu et al., 2026; Hubert et al., 2026; Chen et al., 2025a; Mistral AI, 2026; Requena Pozo et al., 2026). They obtain significantly improved solve rates on harder bench-marks, but they also shift the bottleneck toward inference-time compute: many require hundreds of expensive LLM calls per problem, making them prohibitively expensive to run at scale. 2Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+Routing and cascading. Routing and cascading are stan-dard approaches for reducing the cost of LLM systems. Routing selects a model or tool for a query according to a learned policy or predictor (Chuang et al., 2025; Ding et al., 2024; Hari and Thomson, 2023). Usually, a query is routed to a specialized model for a specific topic, or to a more ex-pensive model if the query is predicted to be difficult. In-stead, cascading runs a sequence of increasingly expensive LLMs and stops once a response passes a quality criterion (Chen et al., 2024; Ramírez et al., 2024). In open-ended natural language tasks, these quality criteria often rely on proxy signals such as confidence, agreement, or response variance (Aggarwal et al., 2024; Jitkrittum et al., 2023). 
+
+Routing in agentic environments. Recent work extends routing and cascading to multi-agent LLM systems (Zhuge et al., 2024; Chen et al., 2025b; Yue et al., 2025; Su et al., 2026; Kumaresan, 2026). These methods typically opti-mize query-level model selection, agent structure, or task allocation across collaborating agents. Our setting differs because we specifically apply routing to the unique envi-ronment of agentic theorem proving in Lean, where the router observes structured proof trajectories in an agentic search process. To our knowledge, no prior work has ex-plored routing in this setting. 
+
+## 3. Action Routing Lean Agent 
+
+Our primary goal is to replace fixed policies with dynami-cally predicted routing decisions, thereby achieving a bet-ter cost-quality tradeoff in Lean agents. This section de-scribes the implementation of our proposed architecture. §3.1 presents the proof-generation data plane, which op-erates the lemma-style prover and records the trajectories consumed by the control plane. §3.2 describes the cost-quality control plane, which evaluates these trajectories to decide dynamically whether the agent should retry the cur-rent target or abandon it. 
+
+3.1. Proof-Generation Data Plane 
+
+The design of the data plane is based on prior work (Varam-bally et al., 2025; Chen et al., 2025c). In particular, it is responsible for decomposing the original problem into tractable subgoals, generating proof attempts for those sub-goals, and reconstructing the final proof. In addition, it produces the attempt trajectories used by the control plane to make routing decisions. The data plane consists of four modules, illustrated in Figure 2. Detailed prompts of each module are provided in §D. 
+
+Breakdown module. We prompt a general-purpose model (GPT-OSS-20B (Agarwal et al., 2025), with high reasoning effort) to first solve the original problem in natu-ral language. The format of the output breakdown is shown in the breakdown prompt in §D. The model organizes the proof into a sequence of lemmas, accompanied by concise proof sketches of each lemma and the main theorem. Lem-mas may depend on other lemmas in the same breakdown, so each proof sketch specifies which lemma should be used to prove the current target. If the modules described next fail to produce a full proof for a breakdown, the break-down is discarded, and the agent generates a new break-down, up to at most nb repetitions. If all nb breakdowns are exhausted, the problem is marked as unsolved. 
+
+Formalizer. Next, the agent attempts to formalize the breakdown in Lean. For every natural-language lemma, we sample nf candidate formalizations from G OEDEL -FORMALIZER -V2-8B (Lin et al., 2025b), compile each candidate against Mathlib, and discard any candidate that produces syntax or type errors. If multiple formalizations of the same lemma compile successfully, we pass them to a general-purpose model (GPT-OSS-20B, with low rea-soning effort), together with the original natural-language statement and proof sketch. The model then selects the best formalization. 
+
+Formal breakdown prover. During proof generation, the agent first attempts to prove the top-level theorem using the formalized lemmas as Lean axioms , which can be used directly to prove the statement. The natural-language proof sketch is included in the prompt to guide the prover. We use G OEDEL -P ROVER -V2-8B (Lin et al., 2025b) to gen-erate proof attempts for this formal breakdown. In Lean, a proof is successful only if it compiles without errors. If a proof attempt fails to compile, the control plane determines whether to sample another attempt, up to a maximum limit, or to terminate the current breakdown. If the control plane terminates the process, the current breakdown is discarded. If the proof compiles successfully, we extract the subset of lemmas invoked in the proof and push them onto a lemma stack for subsequent proof generation. 
+
+Lemma prover. Once the formal breakdown has been proven, the agent pops one lemma at a time from the stack and attempts to prove it using the same G OEDEL -P ROVER -V2-8B model and control plane logic. To avoid spend-ing compute on unused lemmas, the agent only attempts to prove lemmas that are invoked by an accepted proof of the formal breakdown or by other proven lemmas. The input to the prover includes the formal lemma statement, its natural-language proof sketch, and any dependencies extracted from the sketch, which are provided as axioms. If the attempt limit is reached or the control plane de-cides to stop, the breakdown is discarded. If the lemma is proven successfully, any new lemmas invoked in its proof are pushed onto the lemma stack. This process continues recursively until the stack is empty. Once it is, the problem has been successfully solved. 3Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean    
+
+> Problem Statement
+> Breakdown Module Formalizer Formal Breakdown Prover
+> Lemma Prover
+> Pop from lemma stack
+> Figure 2. Overview of the architecture of the data plane, illustrating the core modular components alongside the recursive lemma dependency resolution.
+
+3.2. Cost-Quality Control Plane 
+
+The cost-quality control plane decides whether the agent should continue attempting to prove the current target or terminate the current trajectory and move to another candi-date breakdown. Its role is to replace a fixed attempt budget with a routing policy that accounts for both the expected benefit and the computational cost of additional proof at-tempts. In this section, we first formulate the trajectory-level decision problem (§3.2.1), then define the cost-quality objective used by the router (§3.2.2), and finally describe the cost and quality estimators used to implement this ob-jective (§3.2.3). 3.2.1. T RAJECTORY AND ACTION SPACE 
+
+We define the object currently being proved as a target, which is either the formal breakdown of the original the-orem or an individual lemma produced during decompo-sition. For a given target, a trajectory consists of the se-quence of all failed proof attempts observed so far. Each attempt produces a candidate Lean proof, its compilation result, and auxiliary information such as output length, er-ror messages, and proof structure. The control plane uses this trajectory-level information to decide whether further attempts should be made for the current target or whether the agent should move on to another breakdown. At the be-ginning of a trajectory, to provide non-trivial information, the agent always samples two proof attempts before the first decision is made. We denote the information available to the router at a de-cision point by an abstract state s. This state summarizes the current failed-attempt trajectory and contains whatever quantities are needed by the cost and quality estimators. The concrete information used by two estimators is de-scribed in §3.2.3. We define the action space of the control plane as A =
+
+{ATTEMPT , TERMINATE }. The action A TTEMPT samples one additional proof for the current target. The action T ER - 
+
+> MINATE
+
+stops the current trajectory and marks the break-down as failed. 3.2.2. C OST -QUALITY TRADEOFF AND ROUTING 
+
+Intuitively, the router should continue attempting a target when the next proof attempt has a sufficiently high chance of success, and terminate when the trajectory appears un-likely to yield a valid proof. At each decision point, the router receives the state s. Let 
+
+ˆq(s) denote the predicted probability that one additional at-tempt will solve the current target, which we will refer to as quality, and let ˆc(s) denote the predicted cost of generating that attempt. Following the cost-quality routing formula-tion of Dekoninck et al. (2025), we define the utility of one additional attempt as 
+
+τ (s) = ˆ q(s) − λˆc(s),
+
+where λ > 0 controls the relative penalty assigned to com-putational cost. A positive value of τ (s) indicates that the expected gain in success probability outweighs the cost of another attempt under the chosen budget preference. The resulting routing policy is 
+
+π(s) = 
+
+(
+
+ATTEMPT , τ (s) > 0,
+
+TERMINATE , otherwise. Thus, the router continues proving the current target only when the predicted value of an additional attempt is pos-itive. The hyperparameter λ traces different operating points along the cost-quality frontier. Smaller values of λ
+
+make the router more willing to spend computation, while larger values encourage earlier termination and lower total cost. 3.2.3. E STIMATING COST AND QUALITY 
+
+To instantiate the policy above, the control plane requires two estimates for each decision: the expected cost ˆc(s) of another attempt and the success probability ˆq(s) of that at-tempt. We estimate these quantities separately. 
+
+Cost estimator. We use the number of output tokens as a proxy for the computational cost of each attempt. We mea-sure cost as LLM generation compute and treat the cost of Lean compilation as negligible. Within a trajectory, the agent generates proof attempts using the same model and the same target. We therefore assume that attempt costs 4Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+are independent and identically distributed. Under this as-sumption, the average cost of previous attempts is an un-biased estimator of the cost of the next attempt. Thus, the estimated cost ˆc(s) is computed as the average cost of all previous attempts in the trajectory. 
+
+Quality estimator. Estimating ˆq(s) is more challenging because the value of an additional attempt depends on both the inherent difficulty of the target and the history of previ-ous failures. We design features based on previous failures that may signal whether the prover is making progress or is stuck in a local failure mode. The design of these features is discussed in §3.2.4. Using these features, along with the number of attempts made so far, we train a logistic regres-sion model to predict the success probability of the next attempt. 
+
+Training the quality estimator. To train the estimator, we construct random trajectories on a designated training set of problems using a fixed attempt budget, collecting features at every step from the previous history. Each tra-jectory terminates either when it reaches the first successful attempt or when the attempt budget is exhausted. The qual-ity estimator is a logistic regression model trained on these trajectories, with the attempt success as the signal and the trajectory features and the number of previous attempts as inputs. The training details are listed in §A. 3.2.4. F EATURES FOR QUALITY ESTIMATION 
+
+The quality estimator relies on features extracted from the trajectory of previous proof attempts. These features are designed to capture signals of target difficulty and repeated failure modes. In particular, we use the following features from the proof trajectory for the quality estimation model. We provide an analysis of the correlation between features and the next-attempt quality in §B. 
+
+Proof similarity. We measure how similar the generated proofs are across attempts. To compute this feature, we first normalize each proof by extracting the proof body, renam-ing variables into a standard format, and removing com-ments and redundant whitespace. We then compute the average pairwise fuzzy string ratio among all normalized proofs in the trajectory. A low similarity score suggests that the prover is exploring different proof states and fail-ing in different ways, which might indicate that the model is confused and has low intrinsic confidence. 
+
+Error diversity. We compute the ratio of unique Lean compilation error messages to the total number of compila-tion errors observed across all attempts. A low diversity ra-tio indicates that the prover repeatedly encounters the same error, suggesting a persistent failure mode. In contrast, a high diversity ratio suggests that the prover is exploring dif-ferent proof states and failing in different ways. 
+
+3.3. Extension to Other Lean Agents 
+
+Although we instantiate routing in our own open-source prover, the same control plane principle can be applied to other Lean agents (Varambally et al., 2025; Chen et al., 2025c). The key idea is to separate the agent’s proof-generation mechanism from the routing policy that decides which action is optimal. This separation makes the frame-work extensible to agents with richer action spaces, mul-tiple prover models, or additional self-correction. We do not explore these extensions experimentally due to the high cost of evaluating these agents. 
+
+Action space. The action space need not be restricted to ATTEMPT and T ERMINATE . For example, an agent could include an action that switches to a stronger prover model when the current model appears to be struggling. An-other possible action is self-correction, where the agent uses Lean error messages to repair a failed proof attempt. Such an action may be especially useful when the errors suggest syntactic misuse of Lean rather than a genuine log-ical gap. If the agent supports recursive decomposition, the action space could also include an action that breaks the current target into smaller subgoals instead of abandoning the breakdown entirely. 
+
+Optimal policy. With a larger action space, the same cost-quality principle can be generalized by assigning each candidate action an estimated quality gain and cost. The policy then selects the action with the highest predicted utility: 
+
+π(s) = arg max  
+
+> a∈A
+
+ˆq(a, s ) − λˆc(a, s ).
+
+This formulation preserves the same routing behavior while allowing the router to choose among multiple proof-generation strategies. 
+
+Cost and quality estimation. The cost and quality esti-mators can also be generalized by adapting their inputs to the structure of the agent. When multiple prover models are available, cost can be standardized according to the pa-rameter count. Similarly, the quality estimator can incorpo-rate additional trajectory features that reflect the behavior of new modules. These changes affect only the estimator design and do not change the underlying logic of the con-trol plane. 
+
+## 4. Experiments 
+
+We evaluate our agent on a subset of PutnamBench, fo-cusing on its ability to improve the cost-quality tradeoff of 5Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+Lean proof generation. Specifically, we test whether our agent can reduce unnecessary proof attempts without sub-stantially lowering the solve rate, compare its performance with a fixed-step agent and an oracle agent that has access to ground truth success probabilities. 
+
+4.1. Experimental Setup 
+
+We now explain our experimental setup, with additional de-tails provided in §A. 
+
+Dataset. We evaluate on the subset of 85 PutnamBench problems reportedly solved by GOEDEL -P ROVER -V2-32B with pass@192 in self-correction mode. 1 These 85 problems are randomly split into training and test sets, con-taining 42 and 43 problems, respectively. The models used by our agent are trained on the training set, while all results reported in this section are evaluated on the test set. 
+
+Fixed-step baseline. The fixed-step baseline uses the same data plane pipeline, but replaces adaptive routing with a static policy. Specifically, it allocates a fixed maximum of k proof attempts to each active target before terminating the current breakdown and moving to the next one. 
+
+Oracle agent baseline. The goal of our agent is to termi-nate hard targets early, before spending many failed proof attempts on targets that are unlikely to be solved. To study how much benefit could come from having more accurate features, we include an oracle agent that has access to the ground-truth success probability of the current target. This success probability replaces the trajectory features used by our agent, while the router still uses the same logistic qual-ity estimator with the number of previous attempts as an input. It is a privileged information baseline that measures how much adaptive routing could improve in an ideal-case scenario. 
+
+Evaluation metrics. We measure computational cost us-ing Scaled Floating Point Operations (SFLOPs), defined as the product of the model’s effective parameter count and the number of generated output tokens. We evaluate each method on the cost-accuracy plane across hyperparameters or budget settings. This yields a cost-quality curve repre-senting the best achievable tradeoff for each method. For our agent and the oracle agent, we sweep λ from 2 · 10 −8 to 
+
+4 · 10 −6 to trace the cost-quality tradeoff. For the fixed-step baseline, we evaluate k ∈ { 1, . . . , 64 }, using at most eight breakdowns per problem. To summarize cost efficiency, we use the reverse direction of the cost-quality curve. With the solve rate as the x-axis and cost as the y-axis, we report      
+
+> 1GOEDEL -P ROVER -V2-32B reportedly solves 86 problems (Lin et al., 2025b). However, only 85 are listed in the Putnam-Bench leaderboard list of solved problems. See the full list here. 010 20 30
+> Avg Cost per Problem (M SFLOPs)
+> 010 20 30 40 50
+> Solve Rate (%)
+> Fixed-Step Baseline Oracle Router Our Agent
+> Figure 3. Cost-quality curve of our agent compared with the fixed-step baseline and the zero-noise oracle router.
+
+the average cost decrease as the relative reduction of the AUC on these reversed curves compared to the fixed-step baseline. 
+
+4.2. Main Results Comparison to baselines. Figure 3 compares our agent with the fixed-step baseline and the oracle router. Our agent consistently improves the cost-quality tradeoff relative to the fixed-step baseline. It improves upon the fixed-step baseline by 25 .8% AUC, meaning that, on average, it de-creases the budget by 25 .8% on average. For parity budget, it achieves a 7.8% accuracy improvement. 
+
+Point comparisons. To achieve a high accuracy, the fixed-step baseline solves 44 .0% of problems using 31 .6
+
+M SFLOPs, whereas our agent solves 43 .6% using 22 .6 MSFLOPs. This corresponds to a 28 .4% cost reduction with only a 0.4% decrease in solve rate. In a medium-budget regime, the fixed-step baseline solves 41 .8% of problems using 24 .9 M SFLOPs, while our agent solves 41 .6% of problems using only 17 .5 M SFLOPs. Relative to these points, our agent reduces cost by 29 .6% with only a 0.2% 
+
+decrease in solve rate. 
+
+Contextualizing results. The oracle agent achieves a substantially stronger cost-quality tradeoff than both the fixed-step baseline and our agent. This result shows that accurately identifying hard targets is highly valuable for adaptive routing. The gap between our agent and the oracle reference suggests that better trajectory features or stronger quality estimators could further improve the router’s abil-ity to terminate low-value targets early. Overall, these re-sults show that fixed-step policies leave significant room for efficiency improvements, and that the routing strategy can eliminate unnecessary proof attempts while preserving most of the solve-rate performance. 6Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+4.3. Ablation Studies 
+
+We now present a series of ablation studies to further ana-lyze the performance of the routing strategy and its compo-nents. We first evaluate noisy oracle variants to understand the sensitivity of adaptive routing to quality-estimation ac-curacy (§4.3.1). We then analyze the contribution of differ-ent features in the quality estimation model (§4.3.2). At the end of this section, we isolate the contribution of the data plane architecture by comparing it against a whole-proof generation approach (§4.3.3). 4.3.1. N OISY ORACLE AGENT 
+
+We also evaluate noisy oracle variants by perturbing the ground-truth success probability with different levels of noise. These variants allow us to study how routing per-formance degrades as the target-difficulty signal becomes less reliable, and to assess how effectively our agent re-covers difficulty information from proof trajectories. We perturb the ground-truth success probability of each proof target using different levels of Gaussian or uniform noise. Given a ground-truth success probability of p, we refer to a Gaussian noise level of 10% as pn = p + ε, where 
+
+ε ∼ N (0 , 0.1) , and clamp the value to [10 −6, 1 − 10 −6].We map the perturbed probability pn with a logit mapping (logit (pn) = log pn/(1 − pn)) and feed to the quality esti-mator. Table 1 reports the AUC improvement of each noisy oracle relative to the fixed-step baseline. The zero-noise oracle, which represents the theoretical ceil-ing for this estimator family, yields a 59 .9% cost decrease over the fixed-step baseline. As the noise level increases, performance gradually decreases. Our agent achieves a 
+
+25 .8% cost decrease, placing it between the 5% noise ora-cle, which achieves 23 .2% , and the 4% noise oracle, which achieves 27 .1% . This suggests that the real proof-trajectory features recover a meaningful fraction of the information available to an oracle target-difficulty estimator. We provide a further analysis of the feature coefficients of the quality estimators in §B. 4.3.2. Q UALITY ESTIMATOR ABLATION 
+
+We next analyze the contribution of different features used by the quality estimator. We compare the full feature set against removing different features. Table 2 reports the cost decrease of each model relative to the fixed-step baseline. As can be clearly seen in Table 2, all inputs significantly aid our agent in improving the cost-quality tradeoff, with error diversity being the most important feature. 4.3.3. D ATA PLANE PERFORMANCE 
+
+Finally, we isolate the contribution of the data plane archi-tecture. In addition to the control plane’s dynamic routing  
+
+> Table 1. Average cost decrease according to the Area Under the Curve (AUC) cost-quality curves across varying levels of artificial noise, compared against the Fixed-Step Baseline.
+
+Model Configuration Avg. Cost Decrease 
+
+0% noise (oracle signal) 59 .9% 
+
+1% noise 50 .3% 
+
+2% noise 38 .2% 
+
+3% noise 30 .8% 
+
+4% noise 27 .1% 
+
+Our agent 25 .8% 
+
+5% noise 23 .2% 
+
+10% noise 12 .4%  
+
+> Table 2. Average cost decrease according to the Area Under the Curve (AUC) cost-quality curves for different inputs to the quality estimator, compared against the Fixed-Step Baseline.
+
+Model Configuration Avg. Cost Decrease All three inputs (our agent) 25 .8% 
+
+Proof similarity + error diversity 21 .0% 
+
+Error diversity + attempt count 18 .4% 
+
+Proof similarity + attempt count 16 .2% 
+
+Attempt count only 10 .4% 
+
+decisions, the data plane itself substantially improves over a whole-proof generation approach, in which a specialized prover model directly generates complete proofs without the agentic decomposition architecture. In the whole-proof generation baseline, we prompt the G OEDEL -P ROVER -V2 models to generate entire proofs in a single step, report pass @k, with k ranging from 1 to 256. We provide a de-tailed description of the whole-proof baseline in §C. As shown in Figure 4, when using the same prover model G OEDEL -P ROVER -V2-8B, the data plane pipeline achieves substantially better accuracy: its performance is close to that of the stronger G OEDEL -P ROVER -V2-32B model. Concretely, the data plane pipeline improves the average solve rate over the G OEDEL -P ROVER -V2-8B whole-proof generation pipeline by +99 .9% , only −8.8% 
+
+shy of the performance of the G OEDEL -P ROVER -V2-32B whole-proof generation pipeline. These results demon-strate the effectiveness of the data plane design. 
+
+## 5. Limitations and Future Work 
+
+This work studies adaptive routing as a first step toward cost-aware control for agentic formal mathematical prov-ing. In this section, we discuss several limitations of the current system and open directions for future work. 7Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 0 20 40 60 80  
+
+> Avg Cost per Problem (M SFLOPs)
+> 020 40 60
+> Solve Rate (%)
+> GOEDEL -P ROVER -V2 8B GOEDEL -P ROVER -V2 32B Fixed-Step Baseline
+> Figure 4. Comparison between the fixed-step data plane pipeline and whole-proof generation.
+
+Small benchmark size. Our evaluation is limited to a subset of PutnamBench because running the full agent on larger benchmarks is computationally infeasible. We es-timate our runs on the 85 problem subset to have cost around 1600-2000 GPU hours on NVIDIA GH200, mean-ing that if we were to scale to the full PutnamBench, the cost would be roughly eightfold, around 12000-16000 GPU hours. However, this subset is well matched to the capa-bility of the underlying prover and thus provides a useful setting for studying routing behavior. 
+
+Gap to oracle routing. The proposed routing system also leaves a substantial gap to the oracle router. This gap suggests that the current cost and quality estimators cap-ture only part of the information needed for effective rout-ing. New reward formulations, better trajectory features, and stronger estimator architectures may further improve the prediction. 
+
+Limited action space. The current implementation is also restricted to a binary action space: the router decides whether to sample another proof attempt for the current tar-get or terminate it. As discussed in §3.3, the same frame-work could be extended to larger action spaces and more general agentic architectures. In such settings, however, routing becomes more difficult because the agent must decide not only whether to continue, but also which ac-tion to take next. Future work could study how to effec-tively implement adaptive routing for more sophisticated Lean agents with actions such as model switching, self-correction, and recursive decomposition. 
+
+## 6. Conclusions 
+
+Agentic Lean provers can improve performance by scal-ing inference-time computation, but fixed compute budgets often allocate many attempts to targets that are unlikely to succeed. In this work, we introduced an action rout-ing agent that uses failed proof trajectories to estimate the cost and marginal value of an additional proof attempt. The agent then uses these estimates to decide whether to con-tinue proving the current target or terminate the current tra-jectory and restart from a new breakdown. On a subset of PutnamBench, our agent improves the cost-quality trade-off relative to a fixed-step baseline, reducing the required budget by 25 .8% at parity accuracy and achieving a 7.8% 
+
+improvement in accuracy at parity cost. Overall, these re-sults suggest that cost-aware control policies are a promis-ing approach for making formal theorem proving more ef-ficient. Instead of assigning inference budgets statically, future Lean agents may benefit from dynamically allocat-ing computation based on the observed progress and failure patterns of proof generation. 
+
+## Acknowledgements 
+
+This work was supported by a grant from the Swiss Na-tional Supercomputing Centre (CSCS) under project ID a155 on Alps. 8Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+## References 
+
+Sandhini Agarwal, Lama Ahmad, Jason Ai, Sam Alt-man, Andy Applebaum, Edwin Arbus, Rahul K. Arora, Yu Bai, Bowen Baker, Haiming Bao, Boaz Barak, Ally Bennett, Tyler Bertao, Nivedita Brett, Eugene Brevdo, Greg Brockman, Sébastien Bubeck, Che Chang, Kai Chen, Mark Chen, Enoch Cheung, Aidan Clark, Dan Cook, Marat Dukhan, Casey Dvorak, Kevin Fives, Vlad Fomenko, Timur Garipov, Kristian Georgiev, Mia Glaese, Tarun Gogineni, Adam P. Goucher, Lukas Gross, Katia Gil Guzman, John Hallman, Jackie Hehir, Jo-hannes Heidecke, Alec Helyar, Haitang Hu, Romain Huet, Jacob Huh, Saachi Jain, Zach Johnson, Chris Koch, Irina Kofman, Dominik Kundel, Jason Kwon, Volodymyr Kyrylov, Elaine Ya Le, Guillaume Leclerc, James Park Lennon, Scott Lessans, Mario Lezcano Casado, Yuanzhi Li, Zhuohan Li, Ji Lin, Jordan Liss, Lily Liu, Jiancheng Liu, Kevin Lu, Chris Lu, Zoran Mar-tinovic, Lindsay McCallum, Josh McGrath, Scott McK-inney, Aidan McLaughlin, Song Mei, Steve Mostovoy, Tong Mu, Gideon Myles, Alexander Neitz, Alex Nichol, Jakub Pachocki, Alex Paino, Dana Palmie, Ashley Pan-tuliano, Giambattista Parascandolo, Jongsoo Park, Leher Pathak, Carolina Paz, Ludovic Peran, Dmitry Pimenov, Michelle Pokrass, Elizabeth Proehl, Huida Qiu, Gaby Raila, Filippo Raso, Hongyu Ren, Kimmy Richardson, David Robinson, Bob Rotsted, Hadi Salman, Suvansh Sanjeev, Max Schwarzer, D. Sculley, Harshit Sikchi, Kendal Simon, Karan Singhal, and Yang Song. gpt-oss-120b & gpt-oss-20b model card. CoRR , abs/2508.10925, 2025. doi: 10.48550/ARXIV.2508.10925. URL https: //doi.org/10.48550/arXiv.2508.10925 .Pranjal Aggarwal, Aman Madaan, Ankit Anand, Sriv-idya Pranavi Potharaju, Swaroop Mishra, Pei Zhou, Aditya Gupta, Dheeraj Rajagopal, Karthik Kappa-ganthu, Yiming Yang, Shyam Upadhyay, Manaal Faruqui, and Mausam. Automix: Automatically mixing language models. In Amir Globersons, Lester Mackey, Danielle Belgrave, Angela Fan, Ulrich Pa-quet, Jakub M. Tomczak, and Cheng Zhang, editors, 
+
+Advances in Neural Information Processing Systems 38: Annual Conference on Neural Information Pro-cessing Systems 2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024 , 2024. URL http: //papers.nips.cc/paper_files/paper/2024/hash/ ecda225cb187b40ea8edc1f46b03ffda-Abstract-Conference. html .Jiangjie Chen, Wenxiang Chen, Jiacheng Du, Jinyi Hu, Zhicheng Jiang, Allan Jie, Xiaoran Jin, Xing Jin, Cheng-gang Li, Wenlei Shi, Zhihong Wang, Mingxuan Wang, Chenrui Wei, Shufa Wei, Huajian Xin, Fan Yang, Wei-hao Gao, Zheng Yuan, Tianyang Zhan, Zeyu Zheng, Tianxi Zhou, and Thomas Hanwen Zhu. Seed-prover 1.5: Mastering undergraduate-level theorem proving via learning from experience. CoRR , abs/2512.17260, 2025a. doi: 10.48550/ARXIV.2512.17260. URL https: //doi.org/10.48550/arXiv.2512.17260 .Lingjiao Chen, Matei Zaharia, and James Zou. Frugalgpt: How to use large language models while reducing cost and improving performance. Transactions on Machine Learning Research , 2024. Lingjiao Chen, Jared Quincy Davis, Boris Hanin, Pe-ter Bailis, Matei Zaharia, James Zou, and Ion Stoica. Optimizing model selection for compound AI systems. 
+
+CoRR , abs/2502.14815, 2025b. doi: 10.48550/ARXIV. 2502.14815. URL https://doi.org/10.48550/arXiv. 2502.14815 .Luoxin Chen, Jinming Gu, Liankai Huang, Wenhao Huang, Zhicheng Jiang, Allan Jie, Xiaoran Jin, Xing Jin, Cheng-gang Li, Kaijing Ma, Cheng Ren, Jiawei Shen, Wen-lei Shi, Tong Sun, He Sun, Jiahui Wang, Siran Wang, Zhihong Wang, Chenrui Wei, Shufa Wei, Yonghui Wu, Yuchen Wu, Yihang Xia, Huajian Xin, Fan Yang, Huaiyuan Ying, Hongyi Yuan, Zheng Yuan, Tianyang Zhan, Chi Zhang, Yue Zhang, Ge Zhang, Tianyun Zhao, Jianqiu Zhao, Yichi Zhou, and Thomas Hanwen Zhu. Seed-prover: Deep and broad reasoning for automated theorem proving. CoRR , abs/2507.23726, 2025c. doi: 10.48550/ARXIV.2507.23726. URL https://doi.org/ 10.48550/arXiv.2507.23726 .Yu-Neng Chuang, Prathusha Kameswara Sarma, Parikshit Gopalan, John Boccio, Sara Bolouki, Xia Hu, and He-len Zhou. Learning to route llms with confidence to-kens. In Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-Julien, Felix Berkenkamp, Tegan Maharaj, Kiri Wagstaff, and Jerry Zhu, editors, Forty-second Interna-tional Conference on Machine Learning, ICML 2025, Vancouver, BC, Canada, July 13-19, 2025 , Proceed-ings of Machine Learning Research. PMLR / Open-Review.net, 2025. URL https://proceedings.mlr. press/v267/chuang25b.html .Leonardo de Moura, Soonho Kong, Jeremy Avigad, Floris van Doorn, and Jakob von Raumer. The lean theorem prover (system description). In Amy P. Felty and Aart Middeldorp, editors, Automated Deduction - CADE-25 , pages 378–388, Cham, 2015. Springer International Publishing. ISBN 978-3-319-21401-6. Jasper Dekoninck, Maximilian Baader, and Martin T. Vechev. A unified approach to routing and cascad-ing for llms. In Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-Julien, Felix Berkenkamp, Tegan Maharaj, Kiri Wagstaff, and Jerry Zhu, editors, Forty-second International Conference on Machine Learning, 
+
+9Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+ICML 2025, Vancouver, BC, Canada, July 13-19, 2025 ,Proceedings of Machine Learning Research. PMLR / OpenReview.net, 2025. URL https://proceedings. mlr.press/v267/dekoninck25a.html .Jasper Dekoninck, Nikola Jovanovi´ c, Tim Gehrunger, Kári Rögnvaldsson, Ivo Petrov, Chenhao Sun, and Martin Vechev. Beyond benchmarks: Matharena as an evalu-ation platform for mathematics with llms. 2026. URL 
+
+> https://arxiv.org/abs/2605.00674
+
+.Dujian Ding, Ankur Mallick, Chi Wang, Robert Sim, Sub-habrata Mukherjee, Victor Rühle, Laks V. S. Laksh-manan, and Ahmed Hassan Awadallah. Hybrid LLM: cost-efficient and quality-aware query routing. In The Twelfth International Conference on Learning Represen-tations, ICLR 2024, Vienna, Austria, May 7-11, 2024 .OpenReview.net, 2024. URL https://openreview. net/forum?id=02f3mUtqnM .Surya Narayanan Hari and Matt Thomson. Tryage: Real-time, intelligent routing of user prompts to large lan-guage models. CoRR , abs/2308.11601, 2023. doi: 10.48550/ARXIV.2308.11601. URL https://doi.org/ 10.48550/arXiv.2308.11601 .Thomas Hubert, Rishi Mehta, Laurent Sartran, et al. Olympiad-level formal mathematical reasoning with re-inforcement learning. Nature , 651:607–613, 2026. doi: 10.1038/s41586-025-09833-y. URL https://doi.org/ 10.1038/s41586-025-09833-y .Jiedong Jiang, Wanyi He, Yuefeng Wang, Guoxiong Gao, Yongle Hu, Jingting Wang, Nailing Guan, Peihao Wu, Chunbo Dai, Liang Xiao, and Bin Dong. FATE: A for-mal benchmark series for frontier algebra of multiple difficulty levels. CoRR , abs/2511.02872, 2025. doi: 10.48550/ARXIV.2511.02872. URL https://doi.org/ 10.48550/arXiv.2511.02872 .Wittawat Jitkrittum, Neha Gupta, Aditya Krishna Menon, Harikrishna Narasimhan, Ankit Singh Rawat, and Sanjiv Kumar. When does confidence-based cascade deferral suffice? In Alice Oh, Tristan Naumann, Amir Glober-son, Kate Saenko, Moritz Hardt, and Sergey Levine, editors, Advances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 - 16, 2023 , 2023. URL http: //papers.nips.cc/paper_files/paper/2023/hash/ 1f09e1ee5035a4c3fe38a5681cae5815-Abstract-Conference. html .Ramchand Kumaresan. ACAR: adaptive complexity rout-ing for multi-model ensembles with auditable deci-sion traces. CoRR , abs/2602.21231, 2026. doi: 10. 48550/ARXIV.2602.21231. URL https://doi.org/ 10.48550/arXiv.2602.21231 .Yong Lin, Shange Tang, Bohan Lyu, Jiayun Wu, Hongzhou Lin, Kaiyu Yang, Jia Li, Mengzhou Xia, Danqi Chen, Sanjeev Arora, and Chi Jin. Goedel-prover: A fron-tier model for open-source automated theorem proving. 
+
+CoRR , abs/2502.07640, 2025a. doi: 10.48550/ARXIV. 2502.07640. URL https://doi.org/10.48550/arXiv. 2502.07640 .Yong Lin, Shange Tang, Bohan Lyu, Ziran Yang, Jui-Hui Chung, Haoyu Zhao, Lai Jiang, Yihan Geng, Jiawei Ge, Jingruo Sun, Jiayun Wu, Jiri Gesi, Ximing Lu, David Acuna, Kaiyu Yang, Hongzhou Lin, Yejin Choi, Danqi Chen, Sanjeev Arora, and Chi Jin. Goedel-prover-v2: Scaling formal theorem proving with scaffolded data synthesis and self-correction. CoRR , abs/2508.03613, 2025b. doi: 10.48550/ARXIV.2508.03613. URL https: //doi.org/10.48550/arXiv.2508.03613 .Junqi Liu, Zihao Zhou, Zekai Zhu, Marco Dos Santos, Weikun He, Jiawei Liu, Ran Wang, Yunzhou Xie, Jun-qiao Zhao, Qiufeng Wang, Lihong Zhi, Jia Li, and Wenda Li. Numina-lean-agent: An open and general agentic reasoning system for formal mathematics. arXiv preprint arXiv:2601.14027 , 2026. Mistral AI. Leanstral: Open-source foundation for trust-worthy vibe-coding, March 2026. URL https:// mistral.ai/news/leanstral .Fabian Pedregosa, Gaël Varoquaux, Alexandre Gram-fort, Vincent Michel, Bertrand Thirion, Olivier Grisel, Mathieu Blondel, Andreas Müller, Joel Nothman, Gilles Louppe, Peter Prettenhofer, Ron Weiss, Vincent Dubourg, Jake Vanderplas, Alexandre Passos, David Cournapeau, Matthieu Brucher, Matthieu Perrot, and Édouard Duchesnay. Scikit-learn: Machine learning in python, 2018. URL https://arxiv.org/abs/1201. 0490 .Stanislas Polu, Jesse Michael Han, Kunhao Zheng, Man-tas Baksys, Igor Babuschkin, and Ilya Sutskever. For-mal mathematics statement curriculum learning. In The Eleventh International Conference on Learning Repre-sentations, ICLR 2023, Kigali, Rwanda, May 1-5, 2023 .OpenReview.net, 2023. URL https://openreview. net/forum?id=-P7G-8dmSh4 .Guillem Ramírez, Alexandra Birch, and Ivan Titov. Opti-mising calls to large language models with uncertainty-based two-tier selection. CoRR , abs/2405.02134, 2024. doi: 10.48550/ARXIV.2405.02134. URL https://doi. org/10.48550/arXiv.2405.02134 .10 Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+Z. Z. Ren, Zhihong Shao, Junxiao Song, Huajian Xin, Haocheng Wang, Wanjia Zhao, Liyue Zhang, Zhe Fu, Qihao Zhu, Dejian Yang, Z. F. Wu, Zhibin Gou, Shirong Ma, Hongxuan Tang, Yuxuan Liu, Wenjun Gao, Daya Guo, and Chong Ruan. Deepseek-prover-v2: Advancing formal mathematical reasoning via reinforcement learn-ing for subgoal decomposition. CoRR , abs/2504.21801, 2025. doi: 10.48550/ARXIV.2504.21801. URL https: //doi.org/10.48550/arXiv.2504.21801 .Borja Requena Pozo, Austin Letson, Krystian Nowakowski, Izan Beltran Ferreiro, and Leopoldo Sarra. A minimal agent for automated theorem proving. 2026. URL https://arxiv.org/abs/2602.24273 .Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junx-iao Song, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. DeepSeekMath: Pushing the limits of mathemat-ical reasoning in open language models, 2024. URL 
+
+> https://arxiv.org/abs/2402.03300
+
+.Jinwei Su, Qizhen Lan, Yinghui Xia, Lifan Sun, Weiyou Tian, Tianyu Shi, and Lewei He. Difficulty-aware agen-tic orchestration for query-specific multi-agent work-flows. In Hakim Hacid, Yoelle Maarek, Francesco Bonchi, Ido Guy, and Emine Yilmaz, editors, Proceed-ings of the ACM Web Conference 2026, WWW 2026, Dubai, United Arab Emirates, originally scheduled for April 13-17, 2026, rescheduled for June 29 - July 3, 2026 , pages 2060–2070. ACM, 2026. doi: 10.1145/ 3774904.3792240. URL https://doi.org/10.1145/ 3774904.3792240 .George Tsoukalas, Jasper Lee, John Jennings, Jimmy Xin, Michelle Ding, Michael Jennings, Amitayush Thakur, and Swarat Chaudhuri. Putnambench: Evaluating neural theorem-provers on the putnam mathematical competition. In Amir Globersons, Lester Mackey, Danielle Belgrave, Angela Fan, Ulrich Pa-quet, Jakub M. Tomczak, and Cheng Zhang, editors, 
+
+Advances in Neural Information Processing Systems 38: Annual Conference on Neural Information Pro-cessing Systems 2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024 , 2024. URL http: //papers.nips.cc/paper_files/paper/2024/hash/ 1582eaf9e0cf349e1e5a6ee453100aa1-Abstract-Datasets_ and_Benchmarks_Track.html .Sumanth Varambally, Thomas Voice, Yanchao Sun, Zhifeng Chen, Rose Yu, and Ke Ye. Hilbert: Recur-sively building formal proofs with informal reasoning. 
+
+arXiv preprint arXiv:2509.22819 , 2025. Haiming Wang, Mert Unsal, Xiaohan Lin, Mantas Baksys, Junqi Liu, Marco Dos Santos, Flood Sung, Ma-rina Vinyes, Zhenzhe Ying, Zekai Zhu, Jianqiao Lu, Hugues de Saxcé, Bolton Bailey, Chendong Song, Chen-jun Xiao, Dehao Zhang, Ebony Zhang, Frederick Pu, Han Zhu, Jiawei Liu, Jonas Bayer, Julien Michel, Longhui Yu, Léo Dreyfus-Schmidt, Lewis Tunstall, Luigi Pagani, Moreira Machado, Pauline Bourigault, Ran Wang, Stanislas Polu, Thibaut Barroyer, Wen-Ding Li, Yazhe Niu, Yann Fleureau, Yangyang Hu, Zhouliang Yu, Zihan Wang, Zhilin Yang, Zhengying Liu, and Jia Li. Kimina-prover preview: Towards large formal rea-soning models with reinforcement learning. 2025. URL 
+
+> http://arxiv.org/abs/2504.11354
+
+.Yanwei Yue, Guibin Zhang, Boyang Liu, Guancheng Wan, Kun Wang, Dawei Cheng, and Yiyan Qi. Masrouter: Learning to route llms for multi-agent systems. In Wanx-iang Che, Joyce Nabende, Ekaterina Shutova, and Mo-hammad Taher Pilehvar, editors, Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2025, Vienna, Austria, July 27 - August 1, 2025 , pages 15549–15572. Association for Computational Linguistics, 2025. URL 
+
+> https://aclanthology.org/2025.acl-long.757/
+
+.Kunhao Zheng, Jesse Michael Han, and Stanislas Polu. Minif2f: a cross-system benchmark for for-mal olympiad-level mathematics. arXiv preprint arXiv:2109.00110 , 2021. Yichi Zhou, Jianqiu Zhao, Yongxin Zhang, Bohan Wang, Siran Wang, Luoxin Chen, Jiahui Wang, Haowei Chen, Allan Jie, Xinbo Zhang, Haocheng Wang, Lu-ong Quoc Trung, Rong Ye, Phan Nhat Hoang, Huishuai Zhang, Peng Sun, and Hang Li. Solving formal math problems by decomposition and iterative reflection. 
+
+CoRR , abs/2507.15225, 2025. doi: 10.48550/ARXIV. 2507.15225. URL https://doi.org/10.48550/arXiv. 2507.15225 .Mingchen Zhuge, Wenyi Wang, Louis Kirsch, Francesco Faccio, Dmitrii Khizbullin, and Jürgen Schmidhuber. Gptswarm: Language agents as optimizable graphs. In Ruslan Salakhutdinov, Zico Kolter, Katherine A. Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors, Forty-first International Confer-ence on Machine Learning, ICML 2024, Vienna, Austria, July 21-27, 2024 , Proceedings of Machine Learning Re-search, pages 62743–62767. PMLR / OpenReview.net, 2024. URL https://proceedings.mlr.press/v235/ zhuge24a.html .11 Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+## A. Experimental Details 
+
+Training data. To ensure our experiments are non-contaminated, we split the 85 problem subset of PutnamBench (see §4.1) into a training set of 42 problems and a test set of 43 problems. The training set is used to train the quality estimator, while all results reported in §4 are evaluated on the test set. The train-test split is randomly generated, and the split can be found in the supplementary materials. 
+
+Quality estimator. The quality estimator is a single logistic regression model trained on trajectories with attempt success as the binary target. Its input consists of two parts: the trajectory features described in §3.2.4, and an attempt-count feature 
+
+1/m , where m is the number of previous attempts on the current target. We standardize all inputs to zero mean and unit variance with scikit-learn ’s StandardScaler (Pedregosa et al., 2018) and use its logistic regression implementation with default hyperparameters. 
+
+Routing hyperparameters. We sweep the cost penalty λ (§3.2.2) over 64 seeds with at most eight breakdowns per problem over 
+
+{2 · 10 −8, 4 · 10 −8, 6 · 10 −8, 8 · 10 −8, 1 · 10 −7, 1.5 · 10 −7, 2 · 10 −7, 4 · 10 −7, 4 · 10 −6},
+
+where λ = 0 always continues the current target. The fixed-step baseline sweeps the per-target attempt budget k ∈{1, 2, 4, 8, 16 , 32 , 64 } with at most eight breakdowns per problem. 
+
+Language models. The prover G OEDEL -P ROVER -V2-8B, formalizer G OEDEL -F ORMALIZER -V2-8B, and general-purpose model GPT-OSS-20B all use temperature 1.0. The two 8B models additionally use top-p = 0 .95 . We set the maximum generation length to 40960 tokens for the 8B models and 81920 for GPT-OSS-20B. 
+
+## B. Quality Estimator Analysis 
+
+The learned coefficients of the quality estimator model detailed in Table 3 align closely with our intuition about failure modes. The positive weight on Error Diversity suggests that traversing a wide variety of compilation errors is actually a positive signal of productive exploration, rather than a symptom of failure. The positive weight on Proof Similarity also shows that if the model is generating similar proofs every time, it is more likely to succeed eventually. We hypothesize this is because if the model is generating highly diverse proofs, it is confused, and the intrinsic confidence of the model is low. The positive weight on Attempt Count ( 1/x mapped) also indicates that the more attempts the model has made, the less likely it is to succeed on the next attempt (as attempt count, when 1/x is decreasing). Overall, these coefficients suggest that the model is learning to identify productive trajectories (high error diversity, high proof similarity) and unproductive trajectories (many attempts without success), which is critical for making informed routing decisions.  
+
+> Table 3. Learned linear regression coefficients for the first-stage quality estimators. Note that the model parameters are scaled to mean 0 and variance 1.
+
+Feature Our Agent 
+
+Intercept −4.85 
+
+Proof Similarity 0.27 
+
+Error Diversity 1.03 
+
+Attempt Count ( 1/x mapped) 0.34 
+
+## C. Whole-Proof Generation 
+
+To analyze and later optimize the cost-quality tradeoff of Lean prover models, it is insightful to first analyze the cost-quality tradeoff of the open-weight G OEDEL -P ROVER -V2 models. These results serve as a baseline for our other experiments. 
+
+C.1. Experimental Setup 
+
+We set up an experiment on the same subset of PutnamBench as we used in the main experiment, attempting each problem 256 times, and examining the success rate of the 8B and 32B prover models. 12 Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+To create a robust estimate of the cost-quality curve per model, for each problem, we shuffle the order of the attempts and loop through them sequentially one by one, until we have generated a successful attempt or we have reached the maximum number of attempts. To compute the cost-quality curve of the model, we report pass @k for varying k from 1 to 256, running 64 seeds per k to create stable measurements. 
+
+C.2. Results 
+
+The cost-quality curve of the two models on PutnamBench can be seen in Figure 5. We see that for the PutnamBench, GOEDEL -P ROVER -V2-32B outperforms G OEDEL -P ROVER -V2-8B on the entire data set in terms of the cost-quality tradeoff. At 9.66 M SFLOPs per problem, G OEDEL -P ROVER -V2-8B solves 20% of problems, while at 8.15 M SFLOPs per problem, G OEDEL -P ROVER -V2-32B solves 40% , showing double performance at a lower cost. 0 10 20 30 40 50 60 70 80 
+
+Avg Cost per Problem (M SFLOPs) 
+
+010 20 30 40 50 60 70 
+
+> Solve Rate (%)
+
+GOEDEL -P ROVER -V2 8B GOEDEL -P ROVER -V2 32B 
+
+Figure 5. Whole-proof cost-quality curves on PutnamBench 
+
+## D. Data Plane Prompts 
+
+This section lists the prompts used for the different components of the agentic prover system described in §3.1. 
+
+Breakdown Module Prompt                                                                                                      
+
+> Break the following Lean problem down into lemmas, then describe how to combine the lemmas into afull solution: {formal_statement} **Important points** 1. Make every lemma **mathematically correct** and easy to prove. 2. Do not create redundant lemmas or lemmas that restate the assumptions of the problem 3. In every lemma, also present everything we need to assume to prove the lemma in an isolated manner 4. Make the final solution that combines the lemmas as trivial as possible, i.e. try to put all logic into the lemmas The concrete breakdown format should be avalid json. The output format and what you need to include is the following:
+
+``` json {{ "lemmas": [{{ "id": <lemma number>, "statement": <lemma statement>, "assumption": <state the necessary assumptions for the lemma>, "proof": <idea of the proof of the lemma in natural language, if you need to use other lemmas, specify it in the proof idea> 
+
+13 Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+}} ], "theorem": {{ "statement": <repeat the problem statement>, "proof": <idea of the proof, how to combine the lemmas into the final solution> }} }} 
+
+``` 
+
+**Important notice:** In lemmas' and theorem's proof ideas, explicitly specify them if you need to use other lemmas' conclusion. The output can only contain the json above, no other content is allowed. 
+
+Formalizer Prompt 
+
+This is an informal breakdown of the math problem we have at hand: {informal_breakdown} Your task is to formalize Lemma {i}. To reiterate, here is the statement, the assumptions and the proof idea of Lemma {i}: **Statement:** {statement} **Assumptions:** {assumption} **Proof Idea:** {proof} The statement should have the following format. Please only state lemma {i}, DO NOT try to formalize the final result of the problem. 
+
+``` lean4 theorem lemma{i} : ... := by sorry 
+
+``` 
+
+Formalization Selection Prompt 
+
+Here is a mathematical problem: **Problem Statement:** {original_statement} An LLM has been prompted to formalize the following lemma which is supposed to be a substep of the theorem: **Statement:** {statement} **Assumptions:** {assumption} **Proof Idea:** {proof} Here are four separate formalizations of the lemma: 
+
+``` 
+
+{lemma_code} 
+
+``` 
+
+Choose the best matching formalization to the lemma according to the statement and the assumptions. Output ONLY the index number (zero-based) of the best formalization, nothing else. Do not include any explanation after the number. For example, if formalization 2 is best, output only: 
+
+``` 
+
+2
+
+``` 
+
+Theorem/Lemma Prover Prompt 
+
+Complete the following Lean 4 code: 
+
+``` lean4 {formal_statement} 
+
+``` 
+
+Before producing the Lean 4 code to formally prove the given theorem, give an overview of the lemmas and how they can contribute to solving the problem. The lemmas mentioned correspond to the axioms and should be assumed proven (they will be proven in subsequent steps so don't worry about them being marked as axioms). Restate the proof idea and possibly develop some underdeveloped steps. Here 
+
+14 Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean 
+
+is the proof idea: {informal_prefix} **Very Important:** The lemmas should be combined in the way the proof idea suggests. Trust the provided solution. Your answer must contain the whole Lean 4 proof of the problem in a code block in the following format: 
+
+``` lean4 import Mathlib {formal_statement} <Your proof here> 
+
+``` 
+
+15

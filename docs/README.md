@@ -6,73 +6,48 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-03
-- 运行时间：2026-06-03 22:33:17 UTC
+- 最新运行日期：2026-06-04
+- 运行时间：2026-06-04 21:11:40 UTC
 - 运行状态：成功
-- 本次总论文数：17
+- 本次总论文数：8
 - 精读区：6
-- 速读区：11
+- 速读区：2
 
 ### 今日简报（AI）
-1) 今日日报聚焦多智能体系统的通信拓扑进化与去中心化技能路由，两大高分论文揭示协作新范式。  
-2) 精读高分推荐：《TCP-MCP》提出提示与拓扑协同进化机制，《SwarmHarness》实现去中心化激励对齐的任务路由，两者均达9.0/10。  
-3) 普通读者可重点关注速读中的多智能体任务分区与通信顺序优化，从动态协作策略入手提升系统效率。
-- 详情：[/202606/03/README](/202606/03/README)
+今日整理8篇推荐论文，重点精读2篇高分研究，聚焦多智能体通信与推理效率优化。
+
+最值得关注两个方向：基于上下文相关性的注意力引导能显著提升多智能体通信效果，以及通过自适应聚合与推理并发可高效调度智能体集群。
+
+建议优先精读两篇9分论文，它们提供了改进多智能体协作性能的实用技术路径，适合关注大模型应用落地的读者。
+- 详情：[/202606/04/README](/202606/04/README)
 
 ### 精读区论文标签
-1. [TCP-MCP: Landscape-Guided Co-Evolution of Prompts and Communication Topologies for Multi-Agent Systems](/202606/03/2605.27850v1-tcp-mcp-landscape-guided-co-evolution-of-prompts-and-communication-topologies-for-multi-agent-systems)  
+1. [Enhancing Multi-Agent Communication through Attention Steering with Context Relevance](/202606/04/2605.30136v1-enhancing-multi-agent-communication-through-attention-steering-with-context-relevance)  
    标签：评分：9.0/10、query:mas-routing
-   evidence：多智能体系统中提示与通信拓扑的协同演化
-2. [SwarmHarness: Skill-Based Task Routing via Decentralized Incentive-Aligned AI Agent Networks](/202606/03/2605.28764v1-swarmharness-skill-based-task-routing-via-decentralized-incentive-aligned-ai-agent-networks)  
+   evidence：多智能体通信中的动态注意力路由
+2. [MOSAIC: Efficient Mixture-of-Agent Scheduling via Adaptive Aggregation and Inference Concurrency](/202606/04/2606.03014v1-mosaic-efficient-mixture-of-agent-scheduling-via-adaptive-aggregation-and-inference-concurrency)  
    标签：评分：9.0/10、query:mas-routing
-   evidence：去中心化的基于技能的任务路由，适用于AI代理网络
-3. [SS-ZKR: Spatial-Semantic Zero-Knowledge Routing for Privacy-Preserving Multi-Agent Collaboration](/202606/03/2606.00962v1-ss-zkr-spatial-semantic-zero-knowledge-routing-for-privacy-preserving-multi-agent-collaboration)  
+   evidence：用于混合智能体系统的调度框架，优化跨专家LLM的查询路由
+3. [Skill Is Not Document: A Query-Conditional Benchmark and Two-Stage Retriever for LLM Agent Skill Routing](/202606/04/2606.03565v1-skill-is-not-document-a-query-conditional-benchmark-and-two-stage-retriever-for-llm-agent-skill-routing)  
    标签：评分：9.0/10、query:mas-routing
-   evidence：面向多智能体协作的零知识路由协议
-4. [RASER: Recoverability-Aware Selective Escalation Router for Multi-Hop Question Answering](/202606/03/2606.02488v1-raser-recoverability-aware-selective-escalation-router-for-multi-hop-question-answering)  
-   标签：评分：9.0/10、query:mas-routing
-   evidence：用于多跳问答的路由器，选择最优配置
-5. [Rubric-Guided Process Reward for Stepwise Model Routing](/202606/03/2605.29310v1-rubric-guided-process-reward-for-stepwise-model-routing)  
+   evidence：基于查询条件的智能体技能路由基准与检索器
+4. [When Cloud Agents Meet Device Agents: Lessons from Hybrid Multi-Agent Systems](/202606/04/2605.30102v1-when-cloud-agents-meet-device-agents-lessons-from-hybrid-multi-agent-systems)  
    标签：评分：8.0/10、query:mas-routing
-   evidence：逐步模型路由用于多跳推理
-6. [CONCAT: Consensus- and Confidence-Driven Ad Hoc Teaming for Efficient LLM-Based Multi-Agent Systems](/202606/03/2605.29612v1-concat-consensus--and-confidence-driven-ad-hoc-teaming-for-efficient-llm-based-multi-agent-systems)  
+   evidence：研究云和设备代理之间的路由以平衡成本与准确率
+5. [Cost-Aware Optimization for Agentic Query Execution](/202606/04/2606.03152v1-cost-aware-optimization-for-agentic-query-execution)  
    标签：评分：8.0/10、query:mas-routing
-   evidence：基于共识的无训练组队机制用于LLM多智能体系统
+   evidence：面向智能查询执行的成本感知优化，涉及算子放置路由
+6. [Optimizing the Cost-Quality Tradeoff of Agentic Theorem Provers in Lean](/202606/04/2606.04883v1-optimizing-the-cost-quality-tradeoff-of-agentic-theorem-provers-in-lean)  
+   标签：评分：8.0/10、query:mas-routing
+   evidence：提出带数据平面和控制平面的动作路由智能体用于LLM定理证明
 
 ### 速读区论文标签
-1. [Dynamic Coordination Strategy Selection for Enterprise Multi-Agent Systems](/202606/03/2606.00804v1-dynamic-coordination-strategy-selection-for-enterprise-multi-agent-systems)  
-   标签：评分：8.0/10、query:mas-routing
-   evidence：企业多智能体系统的动态协调策略选择
-2. [When Parallelism Pays Off: Cohesion-Aware Task Partitioning for Multi-Agent Coding](/202606/03/2606.00953v1-when-parallelism-pays-off-cohesion-aware-task-partitioning-for-multi-agent-coding)  
-   标签：评分：8.0/10、query:mas-routing
-   evidence：将任务分区视为图路由问题，实现多智能体LLM的高效任务分配
-3. [MOC: Multi-Order Communication in LLM-based Multi-Agent Systems](/202606/03/2606.02359v1-moc-multi-order-communication-in-llm-based-multi-agent-systems)  
-   标签：评分：8.0/10、query:mas-routing
-   evidence：LLM多智能体系统中的多阶通信消息路由方案
-4. [Rethinking Stepwise Model Routing: A Cost-Efficient Table Reasoning Perspective](/202606/03/2605.29319v1-rethinking-stepwise-model-routing-a-cost-efficient-table-reasoning-perspective)  
+1. [Streaming Communication in Multi-Agent Reasoning](/202606/04/2606.05158v1-streaming-communication-in-multi-agent-reasoning)  
    标签：评分：7.0/10、query:mas-routing
-   evidence：逐步模型路由实现成本高效的多跳推理
-5. [Does The Way You Plan Matter? An Empirical Study of Planning Representations for LLM Web Agents](/202606/03/2605.29927v1-does-the-way-you-plan-matter-an-empirical-study-of-planning-representations-for-llm-web-agents)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：对Web代理规划表示的实证研究，与多跳推理的配置选择相关
-6. [Can LLM Agents Sustain Long-Horizon Organizational Dynamics?](/202606/03/2606.01199v1-can-llm-agents-sustain-long-horizon-organizational-dynamics)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：层级协调框架实现多智能体任务路由，适应长程组织模拟
-7. [Recognize Your Orchestrator: An Entropy Dynamics Perspective for LLM Multi-Agent Systems](/202606/03/2606.01351v1-recognize-your-orchestrator-an-entropy-dynamics-perspective-for-llm-multi-agent-systems)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：分析LLM多智能体系统中的集中式编排拓扑
-8. [A Policy-Driven Runtime Layer for Agentic LLM Serving](/202606/03/2605.27744v1-a-policy-driven-runtime-layer-for-agentic-llm-serving)  
+   evidence：流式通信用于多智能体协调路由
+2. [Exploring the Topology and Memory of Consensus: How LLM Agents Agree, Fragment, or Settle When Forming Conventions](/202606/04/2606.04197v1-exploring-the-topology-and-memory-of-consensus-how-llm-agents-agree-fragment-or-settle-when-forming-conventions)  
    标签：评分：6.0/10、query:mas-routing
-   evidence：多智能体LLM服务中的跨层策略
-9. [Continual Model Routing in Evolving Model Hubs](/202606/03/2605.28577v1-continual-model-routing-in-evolving-model-hubs)  
-   标签：评分：6.0/10、query:mas-routing
-   evidence：演化模型库中的持续模型路由策略
-10. [MAVEN: Improving Generalization in Agentic Tool Calling](/202606/03/2605.30738v1-maven-improving-generalization-in-agentic-tool-calling)  
-   标签：评分：6.0/10、query:mas-routing
-   evidence：自适应工具编排类似于任务路由
-11. [Learning Multi-Agent Coordination via Sheaf-ADMM](/202606/03/2605.31005v1-learning-multi-agent-coordination-via-sheaf-admm)  
-   标签：评分：6.0/10、query:mas-routing
-   evidence：多智能体协调的可微分优化框架
+   evidence：研究通信拓扑和记忆对多智能体共识的影响，与协调路由相关
 
 
 <div class="dpr-home-promo-card">
