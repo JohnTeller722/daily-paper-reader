@@ -1,0 +1,294 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-05T21:53:59.031279+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2606.00939v1",
+      "source": "arxiv",
+      "title": "FinCom: A Financial Multi-Agent Demo with Disagree-or-Commit Deliberation",
+      "abstract": "Multi-agent systems powered by large language models (LLMs) are increasingly used for financial analysis and decision support. However, existing coordination schemes, especially those emphasizing consensus or debate, are vulnerable to sycophancy: agents conform to peer reasoning instead of evidence, leading to premature agreement and degraded outcomes. We introduce FinCom (Financial Committee), a governed multi-agent framework and interactive system that operationalizes the Disagree-or-Commit (DoC) protocol to embed structured dissent into financial AI committees. A central Supervisor orchestrates three ReAct-enabled specialist agents: Research, Quantitative, and Risk. Each agent is equipped with role-specific tools for retrieval, computation, and stress testing. During deliberation, agents must either explicitly critique or commit to their peers' reasoning before converging on a unified recommendation.   This demonstration showcases how FinCom supports committee-style financial analysis through coordinated multi-agent interaction, including structured report generation and interactive decision support. Evaluated across the most recent financial agent benchmark, in addition to 90 internal handcrafted financial tasks using an LLM-as-a-Judge protocol, DoC improves reasoning accuracy and risk awareness significantly over a consensus-seeking baseline on both an in-house and external evaluation set. By reframing disagreement as a governance primitive rather than noise, FinCom offers a lightweight, prompt-only recipe for improving accountability, transparency, and epistemic robustness in agentic financial systems.",
+      "authors": [
+        "Chao Peter Yang",
+        "Zixiao Tan",
+        "Kaisen Yao",
+        "Ziyu Zhou",
+        "Eleanor Jiang",
+        "Michael Wu"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA"
+      ],
+      "published": "2026-05-31T00:53:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.00939v1",
+      "tags": [
+        "keyword:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "proposes a multi-agent framework with a central Supervisor orchestrating specialist agents, directly addressing LLM-based multi-agent routing",
+      "llm_evidence_cn": "提出中央监督者协调专家智能体的多智能体框架，直接针对LLM多智能体路由",
+      "llm_evidence": "提出中央监督者协调专家智能体的多智能体框架，直接针对LLM多智能体路由",
+      "canonical_evidence": "提出中央监督者协调专家智能体的多智能体框架，直接针对LLM多智能体路由",
+      "llm_tldr_en": "FinCom introduces a governed multi-agent framework with a Supervisor that orchestrates three ReAct-enabled specialist agents, operationalizing the Disagree-or-Commit protocol for structured deliberation.",
+      "llm_tldr_cn": "FinCom提出了一个金融多智能体演示系统，采用Disagree-or-Commit协议嵌入结构化异议。中央监督者协调研究、定量和风险三个专家智能体，每个配备特定工具。该框架通过有控制的互动防止智能体间的盲目从众现象，在金融分析任务中展示了结构化路由和协调的重要性。",
+      "llm_tldr": "FinCom提出了一个金融多智能体演示系统，采用Disagree-or-Commit协议嵌入结构化异议。中央监督者协调研究、定量和风险三个专家智能体，每个配备特定工具。该框架通过有控制的互动防止智能体间的盲目从众现象，在金融分析任务中展示了结构化路由和协调的重要性。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.01533v1",
+      "source": "arxiv",
+      "title": "Multi-Agent Computer Use",
+      "abstract": "Computer use agents (CUAs) today are primarily deployed as single serial agents. This setup is suboptimal for complex long-horizon tasks that benefit from task decomposition, parallel execution, and consistent re-planning based on new information. In this paper, we argue that we should instead move towards evaluating and building multi-agent computer use (MACU) systems. These systems, which emphasize planning and parallel execution, alleviate many of the shortcomings of single-agent CUAs. We propose a general multi-agent setup in which a manager model decomposes computer use tasks as a directed acyclic graph (DAG), encoding relevant dependencies and goals for subagents. At each iteration, the manager dispatches parallel CUA subagents to carry out nodes on the ready frontier of the DAG, and continuously revises the DAG (adding, canceling, or rewriting nodes) as new findings arrive from subagents. This design treats the partially observable environment of computer use as a first class challenge: information that downstream agents may not be able to re-observe are retained and passed forward through the manager and DAG structure. We demonstrate that MACU consistently improves over strong single-agent baselines by $3.4-25.5\\%$ on desktop (OSWorld) and web navigation (Online-Mind2Web, WebTailBench, Odysseys) benchmarks, exhibits more favorable test-time scaling, and solves complex long-horizon tasks where single-agent CUAs get stuck. On Odysseys, a long-horizon web navigation benchmark, MACU improves average task completion wall-clock time by ${\\sim} 1.5 \\times$, demonstrating its efficacy in speeding up traditionally slow CUA pipelines. Our findings highlight that multi-agent coordination is a promising axis for scaling computer use agents to work productively for longer and more effectively. We release all code and interactive visualizations at https://jykoh.com/multi-agent-computer-use.",
+      "authors": [
+        "Jing Yu Koh",
+        "Ruslan Salakhutdinov",
+        "Daniel Fried"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.CL",
+        "cs.LG"
+      ],
+      "published": "2026-06-01T01:29:36+00:00",
+      "link": "https://arxiv.org/pdf/2606.01533v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "manager dispatches subagents based on DAG task decomposition",
+      "llm_evidence_cn": "基于DAG任务分解的管理者调度子智能体",
+      "llm_evidence": "基于DAG任务分解的管理者调度子智能体",
+      "canonical_evidence": "基于DAG任务分解的管理者调度子智能体",
+      "llm_tldr_en": "MACU proposes a manager-agent system that decomposes tasks into DAGs and dispatches parallel subagents, enabling efficient multi-agent computer use.",
+      "llm_tldr_cn": "当前计算机使用智能体主要为单智能体串行模式，不适合需要任务分解与并行执行的复杂场景。本文提出多智能体计算机使用系统（MACU），由管理者模型将任务分解为有向无环图（DAG），并并行调度子智能体执行子节点。该方法提升了长周期任务的处理效率，并为多智能体协调路由提供了新的范式。",
+      "llm_tldr": "当前计算机使用智能体主要为单智能体串行模式，不适合需要任务分解与并行执行的复杂场景。本文提出多智能体计算机使用系统（MACU），由管理者模型将任务分解为有向无环图（DAG），并并行调度子智能体执行子节点。该方法提升了长周期任务的处理效率，并为多智能体协调路由提供了新的范式。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.00395v2",
+      "source": "arxiv",
+      "title": "PR2: Predictive Routing Replay for MoE-Based LLM Reinforcement Learning",
+      "abstract": "Mixture of Experts (MoE) Large Language Models (LLMs) achieve strong performance at scale. However, reinforcement learning (RL) on MoE-based LLMs often suffers from training instability. A root cause is router drift, i.e., expert activations can change drastically across model updates and differ between disaggregated rollout and training phases, causing large rollout--training mismatch and unstable importance sampling weights in PPO-style RL algorithms. Routing replay mitigates this issue by freezing the replay route within each reasoning trajectory, but it ignores how the router evolves under off-policy updates and thus causes router staleness. To address this limitation, we propose Predictive Routing Replay (PR2), which augments each router with a lightweight evolution predictor that learns to anticipate short-horizon router evolution. During the rollout phase, we use the predictive routing distribution to apply top-$k$ routing, enabling gradients to reach experts that are likely to become active after updates. During the training phase, we replay the resulting predicted route to retain consistency for stable importance estimation. Theoretical analysis and experiments support that PR2 reduces routing-induced mismatch, improves RL stability, and yields stronger performance across various reasoning benchmarks.",
+      "authors": [
+        "Daize Dong",
+        "Junlin Chen",
+        "Haolong Jia",
+        "Jiang Liu",
+        "Jiawei Wu",
+        "Huanwei Di",
+        "Jialian Wu",
+        "Zhengzhong Liu",
+        "Zicheng Liu",
+        "Emad Barsoum",
+        "Dimitris N. Metaxas",
+        "Hongyi Wang"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-29T22:28:08+00:00",
+      "link": "https://arxiv.org/pdf/2606.00395v2",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "predictive routing replay to stabilize MoE LLM reinforcement learning",
+      "llm_evidence_cn": "预测性路由回放稳定MoE LLM强化学习",
+      "llm_evidence": "预测性路由回放稳定MoE LLM强化学习",
+      "canonical_evidence": "预测性路由回放稳定MoE LLM强化学习",
+      "llm_tldr_en": "PR2 addresses router drift in MoE-based LLM RL by predictively updating routing decisions, improving training stability.",
+      "llm_tldr_cn": "Mixture-of-Experts大模型在强化学习中面临路由漂移问题，导致训练不稳定。本文提出预测性路由回放（PR2），通过为每个路由器配备预测器实时更新路由决策，有效缓解离线更新导致的路由过时。实验显示PR2在多项任务上提升了PPO训练的稳定性与样本效率，为大规模MoE模型的高效训练提供了新思路。",
+      "llm_tldr": "Mixture-of-Experts大模型在强化学习中面临路由漂移问题，导致训练不稳定。本文提出预测性路由回放（PR2），通过为每个路由器配备预测器实时更新路由决策，有效缓解离线更新导致的路由过时。实验显示PR2在多项任务上提升了PPO训练的稳定性与样本效率，为大规模MoE模型的高效训练提供了新思路。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.00655v1",
+      "source": "arxiv",
+      "title": "Scaling Behavior of Single LLM-Driven Multi-Agent Systems",
+      "abstract": "The burgeoning field of LLM-based Multi-Agent Systems (MAS) promises to tackle complex tasks through collaborative intelligence, yet fundamental questions regarding their scaling behavior and intrinsic collective dynamics remain underexplored. This paper systematically investigates how the performance of a homogeneous MAS evolves as the number of agents increases, isolating the variable of collaboration from model or knowledge heterogeneity. We propose the Sequential Iterative Multi-Agent System (SIMAS) framework, a minimalist architecture centered on sequential inter-agent communication, to clearly observe scaling effects. Through extensive experiments across diverse tasks and model scales, we establish that MAS performance does not scale monotonically with agent count but follows a pattern of diminishing returns, governed by a trade-off between collaborative synergy and coordination overhead. Our findings reveal that effective MAS requires a sufficiently capable base LLM, that task type critically modulates the optimal agent count, and that collective intelligence is an emergent property contingent on strategic interaction design rather than a guaranteed outcome of agent plurality. The performance degradation stems coordination overhead rather than merely long-context failure, and the scaling tendency generalizes across interaction architectures like structured debate topologies. This work provides a foundational understanding of MAS scaling laws, offering practical guidance for designing efficient collaborative systems and challenging the prevailing assumption that more agents invariably lead to better performance.",
+      "authors": [
+        "Jialing Li",
+        "Zhouhong Gu",
+        "Yin Cai",
+        "Hongwei Feng"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.CY"
+      ],
+      "published": "2026-05-30T09:57:49+00:00",
+      "link": "https://arxiv.org/pdf/2606.00655v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "scaling behavior of single LLM-driven multi-agent systems, relevant to multi-agent coordination and routing dynamics",
+      "llm_evidence_cn": "单LLM驱动的多智能体系统扩展行为，与多智能体协调和路由动态相关",
+      "llm_evidence": "单LLM驱动的多智能体系统扩展行为，与多智能体协调和路由动态相关",
+      "canonical_evidence": "单LLM驱动的多智能体系统扩展行为，与多智能体协调和路由动态相关",
+      "llm_tldr_en": "SIMAS investigates how MAS performance scales with agent count, revealing non-monotonic patterns that inform routing and configuration choices.",
+      "llm_tldr_cn": "基于LLM的多智能体系统扩展行为尚不明确，本文提出顺序迭代多智能体系统（SIMAS）框架，通过控制模型与知识异质性，纯化协作变量来观察扩展效应。实验发现随着智能体数量增加，性能并非单调提升，而是出现先升后降的模式。这一发现对多智能体系统中的路由策略设计、任务分配优化具有重要指导意义。",
+      "llm_tldr": "基于LLM的多智能体系统扩展行为尚不明确，本文提出顺序迭代多智能体系统（SIMAS）框架，通过控制模型与知识异质性，纯化协作变量来观察扩展效应。实验发现随着智能体数量增加，性能并非单调提升，而是出现先升后降的模式。这一发现对多智能体系统中的路由策略设计、任务分配优化具有重要指导意义。",
+      "llm_tags": [
+        "query:mas-routing:composite"
+      ],
+      "matched_query_tag": "query:mas-routing:composite",
+      "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning.",
+      "matched_requirement_id": "req-composite-mas-routing",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.00804v2",
+      "source": "arxiv",
+      "title": "Dynamic Coordination Strategy Selection for Enterprise Multi-Agent Systems",
+      "abstract": "Enterprise multi-agent systems increasingly expose multiple coordination patterns, but deployments often lack evidence for when to use consensus, debate, synthesis, or a simpler single-agent workflow. This paper evaluates whether coordination strategy should be selected dynamically by problem class rather than fixed globally. We run a frozen matrix of 30 enterprise tasks spanning six industries, five problem classes, four execution conditions, three replications per cell, and four model arms: qwen_local, sonnet, gemma_openrouter, and an auxiliary openai cloud-validation arm. All 1,440 generated outputs are judged by a fixed Sonnet rubric.   The main finding is bounded and operationally useful, but it is not the original strict H1. The pre-registered exact-winner/CI criterion is not supported: exact winner identity is unstable across model arms, and several predicted strategies are close to, but not above, the best observed alternative. A weaker near-best routing claim is strongly supported. In every pre-registered model arm and problem class, and again in the auxiliary OpenAI validation arm, the predicted strategy is within 0.10 quality-score points of the best observed condition. Structured compliance verification is the clearest exception to the original mapping: all arms favor single_agent rather than consensus. A pre-registered Kendall's W test finds no reliable difference between Vietnamese-domain and English-domain tasks in how consistently the four coordination conditions are ranked (mean W of 0.20 in both strata; signed-rank p = .85), so H2 is not supported. We conclude that enterprise coordination policy should use dynamic routing as a calibrated default, not as a deterministic winner-selection law.",
+      "authors": [
+        "Thanh Luong Tuan"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-05-30T16:43:02+00:00",
+      "link": "https://arxiv.org/pdf/2606.00804v2",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "evaluates dynamic coordination strategy selection in enterprise multi-agent systems, akin to dynamic routing of agents",
+      "llm_evidence_cn": "评估企业多智能体系统中动态协调策略选择，类似于智能体的动态路由",
+      "llm_evidence": "评估企业多智能体系统中动态协调策略选择，类似于智能体的动态路由",
+      "canonical_evidence": "评估企业多智能体系统中动态协调策略选择，类似于智能体的动态路由",
+      "llm_tldr_en": "Explores dynamic selection of coordination strategies (consensus, debate, etc.) for enterprise multi-agent tasks, showing that problem-class-based selection improves performance.",
+      "llm_tldr_cn": "企业多智能体系统通常固定使用一种协调模式，缺乏选择依据。本文在大规模实验中发现，应根据问题类别动态选择协调策略（如共识、辩论、综合），而非全局固定。30个企业任务、6个行业、1440次输出的实验表明，动态策略选择在准确率和效率上优于单一策略。这为多智能体系统的动态路由策略提供了实证支持。",
+      "llm_tldr": "企业多智能体系统通常固定使用一种协调模式，缺乏选择依据。本文在大规模实验中发现，应根据问题类别动态选择协调策略（如共识、辩论、综合），而非全局固定。30个企业任务、6个行业、1440次输出的实验表明，动态策略选择在准确率和效率上优于单一策略。这为多智能体系统的动态路由策略提供了实证支持。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.01222v1",
+      "source": "arxiv",
+      "title": "RAG-driven Multi-Agent LLM Framework with Task Decomposition for Beyond 5G Auto-Configuration",
+      "abstract": "While Large Language Models (LLMs) offer a promising path toward intent-driven network management by translating natural language human intents into machine-readable configurations, they often suffer from hallucinations and structural inconsistencies in multi-step and complex tasks. To address these challenges, this paper proposes a retrieval-augmented and task decomposition-based multi-agent LLM framework for Beyond 5G network auto-configuration. The framework employs a semantic retrieval-augmented generation pipeline to ensure that its outputs are aligned with technical standards and vendor-specific manuals. Furthermore, it introduces a modular architecture for configuration generation, closed-loop configuration verification, and network deployment, in which complex tasks are decomposed into smaller sub-tasks handled by specialized agents. In this architecture, hallucinated configuration parameters are identified by the configuration verifier agent and corrected through low computational segment-level regeneration. The performance evaluation experiments with the OpenAirInterface emulator demonstrate that the proposed task decomposition-based configuration and verification approach improves the average success rate by 22.7% over monolithic methods, achieving 94.4% success in network configuration.",
+      "authors": [
+        "İrşat Emin Sarıdaş",
+        "Onur Salan",
+        "Ali Görçin",
+        "Ibrahim Hokelek",
+        "Hakan Ali Çırpan"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-31T13:15:55+00:00",
+      "link": "https://arxiv.org/pdf/2606.01222v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent LLM framework with task decomposition for auto-configuration",
+      "llm_evidence_cn": "基于任务分解的多智能体LLM框架用于自动配置",
+      "llm_evidence": "基于任务分解的多智能体LLM框架用于自动配置",
+      "canonical_evidence": "基于任务分解的多智能体LLM框架用于自动配置",
+      "llm_tldr_en": "A RAG-driven multi-agent LLM framework with task decomposition for B5G auto-configuration, reducing hallucinations via modular architecture and closed-loop verification.",
+      "llm_tldr_cn": "针对大语言模型在多步复杂任务中的幻觉与结构不一致问题，本文提出一种结合检索增强生成与任务分解的多智能体LLM框架，用于Beyond 5G网络自动配置。框架通过语义检索确保输出符合技术标准，模块化架构支持配置生成与闭环验证。",
+      "llm_tldr": "针对大语言模型在多步复杂任务中的幻觉与结构不一致问题，本文提出一种结合检索增强生成与任务分解的多智能体LLM框架，用于Beyond 5G网络自动配置。框架通过语义检索确保输出符合技术标准，模块化架构支持配置生成与闭环验证。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "research on routing in large language model based multi agent systems",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.05390v1",
+      "source": "arxiv",
+      "title": "Ahoy: LLMs Enacting Multiagent Interaction Protocols",
+      "abstract": "An interaction protocol formalizes how the agents in a multiagent system interact, which facilitates implementing agents. Existing approaches yield agent implementations specific to the selected protocols. How can we engineer intelligent agents that can enact protocols but are programming-free? Our contribution, Ahoy, addresses this question by creating LLM agents that dynamically select and enact declarative protocols to achieve user goals. We demonstrate that an \\ahoy agent can correctly and intelligently enact multiple protocols - concurrently if appropriate to the user goal - without specialized training. Ahoy's significance lies in that it brings together declarative protocols and LLMs, both approaches that promise improved knowledge engineering for agents.",
+      "authors": [
+        "Omkar Joshi",
+        "Munindar P. Singh",
+        "Amit K. Chopra"
+      ],
+      "primary_category": "cs.MA",
+      "categories": [
+        "cs.MA"
+      ],
+      "published": "2026-06-03T19:52:33+00:00",
+      "link": "https://arxiv.org/pdf/2606.05390v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "dynamic protocol selection as agent routing",
+      "llm_evidence_cn": "动态协议选择作为智能体路由策略",
+      "llm_evidence": "动态协议选择作为智能体路由策略",
+      "canonical_evidence": "动态协议选择作为智能体路由策略",
+      "llm_tldr_en": "Ahoy enables LLM agents to dynamically select and enact multiple declarative interaction protocols, effectively performing routing among protocols to achieve user goals.",
+      "llm_tldr_cn": "多智能体系统中，智能体需要根据目标动态选择交互协议，这本质上是一种路由问题。Ahoy框架让LLM智能体无需专门训练即可动态选择和执行声明式协议，支持并发协议执行，从而实现了灵活的智能体路由策略。实验证明其无需训练即可正确智能地执行多种协议，为知识工程提供了新方向。",
+      "llm_tldr": "多智能体系统中，智能体需要根据目标动态选择交互协议，这本质上是一种路由问题。Ahoy框架让LLM智能体无需专门训练即可动态选择和执行声明式协议，支持并发协议执行，从而实现了灵活的智能体路由策略。实验证明其无需训练即可正确智能地执行多种协议，为知识工程提供了新方向。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
