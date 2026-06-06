@@ -1,0 +1,491 @@
+Title: Observation, Not Prediction: Conversation-Level Disaggregated Scheduling for Agentic Serving
+
+URL Source: https://arxiv.org/pdf/2606.01839v1
+
+Published Time: Tue, 02 Jun 2026 02:15:44 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# OBSERVATION , N OT PREDICTION : C ONVERSATION -L EVEL 
+
+# DISAGGREGATED SCHEDULING FOR AGENTIC SERVING 
+
+Jianru Ding 1 Ryien Hosseini * 1 Pouya Mahdi Gholami * 1 Mingyuan Xiang * 1 Henry Hoffmann 1
+
+## ABSTRACT 
+
+LLM-based agents resolve a user task through many turns of dependent inference and tool calls, producing a workload whose total cost is unknown when the task arrives. Existing multi-turn systems keep the turn as the scheduling unit and decide, turn by turn, whether to disaggregate prefill from decode. That decision rests on the turn’s decode length, tool behavior, and KV growth, quantities that are not observable when the scheduler must act, forcing the system to predict them. We show this dependence on prediction is imposed by the scheduling unit, not the workload. Raising the scheduling unit from the turn to the conversation converts turn-level irregularity into a stable, two-phase structure: 1) a compute-bound turn-1 prefill followed by 2) a long, memory-bound tail. Thus, with the conversation as the scheduling unit, placement reduces to reading the first-turn input length and per-decoder KV occupancy, both directly observable. We instantiate this principle in ConServe, which routes the first-turn prefill to a high-throughput prefiller, transfers the KV cache exactly once, and pins the conversation to a single decoder for its entire tail, with no learned model of decode-side cost. Against a per-turn prediction baseline, ConServe reduces p95 time-to-first-effective-token (the latency of a conversation’s first user-visible output) by 51.08% and improves energy efficiency by 7.51% while preserving last-turn TBT and SLOs; mapping the two phases onto heterogeneous GPU tiers adds a further 22.75% in energy efficiency. 
+
+## 1 INTRODUCTION 
+
+Traditional large language model (LLM) serving is built around a simple contract: a request arrives, the model pre-fills its prompt and decodes a response, and the request departs (Vaswani et al., 2017). Agentic workloads break this contract. A user task is no longer resolved by a sin-gle model invocation but by a sequence of dependent in-ference calls interleaved with tool use, environmental feed-back, and accumulating state (Yao et al., 2023). The served object is therefore not a request but a stateful, multi-turn program which moreover exhibits a characteristic tempo-ral asymmetry: its first turn encodes a long task descrip-tion (e.g., instructions, repository state, retrieved context) in a single compute-bound prefill, while later turns typi-cally append only short tool outputs and observations, dom-inated by memory-bound decoding over a key-value (KV) cache that only grows. A conversation is therefore, typi-cally, structured as one heavy prefill followed by a long, light, memory-bound tail. This shift is not merely quantitative. Current generic LLM serving systems typically take the request (equivalently, a single prefill–decode turn) as the atomic unit of schedul-  
+
+> *Equal contribution 1University of Chicago. Correspondence to: Jianru Ding <jrding@uchicago.edu >.
+> Preprint
+
+ing. For single-shot inference this approach is harmless, as the unit the system schedules coincides with the unit the user values. Agentic workloads break this coincidence. What the user values is the conversation’s final, externally meaningful output, yet most intermediate turns emit only tool calls that are never read by the user. The result is a scheduling–value mismatch : the system optimizes per-turn latency while the user waits on a conversation-level response. Consequently, existing serving systems that op-timize each turn in isolation optimize the wrong objective. To name the value the user actually cares about, we intro-duce time-to-first-effective-token (TTFET): the time until the first token of genuine, user-visible progress, as opposed to the internal tokens that drive tool calls. TTFET is thus a property of a conversation, not of any turn. Existing multi-turn serving systems do recognize that later turns differ from the first. Building on prefill–decode disag-gregation, which separates the compute-bound prefill from latency-sensitive decoding onto distinct workers (Zhong et al., 2024), these systems add append-prefill routing, KV-cache retention, and tool-aware scheduling to avoid recom-puting shared state across turns (Li et al., 2025; Abhyankar et al., 2024; Luo et al., 2025). Yet these designs share a sin-gle design principle: the decision unit remains the turn. For each turn, such a system decides whether to disaggregate it (i.e., whether to pay a remote prefill and a KV transfer or 1
+
+> arXiv:2606.01839v1 [cs.DC] 1 Jun 2026
+
+process it locally) and reaches that decision by profiling or predicting the turn’s cost (He et al., 2026; Li et al., 2026). In this work, we first argue that this per-turn scheduling decision is structurally brittle . The cost that drives the de-cision cannot be known in advance: a turn’s prefill is fixed by its input length and can be read directly, but other key behavior (e.g., how many tokens it will decode, whether it will call a tool, and how much it will enlarge the KV cache) is unobservable at the moment the scheduler must act. Yet such decode-side quantities are what determine whether disaggregating the turn pays off, so per-turn place-ment must predict them. Any predictor, however well-tuned, will eventually misjudge a turn and route it incor-rectly (we characterize this prefill/decode predictability gap empirically in Section 3). We argue this prediction is not a requirement of the workload but of the scheduling unit: partitioning a conversation into independently scheduled turns discards precisely the structure that would have made placement deterministic. Thus, in prior work, the unit, not the predictor, is the source of the fragility. 
+
+Key Insight. We schedule the conversation, not the turn. At turn granularity, agentic serving is irregular: decode lengths, tool calls, append-prefill sizes, and KV growth are difficult to infer when placement decisions are made. At conversation granularity, this irregularity collapses into a stable two-phase structure : an initial compute-bound pre-fill that materializes task state, followed by a memory-bound trajectory consisting of the first decode and all subsequent append-prefill/decode turns. Later turns may contain append-prefill work, but their input is small rela-tive to the accumulated KV cache, so execution is domi-nated by KV movement and attention over existing state. This restores the original prefill–decode abstraction but at conversation-level granularity: one compute-bound phase, one memory-bound phase, and a KV transfer at the bound-ary. Two consequences follow. First, scheduling need not pre-dict turn-level outcomes such as future decode lengths or tool behavior; it can instead rely on the same kind of ob-servable phase structure that classical serving systems al-ready expose. Second, heterogeneous serving follows by construction: under heterogeneous cluster environments, the same phase split maps compute-intensive initial prefills to high-throughput GPUs and the long memory-bound tail to devices with sufficient memory bandwidth and capacity. 
+
+ConServe. We instantiate this principle in ConServe 1,a conversation-level disaggregation scheduler for agentic serving. ConServe mirrors the original prefill–decode ab-    
+
+> 1So named as to reflect two commitments: ConServe serves
+> stateful, multi-turn agentic con versations and conserves energy by spending it only on the phase that requires it.
+
+straction at the conversation level: it routes the first-turn prefill as the compute-bound phase, transfers the resulting KV cache exactly once, and then runs the first-turn decode and every subsequent append-prefill/decode turn as a single memory-bound phase. Under ConServe, a conversation is therefore pinned for its entire memory-bound tail, avoiding repeated KV movement across turns. This paradigm shows that placement should be reactive rather than predictive. 
+
+New conversations are assigned using observable quanti-ties: input-token counts for the initial prefill and decoder KV-cache utilization for the memory-bound tail. ConServe overprovisions decode replicas to absorb variation in con-versation length; when a prefiller is saturated, or when de-coders approach saturation under bursts of long conversa-tions, the scheduler routes the next conversation elsewhere rather than migrating one already placed. We evaluate ConServe on representative agentic workloads (Jimenez et al., 2024), using a Qwen3-0.6B model back-bone and a NVIDIA A40 GPU cluster, against collocated, fully disaggregated, and per-turn prediction-based base-lines. Compared to the per-turn baseline (He et al., 2026), ConServe reduces p95 TTFET by 51.08% and improves energy efficiency by 7.51% while maintaining similar last-turn time-between-tokens (TBT) and preserving service-level objectives (SLOs). It does so with a deliberately minimal policy: one disaggregation per conversation and no learned cost model. On heterogeneous hardware, Con-Serve preserves these latency results while improving en-ergy efficiency by a further 22.75% over its homogeneous configuration. These gains show that the relevant abstrac-tion is the conversation, not the turn. We therefore present conversation-level scheduling as a principled paradigm for agentic serving, and ConServe as a minimal instantiation of this principle. We make the following contributions: • Conversation-level scheduling. We identify a
+
+scheduling–value mismatch in agentic serving: sys-tems optimize per-turn latency, while users wait for conversation-level outcomes. We argue that the con-versation is therefore the correct unit of scheduling, and introduce time-to-first-effective-token (TTFET) and 
+
+last-turn time-between-tokens (TBT) as metrics that cap-ture this objective. Raising the unit to the conversation replaces turn-level prediction with directly observable state, eliminating the source of brittleness in prior multi-turn schedulers. • ConServe. We introduce a disaggregation scheduler that routes first-turn prefills to high-power GPUs, transfers KV state exactly once, and executes a conversation’s en-tire tail locally on a separate (possibly low-power) de-coder. Committing to one placement per conversation from observable signals allows ConServe to work with-out a learned cost model. 2• Empirical demonstration of structural brittleness. 
+
+We show that per-turn scheduling is brittle in a struc-tural sense: under a per-turn prediction baseline, SLO violations and energy efficiency degrade linearly in pre-diction error rate, while ConServe’s conversation-level placement holds constant by construction. • Heterogeneity and energy as corollaries. Because placement reads only observable states, tier-aware allo-cation and conversation-level energy optimization follow without additional machinery, and both are largely unad-dressed by prior multi-turn systems. 
+
+## 2 BACKGROUND 
+
+2.1 LLM Serving Techniques 
+
+Transformer-based language models (Vaswani et al., 2017) generate text autoregressively in two stages (Radford et al., 2018; 2019). Prefill processes the input prompt in a single forward pass and produces a key-value (KV) cache for ev-ery input token. Decode then generates each subsequent token by reading the full KV cache and appending one new entry. Prefill is consequently compute-bound; decode is memory-bound, gated by KV cache bandwidth at every step (Pope et al., 2023; Patel et al., 2024). Efficient man-agement of this growing KV cache is critical for serving throughput (Gao et al., 2024). A few techniques have been proposed and adopted in prac-tice to address these characteristics and improve serving quality for user-facing LLM inference requests. Prefix caching (Zheng et al., 2024) reuses the KV cache across requests sharing a common input prefix, eliminating re-dundant prefill computation. Dynamic batching (Yu et al., 2022) batches forward passes from different requests at each iteration so finished requests can leave and new re-quests can join continuously, raising GPU utilization. Its downside is that a long prefill batched into ongoing de-code iterations stalls the decoders for the prefill’s dura-tion; chunked prefill (Agrawal et al., 2024) mitigates this by splitting long prefills into smaller chunks that interleave with decode, bounding the per-step stall. Prefill-decode (PD) disaggregation (Zhong et al., 2024; Patel et al., 2024) eliminates the problem entirely by assigning prefill and de-code to separate replicas, exploiting the compute-bound vs memory-bound asymmetry to raise aggregate GPU utiliza-tion at the cost of transferring KV state between replicas. 
+
+2.2 Multi-turn Agentic Conversations 
+
+Agentic LLM applications (Chase, 2022; Richards, 2023) follow a multi-turn ReAct execution loop, in which the model reasons about a user request prompt, emits a struc-tured tool call (e.g., an API invocation, code execution, or database query), suspends until the tool returns, and re-sumes generation with the tool result appended to the con-text (Yao et al., 2023; Schick et al., 2023; Shinn et al., 2023; Qin et al., 2024). We refer to the full sequence of turns re-quired to complete a single user request as a conversation .A conversation begins with a detailed, initial prompt that establishes the task and environment context, followed by a variable number of turns, each consisting of an LLM gen-eration step and a subsequent tool invocation whose result is fed back as additional input (Liu et al., 2024b). To improve context efficiency, modern agentic systems fre-quently restrict tool-call outputs to task-relevant informa-tion, avoiding the inclusion of complete files, logs, or other large artifacts in the prompt (Anthropic, 2026). Unfortunately, neither collocated nor fully disaggregated prefill-decode architectures are well matched to this work-load structure. In a collocated deployment, chunked prefill (Agrawal et al., 2024) splits the long prefill into smaller chunks interleaved with decode steps, but a turn-1 prompt spanning thousands of tokens still occupies the GPU for many chunk iterations, delaying collocated de-codes throughout the chunking window. Full prefill-decode disaggregation eliminates this interference by routing pre-fill and decode to dedicated GPUs (Zhong et al., 2024; Patel et al., 2024). In a multi-turn setting, however, this design routes every turn through the prefill node, disregarding a key structural property of agentic workloads: turn 2+ ap-pends are short incremental prefills that could run directly on the decoder holding the cached prefix, with minimal contention (Figure 5). Full disaggregation forfeits this op-timization opportunity in turn 2+ requests. Two concurrent systems route incremental prefills in multi-turn disaggregated serving, and both retain the turn as the decision unit. AMPD (He et al., 2026) chooses, for each Turn 2+ prefill, between local execution and remote exe-cution on a prefill node using real-time queue states and an offline cost model; remote execution reads the history KV from the decoder and writes the new KV back, a bidi-rectional transfer that departs from the one-way producer-consumer contract of standard disaggregation. PPD (Li et al., 2026) makes the same per-turn choice through an of-fline lookup table indexed by context length, input-output ratio, and load. Keeping the turn as the unit has two conse-quences. First, each decision conditions on quantities un-available when it is made: AMPD’s cost model omits the collocated-decode interference that dominates local execu-tion cost, and PPD’s table is indexed by a request’s output length, unknown at arrival. Second, both optimize per-turn TTFT and TBT, and neither measures TTFET or last-turn TBT, the conversation-level metrics that determine user-perceived performance (§1). Both consequences trace to scheduling the turn rather than the conversation. The case for per-turn routing is also narrowest where agentic work-loads sit: PPD’s dynamic routing is motivated by Turn 2+ 3requests with heavy prefills, but agentic appends are uni-formly short (§3), the regime in which local execution al-ready dominates and the per-turn decision collapses to a fixed local policy. ConServe adopts that policy at conversa-tion granularity, conditioning only on observable state and optimizing the metrics users experience. 
+
+2.3 Serving with Heterogeneous GPUs 
+
+Several recent systems serve LLMs on heterogeneous GPU clusters. Some formulate GPU allocation as constrained optimization over cost or throughput, assigning GPU types to model replicas or partitions (Griggs et al., 2024; Mei et al., 2025; Jiang et al., 2024). Others route the prefill and decode phases onto distinct GPU tiers, matching the compute-bound prefill and memory-bound decode to hard-ware suited to each (Patel et al., 2024; Jiang et al., 2025b;a; Shi et al., 2024). Although these approaches differ in op-timization formulation and partitioning strategy, they share a common insight: LLM inference places non-uniform de-mands on compute, memory capacity, and memory band-width, making it profitable to map workload to GPU capa-bilities rather than deploying a single homogeneous GPU type. All of this work, however, targets single-turn infer-ence. At conversation granularity, agentic workloads ex-hibit a stable two-phase structure, a compute-bound first-turn prefill followed by a memory-bound trajectory, which remains unexploited. 
+
+## 3 CHARACTERIZATION OF AGENTIC 
+
+## WORKLOADS 1 2 3 4 5 6 7 8 9 10  
+
+> Turn index
+> 10
+> 100
+> 1,000
+> 10,000
+> 100,000
+> Tokens (log scale)
+> Appended input Output
+
+Figure 1. Input/Output token distribution of the first 10 turns from agentic traces. For the appended input, turn-1 is the input prompt, turn-2+ is the tool call response. 
+
+While LLM and agentic workloads share similar compu-tational phases, agentic workloads behave differently due to their underlying characteristics, as shown empirically in Figure 1. The figure depicts the input and output to-ken distributions of agentic traces generated from SWE-bench bm25 13K with swe-agent, using Qwen3-Coder-30B-A3B-Instruct as the trace-generation model. Agentic conversations begin with an initial input of tens of thou-sands of tokens, whereas prompts appended in later turns are far smaller, on the order of hundreds. Output token counts, in contrast, are unpredictable and exhibit large vari-ance. To build the quantitative foundation to understand the impact of serving techniques on agentic conversations, we profile agentic workloads across computational phases, in-puts tokens, context lengths, and GPU power budgets and analyze the impact of each variable on agentic serving. 
+
+Profiling Setup. Experiments are conducted on NVIDIA A40 GPUs running Qwen3-0.6B in bf16 precision. This model size is chosen to leave sufficient GPU memory head-room to accommodate the large and growing KV caches of multi-turn agentic conversations, making the experimental setup representative of realistic agentic serving conditions. For heterogenous GPU experiments, we power cap GPUs at 2/3 of their Thermal Dynamic Power (TDP) to repre-sent lower-power GPUs that has less compute capacity but similar memory hardware. While results are model- and hardware-specific, the general qualitative observations hold broadly across model sizes and GPU generations as the un-derlying computational properties are architectural rather than configuration-specific. 
+
+3.1 Prefill Phase 
+
+We analyze the compute-bound prefill phase under multi-turn agentic conversations. We characterize each turn indi-vidually and use Time-to-first-token (TTFT) – latency from request arrival to the first generated token – for comparison. Our results show a clear picture: (1) first turn prefill la-tency is predictably expensive, but (2) caching and reusing the KV cache could substantially improve prefill latency at later turns, and (3) KV cache transfer between model repli-cas is relatively inexpensive in agentic scenarios. These insights motivate the design of ConServe in §4. 10 2 10 3 10 4   
+
+> Input tokens
+> 0
+> 2000
+> 4000
+> 6000
+> TTFT (ms)
+> prefill
+> prefill ( 1024 tokens):
+> 1.47 ns·L² + 10.5 μs·L + 13.8 ms (R2=1.000)
+> prefill w/ prefix-cache hit
+> prefill w/ prefix-cache hit (median): 27 ms
+
+Figure 2. Characterization of TTFT under large inputs with and without caching. Uncached agentic prompts ( ≥ 10 4) incur quadratic latency overheads but remain predictable as shown in the label ( R2 = 1 .0). 
+
+Initial prefills are expensive but predictable.. We pro-4file prefill latency across a range of input lengths; results are shown in Figure 2. TTFT is nearly constant for short prompts, but grows quadratically once attention becomes the dominant bottleneck. Prior work often models prefill la-tency as linear (Databricks, 2023), which is accurate when linear projection layers dominate the quadratic attention term. First turn agentic prompts, however, can reach tens of thousands of tokens, where attention is no longer negligible and a quadratic fit is substantially more accurate. In both regimes, TTFT is determined primarily by input length, al-lowing prefill latency to be estimated accurately from the input-token count alone. ConServe uses this observation to route incoming conversations away from saturated prefill workers before they incur queueing delay. 
+
+Prefix caching reduces TTFT to near-constant in multi-turn agentic workloads. Figure 2 includes the latency of prefill stage with prefix-caching across a range of in-put tokens. As shown, prefix caching reduces TTFT to near-constant, reducing latency by two orders of magni-tude under long inputs. Since relatively small prompts are appended to the whole history context after the first turn, prefix caching prior prompts and only calculating new KV cache entries for the appended tokens would substantially speed up the prefill stage at later turns. 
+
+KV cache transfer between GPUs is marginal in agentic workloads. Prefill-decode disaggregation – i.e. , when pre-fill and decode phases occur on separate model replicas – incurs additional KV cache transfer between the prefill and decode GPU. Figure 3 depicts the latency overhead of KV-transfer and its relative impact on TTFT across a range of input tokens. While KV-transfer contributes significantly to TTFT at low input tokens ( > 20% ), it scales linearly with respect to input tokens and its impact is thus overshad-owed by quadratic prefill latency at long inputs, precisely the operating domain of agentic workloads. Moreover, if no disaggregation happens for the rest of the turns given huge speedup by prefix caching, the KV-transfer overhead becomes negligible. ConServe relies on this insight when scheduling the first turn prefill stage for agentic requests. 
+
+3.2 Decode Phase 
+
+Output tokens are generated autoregressively across many iterations throughout the decode stage. We conclude that (1) agentic workloads are memory bound, (2) prefix-caching reduces collocation overheads, and (3) decoding latency is unpredictable. Our conclusions inform the the design of ConServe in §4. 
+
+Agentic workloads are memory-bound. We profile the average TBT across a range of batch sizes and KV lengths. As shown in Figure 4, mean TBT is relatively stable in low memory configurations but increases substantially un-10 2 10 3 10 4 10 5     
+
+> Input tokens
+> 0
+> 20
+> 40
+> 60
+> 80
+> 100
+> KV-transfer latency (ms)  KV-transfer latency ( 1024 tokens): const 4.8 ms
+> KV-transfer latency ( 1024 tokens):
+> linear 0.98 μs/tok + 5.3 ms (R2=0.981)
+> KV-transfer latency / TTFT
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 30
+> 35
+> KV-transfer share of TTFT (%)
+
+Figure 3. KV-transfer overhead is constant at short input lengths (< 1024 ) and scales linearly at long inputs ( ≥ 1024 ). KV-transfer overhead between GPUs is significant when input is short but is dominated by Prefill latency in agentic workloads where inputs are tens of thousands of tokens long. 
+
+der high batch sizes or long contexts lengths where mem-ory bandwidth is saturated. Given the long context length of agentic tasks, these workloads are memory-bound dur-ing the decode stage. 
+
+Prefix-caching changes what impacts collocation over-heads. We conduct a series of experiments to understand the impact of collocating prefill and decode stages on a per iteration basis. In the first experiment, we begin a number of decode tasks and then introduce a prefill request after 58 – 92 decode iterations and measure the collocated itera-tions latency. Figure 5.a depicts these results across a range of initial decode tasks (batch size) and prefill size requests. In our second experiment, we maintain a consistent batch size and introduce the prefill request after a range of iter-ations. Figure 5.b depicts these results across a range of prefill size requests. Both figures depict results with and without prefix-cache hits. As shown, prefix-caching sig-nificantly improves results by approximately one order of magnitude in both experiments. However, when the de-coding context gets larger to where memory cost exceeds to prefill compute cost, the iteration latency is largely af-fected by the decoding context length. At 262,144 active kv-cache tokens, the iteration latency is determined by the decoding instead of the collocated prefill. Hence, any pre-diction of such collocated iteration is invalid if the active kv-cache usage is not taken into account. 
+
+Decoding latency is highly variable. Our experimental re-sults indicate that decoding latency is highly variable, and unlike the prefill stage, scheduling decisions should not rely on estimating decoding latency. We record the TBT for 64 different, batched prompts across 32 runs and report the iteration-level results in Figure 6. While the mean TBT generally increases as the context length and number of it-erations increase, individual TBT remains unpredictable. 5128 256 512 1024 2048 4096 8192 16384 32768                                                  
+
+> Per-request context length L (tokens)
+> 128
+> 64
+> 32
+> 16
+> 8
+> 4
+> 2
+> 1
+> Batch size  B
+> 17.8 18.8 24.1 36.5
+> 16.1 15.9 16.5 21.6 34.1
+> 15.1 14.9 15.8 15.6 20.7 33.9
+> 14.3 14.6 14.8 15.5 14.6 18.7 30.4
+> 14.5 15.1 15.4 14.9 14.2 14.6 17.9 29.9
+> 15.5 14.7 14.9 14.8 15.0 15.9 14.8 17.6 29.5
+> 15.9 15.4 15.4 14.9 15.0 14.4 14.6 15.8 17.7
+> 13.8 12.5 13.1 13.0 14.2 13.6 13.9 14.4 13.7
+> B·L = 64k
+> 15
+> 20
+> 25
+> 30
+> 35
+> Mean TBT (ms)
+
+Figure 4. Heat map of mean time between tokens (TBT) across a range of batch sizes and context lengths. The dashed white line highlights the boundary between unsaturated (lower left) and sat-urated (upper right) memory bandwidth regions. Given the long context length of agentic tasks, agentic workloads lay in the satu-rated memory bandwidth domain. 
+
+Moreover, as shown in Figure 5.b, iteration latency under collocation and prefix-caching depends on the prefill input size and the context length of running decode tasks. Fi-nally, the total number of output tokens is input-dependent and cannot be known apriori (Figure 1. Overall, while de-coding latency is correlated with memory bandwidth uti-lization, we find that accurately estimating the per iteration or end-to-end decoding latency is a challenging task that depends on many complex or unknown factors. Hence, ConServe’s design opts to not rely on such estimates for scheduling purposes. 
+
+3.3 Heterogeneous Serving 
+
+We vary the GPU power caps to simulate the impact of het-erogeneous agentic serving on the prefill and decode phase. We find that prefill and decode are impacted significantly and marginally, respectively. These findings further moti-vate ConServe’s design choices in §4. 
+
+Power capping impacts the prefill stage heavily but has a marginal effect on prefix caching. We repeat the ex-periments in Figure 2 on power-capped GPUs and show the difference in performance in Figure 7. Since prefill is compute-bound at high input token ranges, power-capping significantly increases TTFT. On the other hand, prefill with prefix-caching remains relatively stable irrespective of input size. This insight harmonizes well with ConServe’s heterogeneous mapping: turn 1 prefill stages are scheduled on the best available GPUs, whereas later prefill stages with prefix-cache hits can occur on less powerful decode GPUs with marginal performance penalties. 20 21 22 23 24 25          
+
+> Batch size
+> 10 1
+> 10 2
+> 10 3
+> Iteration latency (ms)
+> a. Varying decoder batch size
+> 210 211 212 213 214 215
+> Individual context length (tokens)
+> b. Varying decoder context length
+> Prefill tokens 4096 16384 32768
+> Prefix-cache miss hit
+
+Figure 5. Iteration latency of collocated prefill and decode stages. (a) Latency of a prefill request arriving after 58 – 92 decode iter-ations across a range decoder batch sizes. (b) Latency of a prefill request arriving after a range of decoding iterations with a fixed batch size (8). Prefix-caching significantly improves collocation overhead. 800 1000 1200 1400 1600 1800 2000   
+
+> Decode Iteration Counter
+> 10
+> 15
+> 20
+> 25
+> 30
+> 50
+> 100
+> 150
+> 200
+> 250
+> 300
+> TBT (ms)
+> P5 P95 TBT Spread P99 TBT Mean TBT
+
+Figure 6. High variance in TBT throughout a long decode 
+
+Power capping has a marginal effect on the decode stage of agentic workloads. We repeat the experiments in Figure 4 on power-capped GPUs and show the results in Figure 8. As depicted, decoding is marginally impacted when mem-ory is saturated, i.e. , the operating regime where agentic operations occur. This insight allows ConServe to delegate decoding to less powerful GPUs when possible. 
+
+## 4 CON SERVE 
+
+ConServe instantiates conversation-level scheduling with a minimal placement policy. As illustrated in Figure 9, the system runs on a prefill-decode disaggregated architecture: one model replica is dedicated to processing input prompts (the prefiller node ), and the remaining replicas are dedi-cated to generating output tokens (the decoder replicas ). A conversation is bound to one decoder replica at arrival, and the binding persists for the conversation’s lifetime. The first-turn prefill is routed to the prefiller where the long ini-610 2 10 3 10 4
+
+> Input tokens
+> 0
+> 10
+> 20
+> 30
+> 40
+> TTFT change (%)
+> prefill
+> prefill w/ prefix-cache hit
+
+Figure 7. TTFT difference between uncapped GPUs and GPUS capped at 2/3 TDP. Power capping impacts the prefill stage heav-ily but has a marginal effect on prefix caching. 128 256 512 1024 2048 4096 8192 16384 32768                                                    
+
+> Per-request context length L(tokens)
+> 128
+> 64
+> 32
+> 16
+> 8
+> 4
+> 2
+> 1
+> Batch size  B
+> +3.4% -2.9% +2.3% +2.2%
+> +1.2% +0.1% +2.7% +1.9% +2.0%
+> -2.9% -0.8% -5.4% -1.7% +2.0% +2.7%
+> +12.5% +9.4% +6.5% -5.7% +3.9% +1.8% +1.4%
+> +12.7% +5.8% -3.0% -0.0% +3.9% +10.1% +1.5% +1.6%
+> -6.9% -1.2% +2.3% +9.0% -0.6% -10.0% +5.3% +1.5% +1.0%
+> +5.3% +6.0% -2.0% -0.0% +1.8% +2.3% -1.7% -9.4% +2.0%
+> -1.1% +6.5% -2.3% +1.9% +0.8% +3.9% -0.8% -4.1% -1.8%
+> B·L = 64k
+> 10
+> 5
+> 0
+> 5
+> 10
+> Mean TBT (%)
+
+Figure 8. Heat map of mean TBT difference uncapped GPUs and GPUS capped at 2/3 TDP across a range of batch sizes and context lengths. The dashed black line highlights the boundary between unsaturated (lower left) and saturated (upper right) memory band-width regions. Power capping has a marginal effect in the satu-rated memory bandwidth domain. 
+
+tial prompt is processed; the resulting KV cache is trans-ferred once to the bound decoder. The first-turn decode and every subsequent turn’s incremental prefill and decod-ing then execute on that decoder with full KV cache reuse across turns. The system makes one routing decision per conversation and predicts no decode-side quantity at any point. A ConServe deployment consists of one prefill node and 
+
+N decoder replicas, with N chosen such that the prefill node saturates before the decoder pool under the work-load’s input-to-output token ratio. This deliberate over-provisioning of decoders places the system’s throughput ceiling on the prefill side, where the relevant signal (input token rate) is observable at admission time and the cost-per-token relationship is deterministic (§3.1). The scheduler 
+
+Figure 9. ConServe System Architecture. 
+
+can therefore decide whether to admit a new conversation, where to bind it, and when to scale out by reading current system state rather than forecasting decode behavior. 
+
+4.1 Instance Configuration 
+
+Provisioning N is bounded by two constraints on the de-coder side. The first is throughput: aggregate decoder throughput must process the tokens consumed and gener-ated across each conversation’s lifetime. The second is memory: each decoder pins its bound conversations and holds their KV cache in GPU memory, limiting concurrent conversations per replica to B slots, where B is determined by GPU memory capacity and per-conversation peak KV footprint. Let R denote the arrival rate, Td the per-decoder token throughput, Ld the mean per-conversation token volume handled by decoders (turn-1 decode plus all turn 2+ prefill and decode), and W the mean wall-clock lifetime including time spent on external tool calls. N decoders must satisfy both constraints simultaneously: 
+
+N · Td ≥ R · Ld (throughput) (1) 
+
+N · B ≥ R · W (memory) (2) The prefill node saturates at arrival rate R∗ = Tp/L in ,where Tp is the prefill input throughput and Lin the mean first-turn input length. ConServe provisions N as an in-teger more than satisfying both inequalities at R = R∗.This places the throughput bottleneck on the prefill node, where input token rate maps deterministically to expected utilization via the offline-profiled latency curve. The spe-cific value of N used in our evaluation is given in §5.1. 74.2 Reactive Scheduling 
+
+The scheduler operates on two signals, both directly ob-servable. The first, the prefill latency curve, is profiled of-fline as a deterministic function of input token count (§3.1); given an incoming conversation’s first-turn prompt length, the scheduler reads off the prefill node’s expected utiliza-tion in constant time. The second is per-decoder active KV cache occupancy. Because every turn reuses the conver-sation’s accumulated history, every byte of KV cache held for a live conversation is part of its active working set; the scheduler decrements occupancy on conversation termina-tion so the signal always reflects only currently active state rather than allocated-but-idle memory. Both signals are properties of state the system already maintains, not fore-casts of what the workload will do next. A new conversation enters the system at its first turn. The first-turn prefill is routed unconditionally to the prefill node. Once the prefill completes and the KV cache is trans-ferred, the scheduler binds the conversation to the decoder replica with the lowest current KV cache occupancy. The binding is persistent: every subsequent turn for this conver-sation executes on the same decoder, with no re-evaluation of where it should go. Because the two signals are direct measurements of system state, the same observability extends to capacity manage-ment. Imminent prefill saturation is detectable from the input token rate against the profiled curve, and decoder sat-uration surfaces as aggregate KV cache pressure across the pool. Provisioning additional capacity in either tier follows from the same observations the scheduler already makes. 
+
+4.3 Heterogeneous GPU Mapping 
+
+ConServe segments a conversation into a compute-bound first-turn prefill and a memory-bound tail, mirroring the phase structure that prefill-decode disaggregation exploits. This segmentation maps cleanly onto heterogeneous GPU tiers. Memory-bound workloads scale less aggressively with newer hardware than compute-bound workloads do, so decoder replicas, which run the memory-bound tail, can execute on older lower-power GPUs without proportional throughput loss, while the prefill node takes the newest high-power GPU available. This mapping requires no changes to the scheduling logic. The same two observable signals drive placement on either uniform or heterogeneous hardware, and the conversation-level commitment ensures KV state is transferred be-tween tiers at most once per conversation. Energy effi-ciency emerges as a consequence: the system spends high-power compute only on the turn that requires it, while the memory-bound tail runs on hardware that consumes sub-stantially less power. 1          
+
+> 5
+> 10
+> 100
+> gmean
+> TTFET
+> 1
+> 5
+> 10
+> 100
+> p95
+> 0.5 11.5
+> 0
+> 25
+> 100
+> SLO violation (%)
+> Last-turn TBT
+> 0.5 11.5
+> E2E
+> 0.5 11.5
+> Request rate (conv / s)
+> Collocated Full Disagg AMPD ConServe SLO (5×)
+
+Figure 10. Normalized agentic performance results over multiple request arrival rates (lower is better). AMPD has 10% wrong pre-diction rate. 10 2 10 3 10 4   
+
+> TTFT (ms)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> CDF
+> 10 2
+> TBT (ms)
+> Collocated Full Disagg AMPD ConServe
+
+Figure 11. Overall TTFT and TBT distribution at RPS 1.634. 
+
+## 5 EVALUATION 
+
+Our evaluation addresses the following questions: • Q1: Does ConServe match or beat all baselines on latency? • Q2: Does ConServe maintain SLO at saturation? • Q3: Does ConServe avoid the routing error sensitivi-ties of per-turn approaches? • Q4: Does the heterogeneous variant translate to en-ergy efficiency wins? 85.1 Experiment Setup Workload and hardware We evaluate on agentic traces generated from SWE-bench bm25 13K with swe-agent, using Qwen3-Coder-30B-A3B-Instruct as the trace-generation model. Traces are replayed on a 4-GPU NVIDIA A40 machine with Qwen3-0.6B as the served model. The smaller served model leaves sufficient memory headroom for the long KV caches characteristic of multi-turn agentic conversations. To simulate the serving per-formance on heterogeneous GPUs, we power cap 3 GPUs to 2/3 of their TDP (300W) to represent prior-generation GPUs with less compute capacity but similar memory hard-ware. 
+
+System configuration. Each served model replica occu-pies one GPU. The prefiller sustains roughly 25k input to-kens per second, while each decoder produces 1k output tokens per second and accommodates approximately 300k tokens of KV cache. We allocate one prefiller and three decoders across the four-GPU machine. As a sanity check following the analysis in §4.1, an average of 15k input to-kens and 1k output tokens per conversation would require at least 1.67 decoders per prefiller. The 3 decoder config-uration is a guarantee that the prefiller saturates before the decoders. 
+
+Implementation and Baselines. 
+
+We implement ConServe on with vLLM (Kwon et al., 2023) as the LLM serving engine and LMCache (Cheng et al., 2025) as the Prefill-Decode disaggregation manager. We configure the prefiller model replica with a vLLM stan-dard 8192 chunked token size per batch to prevent aggres-sive queueing due to long context. We compare against three baselines. • Collocated uses all four GPUs as mixed-batch repli-cas, and runs each conversation on a single replica with prefill and decode batched together. Each model replica is configured with a 2944 chunked token size. This size is derived from our offline profiling, such that the iteration latency is within 5x baseline SLO, as practiced in prior work (Stojkovic et al., 2025). • Full Disaggregation routes every turn through a ded-icated prefill node. • We also implement AMPD (He et al., 2026) at our best effort, which performs per-turn prediction-based disaggregation for multi-turn workloads. As bi-directional KV cache transfer (between two model replicas) and management is infeasible to implement in a reasonable amount of time, we simulate the la-tency of KV cache transfer and stall requests for that period. We further post-process the experiment trace with our offline profiling results at best effort. Be-cause in all our experiments, executing the turn 2+ prefill locally on the decoders is more effecient than migrating it to the prefiller, all reported AMPD results except Figure 12 induce a 10% wrong prediction rate, i.e., the scheduler migrates the turn 2+ prefill to the prefiller for 10% of all turns. 
+
+Metrics. We report three latency metrics: TTFET, last-turn TBT, and end-to-end (E2E) latency, motivated in §2.2. Together they capture the three user-facing performance di-mensions that matter for multi-turn agentic conversations. For comparison with prior work, we additionally report conventional per-turn TTFT and TBT distributions, though these metrics conflate intermediate tool-call turns with the final user-facing reply and therefore do not reflect end-user experience. 
+
+5.2 Q1: Agentic Conversation Performance Agentic performance. Figure 10 reports normalized geo-metric mean and p95 latencies for TTFET, last-turn TBT, and E2E across the five systems at request rates from 0.5 to 1.5 conversations per second under Poisson arrivals. We additionally report results at 1.634 conv/s, which is not a Poisson rate but a synthesized arrival pattern that holds the prefiller exactly at its saturation throughput, isolating be-havior at the system’s capacity limit. For AMPD we fixed a wrong prediction rate of 10%, with further discussion in section 5.4. ConServe outperforms AMPD by reducing up to 19.17% and +51.08% on geometric mean and p95 TTFET. At low to moderate loads (0.5 to 1.25 conv/s), ConServe, AMPD, and Collocated remain within 2 × of the baseline. At satu-ration (1.5 to 1.634 conv/s), ConServe holds steady while Collocated and AMPD degrade sharply at p95, reflecting their respective structural failure modes: Collocated suf-fers from prefill-decode contention growing with load, and AMPD accumulates routing-decision errors that compound into prefiller queue pressure (§5.4). Full Disaggregation is uncompetitive at every operating point, with gmean TTFET and E2E exceeding 10 × the baseline. Routing every turn through the prefill node forfeits the cross-turn KV cache reuse that dominates efficiency in multi-turn workloads, and additionally pays a per-turn KV transfer cost. Last-turn TBT inverts the ordering. Full Disaggregation achieves the lowest TBT across all loads, since its de-coder replicas process only decode tokens with no prefill interference. At saturation, ConServe’s gmean last-turn TBT (2.49 × baseline) is 91.85% higher than Full Disag-gregation’s (1.35 ×). This penalty is the price of preserv-ing cross-turn KV cache reuse, and is dwarfed by the pre-fill latency that Full Disaggregation incurs on every turn: 9its gmean TTFET reaches 18.78 × baseline against Con-Serve’s 2.53 ×, translating to 4.7 × worse E2E. AMPD pro-duces essentially identical TBT to ConServe despite dis-aggregating roughly 10% of turn 2+ prefills, showing that partial disaggregation at this rate gains no measurable TBT benefit while still paying the TTFET cost of those routing decisions (§5.4). Collocated has the worst p95 TBT at satu-ration (7.52 × baseline, 72% worse than ConServe), reflect-ing the prefill-decode contention from batching long initial prefills with ongoing decoder workloads. 
+
+A deeper look at LLM metrics. Figure 11 shows the per-turn TTFT and TBT CDFs across all turns and conversa-tions. Full Disaggregation pays both the full prefill cost and the KV transfer on every turn, producing the right-most TTFT distribution; its prefill-free decoders produce the leftmost TBT distribution. The TTFT CDF resolves into three regimes for the remain-ing systems. Below the 0.7 percentile, ConServe, AMPD, and Collocated overlap: these are turn 2+ prefills, which complete quickly regardless of where they execute. Be-tween 0.7 and 0.8, ConServe pulls ahead significantly. This regime contains turn-1 prefills, which in Collocated batch with ongoing turn 2+ prefills on the same replicas, and in AMPD wait behind the queue formed by wrongly disag-gregated turn 2+ prefills on the prefill node. Above 0.8, the ordering inverts: Collocated becomes best because its four-GPU pool prevents compute saturation, while AMPD becomes worst as its accumulated prefill queue stretches into the tail. The TBT CDF completes the picture. ConServe and AMPD produce nearly identical distributions across the full range; AMPD’s 10% per-turn disaggregation does not meaningfully change which prefills reach the decoders. Be-low the 0.7 percentile, Collocated outperforms both be-cause it dedicates four GPUs to decoding while ConServe and AMPD dedicate only three, giving Collocated one-third more aggregate memory bandwidth. Above the 0.7 percentile, this advantage inverts as long turn-1 prefills batch with ongoing decode on Collocated’s replicas and in-flate per-step latency, while ConServe and AMPD insulate the decoders from this contention. 
+
+5.3 Q2: Serving Throughput and Quality 
+
+Figure 10 (third row) reports SLO violation rates. We set the SLO threshold at 5 × the baseline latency for each met-ric, where the baseline is measured by executing a single request without batching or interference. This 5 × threshold follows standard practice in prior LLM serving work. Con-Serve sustains zero SLO violations across all three metrics at every request rate tested, including the 1.634 conv/s sat-uration point. The baselines fail at saturation in metric-specific patterns that reveal their underlying failure modes. Collocated violates both TTFET and last-turn TBT SLOs at 1.634 conv/s, since prefill-decode contention degrades both phases simultaneously. AMPD violates only the TTFET SLO, because its per-turn routing errors accumulate on the prefiller but leave the decoder workload unchanged (§5.4). Full Disaggregation violates the TTFET and E2E SLOs at nearly 100% across all loads, with last-turn TBT remaining under the SLO due to its interference-free decoder design. The structural reason for ConServe’s SLO robustness is that the prefiller’s load is bounded by design. Only turn-1 pre-fills route to the prefill node, and the rate at which they ar-rive is gated by incoming conversation arrival. Since turn-1 prefill latency is a deterministic function of input token count (§3.1), the system operates exactly at the prefiller’s saturation capacity without exceeding it. Neither baseline has this property: Collocated absorbs all load on a single batched replica pool, and AMPD’s per-turn routing injects unpredictable additional prefiller load that breaks the oper-ating bound. 
+
+5.4 Q3: Pitfalls of Per-Turn Routing 
+
+AMPD’s per-turn predictions are susceptible to three sources of error: the cost model does not account for de-coder KV cache utilization, which directly affects decode throughput (§3.2); when incremental prefills batch with heavy ongoing decode, the resulting latency has high vari-ance that offline profiling cannot capture; and most con-sequentially, the cost model does not account for prefiller queueing pressure, so each erroneously disaggregated turn 2+ prefill adds to the prefiller’s queue and delays all sub-sequent prefill workload. ConServe sidesteps all three by scheduling on incoming input prompt size alone, which is fully observable and makes the prefiller’s saturation point deterministic, enabling predictable autoscaling. Figure 12 shows that AMPD is highly sensitive to even small cost-estimation errors. At a 0% wrong-prediction rate, AMPD routes every turn 2+ prefill locally and re-duces to ConServe, so the curves begin at ConServe’s op-erating point. At just 5% wrong predictions, SLO viola-tions reach roughly 7.8% for TTFET and 6.3% for E2E. As the wrong-prediction rate climbs to 50%, both gmean and p95 latencies grow linearly and SLO violations ex-ceed 50%. The linearity follows directly from the queue-ing mechanism: each wrong decision adds one unit of unanticipated load to a system operating at saturation, so the resulting queue delay scales with the cumulative ex-cess load. Our evaluation runs a finite trace subset, after which the prefiller queue drains. In a sustained production workload, the queueing pressure continues to accumulate, and the SLO violations observed here form a lower bound on AMPD’s deployment-scale impact. Last-turn TBT re-mains flat throughout, since routing errors affect interme-10 2   
+
+> 3
+> 4
+> 5
+> 6
+> ConServe
+> a. Normalized gmean latencies
+> 4
+> 6
+> 8
+> 10
+> 12
+> 14
+> ConServe
+> b. Normalized p95 latencies
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> 60%
+> ConServe
+> c. SLO violation
+> 0%
+> 10%
+> 20%
+> 30%
+> 40%
+> 50%
+> Wrong-prediction rate
+> 58
+> 60
+> 62
+> 64
+> tokens / J
+> ConServe
+> d. Energy efficiency
+> TTFET Last-turn TBT E2E SLO (5× baseline)
+
+Figure 12. Comparison between ConServe and AMPD over dif-ferent wrong prediction rate. 
+
+diate turns but never reach the user-visible final turn. Con-Serve has no equivalent degradation curve: it makes no per-turn routing decision and therefore generates no prediction error. The same routing errors degrade energy efficiency (Fig-ure 12.d). A wrongly migrated turn 2+ prefill carries sub-stantial reused KV cache; mixing this memory-heavy work with the compute-bound turn-1 prefills on the prefiller low-ers the prefiller’s utilization. The misrouted conversations also incur longer latency, and these delays accumulate into a longer wall-clock time to serve the full workload. At the 1.634 conv/s saturation point, with 10% wrong pre-dictions, AMPD takes 15% longer than ConServe to drain the workload while delivering 7.5% lower tokens-per-joule. Because the workload processes a fixed token volume, the lower efficiency reflects higher total energy; that the 15% time penalty exceeds this energy increase indicates the GPUs spend the extra time under-utilized, idling on queue 1   
+
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 10
+> 25
+> 50
+> 100
+> TTFET p95 Last-turn TBT p95
+> Collocated
+> Full Disagg
+> AMPD
+> ConServe
+> 1
+> 2
+> 3
+> 4
+> 5
+> 6
+> 7
+> 10
+> 25
+> 50
+> 100
+> E2E p95
+> Collocated
+> Full Disagg
+> AMPD
+> ConServe
+> 20
+> 30
+> 40
+> 50
+> 60
+> 70
+> 80
+> Tokens per Joule
+> 300W / 300W 300W / 200W SLO (5×)
+
+Figure 13. P95 agentic performance and energy efficiency on het-erogeneous GPUs. 
+
+rather than computing. The effect compounds with error rate: AMPD’s tokens-per-joule declines monotonically to-ward 58 tokens/J at a 50% wrong-prediction rate, while ConServe holds constant by construction. 
+
+5.5 Q4: Serving with Heterogeneous GPUs 
+
+ConServe segments each conversation into a compute-bound first-turn prefill and a memory-bound tail, mirroring the prefill-decode abstraction at conversation granularity. If this segmentation is faithful, the memory-bound tail should tolerate a reduced power budget on the decoder GPUs: its throughput is gated by memory bandwidth, not by the compute capacity a power cap removes. Figure 13 tests this, comparing a homogeneous configuration (300W pre-fill, 300W decoders) against a heterogeneous one (300W prefill, 200W decoders). ConServe realizes two energy wins. Its scheduling alone is energy-efficient in the homogeneous configuration, since confining compute-bound work to one prefill node and run-ning the memory-bound tail without per-turn disaggrega-tion avoids the wasted transfers and idle cycles that lower the baselines’ tokens-per-joule. Capping the decoders to 200W then adds a further gain: tokens-per-joule rises by 22.75% while p95 TTFET, last-turn TBT, and E2E remain essentially unchanged. The memory-bound tail absorbs the power cap, so the heterogeneous mapping does not trade away ConServe’s scheduling advantage but compounds it. The baselines do not share this property. Collocated batches prefill and decode on the same GPUs, so reducing 11 decoder power to 200W starves the compute-bound pre-fill: its p95 TTFET worsens by 11.15% under the hetero-geneous configuration. Full Disaggregation cannot meet the SLO in either configuration, leaving its energy num-bers moot. AMPD gains the same power-cap benefit as ConServe, since it also runs decode on the capped GPUs, but it carries the per-turn routing penalties characterized in §5.5. 
+
+## 6 RELATED WORK 
+
+LLM Request Scheduling. LLM request scheduling has been studied along several axes. Iteration-level scheduling batches and preempts at the granularity of individual de-code steps to raise utilization (Yu et al., 2022; Sun et al., 2024), and recent schedulers route or reorder requests us-ing predicted output lengths or learned rankings (Fu et al., 2024; Jain et al., 2025). A parallel line schedules across the prefill-decode split: disaggregation systems decide where each phase executes and how the two scale independently (Zhong et al., 2024; Patel et al., 2024), while intra-GPU and unified designs revisit where the split is drawn (Shi et al., 2025; Gao et al., 2025; Wang et al., 2025). Elastic systems extend this to autoscaling prefill and decode ca-pacity in response to load (Zhang et al., 2025; Lai et al., 2025). Production frameworks fold all of these together: NVIDIA Dynamo unifies KV-cache-aware routing, condi-tional prefill-decode disaggregation, SLO-driven autoscal-ing, and tiered KV cache management in one serving sys-tem (NVIDIA, 2025). Whether these mechanisms are stud-ied in isolation or integrated this way, the unit of scheduling remains the request, or its constituent phases and iterations. ConServe raises the unit to the conversation: it commits one placement per conversation and never revisits it, which is what lets scheduling condition on observable state rather than predicted per-request cost. 
+
+KV Cache Management. A separate line of work tar-gets how key-value state is stored and reused rather than where the computation that produces it runs. Hierarchical and distributed cache layers move KV state across memory tiers and across the cluster to extend reuse beyond a sin-gle instance (Gao et al., 2024; Qin et al., 2025; Hu et al., 2024; Cheng et al., 2025), and compression and offload-ing shrink or relocate the cache to fit larger working sets (Li et al., 2024; Liu et al., 2024a). These mechanisms operate at a different layer than ConServe, which sched-ules computation and assumes only standard local prefix caching beneath it. The two compose: richer cache man-agement widens what can be reused, while ConServe’s conversation-level placement keeps the reusable prefix on the instance that will read it, so after the first turn it never crosses the network again. 
+
+Agentic and Application-Aware Serving. A growing body of work optimizes serving for the structure of agen-tic applications. Parrot recovers prompt sharing and re-quest dependencies through application-level dataflow (Lin et al., 2024). A second line targets the tool-call period that separates an agent’s turns: InferCept retains, discards, or swaps the paused KV cache while an external call runs (Ab-hyankar et al., 2024), Continuum retains KV state across pauses under a time-to-live policy (Li et al., 2025), and Su-tradhara co-designs orchestrator and engine to overlap tool execution with subsequent prefill and decode (Biswas et al., 2026). KVFlow evicts and prefetches cache entries ac-cording to an agent execution graph (Pan et al., 2025), and Autellix raises the scheduling unit to the agentic program to order calls against head-of-line blocking (Luo et al., 2025). Several of these optimize conversation-level rather than per-turn objectives: Continuum targets job completion time, and Sutradhara optimizes final-answer latency, the same quantity ConServe captures as TTFET. All of them operate within a conversation whose physical placement is fixed, managing its cache, overlapping its tool calls, and ordering its requests on an instance already chosen. None makes the placement decision itself: where the first-turn prefill runs, when its KV state transfers, and which decoder holds the conversation for its lifetime. ConServe commits this decision once from observable state and is orthogonal to this line of work, which caches, overlaps, and sched-ules the calls within a conversation ConServe has already placed. 
+
+## 7 CONCLUSION 
+
+We introduce ConServe, a conversation-level disaggrega-tion scheduler for agentic serving. ConServe raises the scheduling unit from the turn to the conversation, which collapses turn-level irregularity into a stable two-phase structure: a compute-bound first-turn prefill followed by a memory-bound tail. ConServe routes the first-turn prefill to a high-power prefiller provisioned as the system bottle-neck, transfers the KV cache exactly once, and pins each conversation to a decoder replica for its lifetime, condition-ing placement only on observable turn-1 input length and per-decoder KV occupancy rather than predicted per-turn cost. Experiments on agentic workloads show that Con-Serve reduces p95 TTFET by 51.08% over per-turn routing while sustaining zero SLO violations at saturation, and its phase split maps onto heterogeneous GPU tiers for a further 22.75% gain in energy efficiency. 
+
+## REFERENCES 
+
+Reyna Abhyankar, Zijian He, Vikranth Srivatsa, Hao Zhang, and Yiying Zhang. 2024. InferCept: Effi-cient Intercept Support for Augmented Large Language 12 Model Inference. arXiv:2402.01869 [cs.LG] https: //arxiv.org/abs/2402.01869 
+
+Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav S. Gulavani, Alexey Tumanov, and Ramachandran Ramjee. 2024. Tam-ing Throughput-Latency Tradeoff in LLM Inference with Sarathi-Serve. In 18th USENIX Symposium on Operating Systems Design and Implementation, OSDI 2024, Santa Clara, CA, USA, July 10-12, 2024 , Ada Gavrilovska and Douglas B. Terry (Eds.). USENIX As-sociation, 117–134. Anthropic. 2026. Models, Usage, and Limits in Claude Code. https:// support.claude.com/en/articles/ 14552983-models-usage-limits-in-claude-code .Accessed: 2026-05-30. Anish Biswas, Kanishk Goel, Srivarshinee S, Jayashree Mohan, Alind Khare, Anjaly Parayil, Ramachandran Ramjee, and Chetan Bansal. 2026. Sutradhara: An In-telligent Orchestrator-Engine Co-design for Tool-based Agentic Inference. arXiv:2601.12967 [cs.DC] https: //arxiv.org/abs/2601.12967 
+
+Harrison Chase. 2022. LangChain . https://github. com/langchain-ai/langchain 
+
+Yihua Cheng, Yuhan Liu, Jiayi Yao, Yuwei An, Xiaokun Chen, Shaoting Feng, Yuyang Huang, Samuel Shen, Kuntai Du, and Junchen Jiang. 2025. LMCache: An Efficient KV Cache Layer for Enterprise-Scale LLM In-ference. arXiv preprint arXiv:2510.09665 (2025). Databricks. 2023. LLM Inference Per-formance Engineering: Best Practices. 
+
+https://www.databricks.com/blog/ llm-inference-performance-engineering-best-practices .Yichao Fu, Siqi Zhu, Runlong Su, Aurick Qiao, Ion Sto-ica, and Hao Zhang. 2024. Efficient LLM Schedul-ing by Learning to Rank. arXiv:2408.15792 [cs.LG] 
+
+https://arxiv.org/abs/2408.15792 
+
+Bin Gao, Zhuomin He, Puru Sharma, Qingxuan Kang, Djordje Jevdjic, Junbo Deng, Xingkun Yang, Zhou Yu, and Pengfei Zuo. 2024. Cost-Efficient Large Lan-guage Model Serving for Multi-turn Conversations with CachedAttention. arXiv:2403.19708 [cs.CL] https: //arxiv.org/abs/2403.19708 
+
+Lei Gao, Chaoyi Jiang, Hossein Entezari Zarch, Daniel Wong, and Murali Annavaram. 2025. DuetServe: Harmonizing Prefill and Decode for LLM Serving via Adaptive GPU Multiplexing. arXiv preprint arXiv:2511.04791 (2025). Tyler Griggs, Xiaoxuan Liu, Jiaxiang Yu, Doyoung Kim, Wei-Lin Chiang, Alvin Cheung, and Ion Stoica. 2024. M\’elange: Cost efficient large language model serv-ing by exploiting gpu heterogeneity. arXiv preprint arXiv:2404.14527 (2024). Wenhao He, Youhe Jiang, Penghao Zhao, Quanqing Xu, Eiko Yoneki, Bin Cui, and Fangcheng Fu. 2026. Effi-cient multi-round llm inference over disaggregated serv-ing. arXiv preprint arXiv:2602.14516 (2026). Cunchen Hu, Heyang Huang, Junhao Hu, Jiang Xu, Xusheng Chen, Tao Xie, Chenxi Wang, Sa Wang, Yun-gang Bao, Ninghui Sun, and Yizhou Shan. 2024. Mem-Serve: Context Caching for Disaggregated LLM Serving with Elastic Memory Pool. arXiv:2406.17565 [cs.DC] 
+
+https://arxiv.org/abs/2406.17565 
+
+Kunal Jain, Anjaly Parayil, Ankur Mallick, Esha Choukse, Xiaoting Qin, Jue Zhang, ´ I˜ nigo Goiri, Rujia Wang, Chetan Bansal, Victor R¨ uhle, Anoop Kulkarni, Steve Kofsky, and Saravan Rajmohan. 2025. Intelli-gent Router for LLM Workloads: Improving Per-formance Through Workload-Aware Load Balancing. arXiv:2408.13510 [cs.DC] https://arxiv.org/ abs/2408.13510 
+
+Youhe Jiang, Fangcheng Fu, Xiaozhe Yao, Taiyi Wang, Bin Cui, Ana Klimovic, and Eiko Yoneki. 2025a. Thunder-Serve: High-performance and Cost-efficient LLM Serv-ing in Cloud Environments. In Proceedings of the Eighth Conference on Machine Learning and Systems, MLSys 2025, Santa Clara, CA, USA, May 12-15, 2025 , Matei Zaharia, Gauri Joshi, and Yingyan (Celine) Lin (Eds.). OpenReview.net/mlsys.org. Youhe Jiang, Ran Yan, Xiaozhe Yao, Yang Zhou, Beidi Chen, and Binhang Yuan. 2024. HexGen: Genera-tive Inference of Large Language Model over Hetero-geneous Environment. In Forty-first International Con-ference on Machine Learning, ICML 2024, Vienna, Aus-tria, July 21-27, 2024 (Proceedings of Machine Learning Research) , Ruslan Salakhutdinov, Zico Kolter, Kather-ine A. Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp (Eds.). PMLR / Open-Review.net, 21946–21961. Youhe Jiang, Ran Yan, and Binhang Yuan. 2025b. HexGen-2: Disaggregated Generative Inference of LLMs in Het-erogeneous Environment. In The Thirteenth Interna-tional Conference on Learning Representations, ICLR 2025, Singapore, April 24-28, 2025 . OpenReview.net. Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik Narasimhan. 2024. SWE-bench: Can Language Models Resolve 13 Real-World GitHub Issues? arXiv:2310.06770 [cs.CL] 
+
+https://arxiv.org/abs/2310.06770 
+
+Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica. 2023. Efficient Memory Management for Large Language Model Serving with PagedAttention. In Proceedings of the 29th Sympo-sium on Operating Systems Principles, SOSP 2023, Koblenz, Germany, October 23-26, 2023 , Jason Flinn, Margo I. Seltzer, Peter Druschel, Antoine Kaufmann, and Jonathan Mace (Eds.). ACM, 611–626. Ruiqi Lai, Hongrui Liu, Chengzhi Lu, Zonghao Liu, Siyu Cao, Siyang Shao, Yixin Zhang, Luo Mai, and Dmitrii Ustiugov. 2025. TokenScale: Timely and Accurate Au-toscaling for Disaggregated LLM Serving with Token Velocity. arXiv preprint arXiv:2512.03416 (2025). Hanchen Li, Runyuan He, Qiuyang Mang, Qizheng Zhang, Huanzhi Mao, Xiaokun Chen, Hangrui Zhou, Alvin Cheung, Joseph Gonzalez, and Ion Stoica. 2025. Con-tinuum: Efficient and robust multi-turn llm agent scheduling with kv cache time-to-live. arXiv preprint arXiv:2511.02230 (2025). Yuhong Li, Yingbing Huang, Bowen Yang, Bharat Venkitesh, Acyr Locatelli, Hanchen Ye, Tianle Cai, Patrick Lewis, and Deming Chen. 2024. SnapKV: LLM Knows What You are Looking for Before Generation. arXiv:2404.14469 [cs.CL] https://arxiv.org/ abs/2404.14469 
+
+Zongze Li, Jingyu Liu, Zhen Xu, Yineng Zhang, Tahseen Rabbani, and Ce Zhang. 2026. Not All Prefills Are Equal: PPD Disaggregation for Multi-turn LLM Serv-ing. arXiv:2603.13358 [cs.NI] https://arxiv. org/abs/2603.13358 
+
+Chaofan Lin, Zhenhua Han, Chengruidong Zhang, Yuqing Yang, Fan Yang, Chen Chen, and Lili Qiu. 2024. Par-rot: Efficient Serving of LLM-based Applications with Semantic Variable. In 18th USENIX Symposium on Operating Systems Design and Implementation, OSDI 2024, Santa Clara, CA, USA, July 10-12, 2024 , Ada Gavrilovska and Douglas B. Terry (Eds.). USENIX As-sociation, 929–945. Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Ke-juan Yang, Shudan Zhang, Xiang Deng, Aohan Zeng, Zhengxiao Du, Chenhui Zhang, Sheng Shen, Tianjun Zhang, Yu Su, Huan Sun, Minlie Huang, Yuxiao Dong, and Jie Tang. 2024b. AgentBench: Evaluating LLMs as Agents. In The Twelfth International Conference on Learning Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. Yuhan Liu, Hanchen Li, Yihua Cheng, Siddhant Ray, Yuyang Huang, Qizheng Zhang, Kuntai Du, Jiayi Yao, Shan Lu, Ganesh Ananthanarayanan, Michael Maire, Henry Hoffmann, Ari Holtzman, and Junchen Jiang. 2024a. CacheGen: KV Cache Compression and Stream-ing for Fast Large Language Model Serving. In Proceed-ings of the ACM SIGCOMM 2024 Conference, ACM SIGCOMM 2024, Sydney, NSW, Australia, August 4-8, 2024 . ACM, 38–56. Michael Luo, Xiaoxiang Shi, Colin Cai, Tianjun Zhang, Justin Wong, Yichuan Wang, Chi Wang, Yanping Huang, Zhifeng Chen, Joseph E. Gonzalez, and Ion Stoica. 2025. Autellix: An Efficient Serving Engine for LLM Agents as General Programs. arXiv:2502.13965 [cs.LG] 
+
+https://arxiv.org/abs/2502.13965 
+
+Yixuan Mei, Yonghao Zhuang, Xupeng Miao, Juncheng Yang, Zhihao Jia, and Rashmi Vinayak. 2025. He-lix: Serving Large Language Models over Heteroge-neous GPUs and Network via Max-Flow. In Proceed-ings of the 30th ACM International Conference on Archi-tectural Support for Programming Languages and Op-erating Systems, Volume 1, ASPLOS 2025, Rotterdam, The Netherlands, 30 March 2025 - 3 April 2025 , Lieven Eeckhout, Georgios Smaragdakis, Kaitai Liang, Adrian Sampson, Martha A. Kim, and Christopher J. Rossbach (Eds.). ACM, 586–602. NVIDIA. 2025. NVIDIA Dynamo: A Low-Latency Dis-tributed Inference Framework for Scaling Reasoning AI Models. https://developer.nvidia.com/ dynamo .Zaifeng Pan, Ajjkumar Patel, Zhengding Hu, Yipeng Shen, Yue Guan, Wan-Lu Li, Lianhui Qin, Yida Wang, and Yufei Ding. 2025. KVFlow: Efficient Prefix Caching for Accelerating LLM-Based Multi-Agent Workflows. arXiv:2507.07400 [cs.DC] https://arxiv.org/ abs/2507.07400 
+
+Pratyush Patel, Esha Choukse, Chaojie Zhang, Aashaka Shah, ´ I˜ nigo Goiri, Saeed Maleki, and Ricardo Bianchini. 2024. Splitwise: Efficient Generative LLM Inference Using Phase Splitting. In 51st ACM/IEEE Annual In-ternational Symposium on Computer Architecture, ISCA 2024, Buenos Aires, Argentina, June 29 - July 3, 2024 .IEEE, 118–132. Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Ja-cob Devlin, James Bradbury, Jonathan Heek, Kefan Xiao, Shivani Agrawal, and Jeff Dean. 2023. Effi-ciently Scaling Transformer Inference. In Proceedings of the Sixth Conference on Machine Learning and Sys-tems, MLSys 2023, Miami, FL, USA, June 4-8, 2023 ,Dawn Song, Michael Carbin, and Tianqi Chen (Eds.). mlsys.org. 14 Ruoyu Qin, Zheming Li, Weiran He, Jialei Cui, Feng Ren, Mingxing Zhang, Yongwei Wu, Weimin Zheng, and Xinran Xu. 2025. Mooncake: Trading More Storage for Less Computation - A KVCache-centric Architec-ture for Serving LLM Chatbot. In 23rd USENIX Con-ference on File and Storage Technologies, FAST 2025, Santa Clara, CA, February 25-27, 2025 , Haryadi S. Gu-nawi and Vasily Tarasov (Eds.). USENIX Association, 155–170. Yujia Qin, Shihao Liang, Yining Ye, Kunlun Zhu, Lan Yan, Yaxi Lu, Yankai Lin, Xin Cong, Xiangru Tang, Bill Qian, Sihan Zhao, Lauren Hong, Runchu Tian, Ruob-ing Xie, Jie Zhou, Mark Gerstein, Dahai Li, Zhiyuan Liu, and Maosong Sun. 2024. ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs. In The Twelfth International Conference on Learn-ing Representations, ICLR 2024, Vienna, Austria, May 7-11, 2024 . OpenReview.net. Alec Radford, Karthik Narasimhan, Tim Salimans, Ilya Sutskever, et al. 2018. Improving language under-standing by generative pre-training. (2018). https: //cdn.openai.com/research-covers/ language-unsupervised/language_ understanding_paper.pdf 
+
+Alec Radford, Jeffrey Wu, Rewon Child, David Luan, Dario Amodei, Ilya Sutskever, et al. 2019. Lan-guage models are unsupervised multitask learn-ers. (2019). https://cdn.openai.com/ better-language-models/language_ models_are_unsupervised_multitask_ learners.pdf 
+
+Toran Bruce Richards. 2023. AutoGPT . https: //github.com/Significant-Gravitas/ AutoGPT 
+
+Timo Schick, Jane Dwivedi-Yu, Roberto Dess` ı, Roberta Raileanu, Maria Lomeli, Eric Hambro, Luke Zettle-moyer, Nicola Cancedda, and Thomas Scialom. 2023. Toolformer: Language Models Can Teach Themselves to Use Tools. In Advances in Neural Information Pro-cessing Systems 36: Annual Conference on Neural In-formation Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 - 16, 2023 , Alice Oh, Tristan Naumann, Amir Globerson, Kate Saenko, Moritz Hardt, and Sergey Levine (Eds.). Tianyao Shi, Yanran Wu, Sihang Liu, and Yi Ding. 2024. GreenLLM: Disaggregating Large Language Model Serving on Heterogeneous GPUs for Lower Car-bon Emissions. arXiv:2412.20322 [cs.AR] https: //arxiv.org/abs/2412.20322 
+
+Xiaoxiang Shi, Colin Cai, Junjia Du, and Zhihao Jia. 2025. Nexus: Proactive Intra-GPU Disaggregation of Prefill and Decode in LLM Serving. arXiv preprint arXiv:2507.06608 (2025). Noah Shinn, Federico Cassano, Ashwin Gopinath, Karthik Narasimhan, and Shunyu Yao. 2023. Reflexion: lan-guage agents with verbal reinforcement learning. In Ad-vances in Neural Information Processing Systems 36: Annual Conference on Neural Information Processing Systems 2023, NeurIPS 2023, New Orleans, LA, USA, December 10 - 16, 2023 , Alice Oh, Tristan Naumann, Amir Globerson, Kate Saenko, Moritz Hardt, and Sergey Levine (Eds.). Jovan Stojkovic, Chaojie Zhang, ´I˜ nigo Goiri, Josep Torrellas, and Esha Choukse. 2025. DynamoLLM: Designing LLM Inference Clusters for Performance and Energy Efficiency. In 2025 IEEE International Symposium on High Performance Computer Archi-tecture (HPCA) . IEEE, 1348–1362. doi: 10.1109/ hpca61900.2025.00102 
+
+Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin. 2024. Llumnix: Dynamic Scheduling for Large Language Model Serv-ing. In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24) . USENIX Asso-ciation, 173–191. Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. 2017. Attention is All you Need. In Advances in Neural Information Processing Systems 30: Annual Conference on Neural Information Process-ing Systems 2017, December 4-9, 2017, Long Beach, CA, USA , Isabelle Guyon, Ulrike von Luxburg, Samy Bengio, Hanna M. Wallach, Rob Fergus, S. V. N. Vish-wanathan, and Roman Garnett (Eds.). 5998–6008. Chao Wang, Pengfei Zuo, Zhangyu Chen, Yunkai Liang, Zhou Yu, and Ming-Chang Yang. 2025. Prefill-Decode Aggregation or Disaggregation? Uni-fying Both for Goodput-Optimized LLM Serving. arXiv:2508.01989 [cs.DC] https://arxiv.org/ abs/2508.01989 
+
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik R. Narasimhan, and Yuan Cao. 2023. ReAct: Synergizing Reasoning and Acting in Language Models. In The Eleventh International Conference on Learning Representations, ICLR 2023, Kigali, Rwanda, May 1-5, 2023 . OpenReview.net. Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soo-jeong Kim, and Byung-Gon Chun. 2022. Orca: A Dis-tributed Serving System for Transformer-Based Genera-15 tive Models. In 16th USENIX Symposium on Operating Systems Design and Implementation, OSDI 2022, Carls-bad, CA, USA, July 11-13, 2022 , Marcos K. Aguilera and Hakim Weatherspoon (Eds.). USENIX Association, 521–538. Dingyan Zhang, Haotian Wang, Yang Liu, Xingda Wei, Yizhou Shan, Rong Chen, and Haibo Chen. 2025. BlitzScale: Fast and Live Large Model Autoscaling with O(1) Host Caching. In 19th USENIX Symposium on Op-erating Systems Design and Implementation (OSDI 25) .USENIX Association, 275–293. Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Chuyue Sun, Jeff Huang, Cody Hao Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E. Gonzalez, Clark W. Barrett, and Ying Sheng. 2024. SGLang: Efficient Exe-cution of Structured Language Model Programs. In Ad-vances in Neural Information Processing Systems 38: Annual Conference on Neural Information Processing Systems 2024, NeurIPS 2024, Vancouver, BC, Canada, December 10 - 15, 2024 , Amir Globersons, Lester Mackey, Danielle Belgrave, Angela Fan, Ulrich Paquet, Jakub M. Tomczak, and Cheng Zhang (Eds.). Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang. 2024. DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving. In 18th USENIX Symposium on Operating Systems De-sign and Implementation, OSDI 2024, Santa Clara, CA, USA, July 10-12, 2024 , Ada Gavrilovska and Douglas B. Terry (Eds.). USENIX Association, 193–210. 16

@@ -6,41 +6,38 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-05
-- 运行时间：2026-06-05 21:59:15 UTC
+- 最新运行日期：2026-06-06
+- 运行时间：2026-06-06 20:37:41 UTC
 - 运行状态：成功
-- 本次总论文数：7
-- 精读区：2
-- 速读区：5
+- 本次总论文数：6
+- 精读区：3
+- 速读区：3
 
 ### 今日简报（AI）
-今日聚焦多智能体协作，精读《FinCom》（9.0/10）的金融协商框架与《Multi-Agent Computer Use》（8.0/10）的自主计算方案。最值得关注FinCom的“分歧-承诺”机制和多智能体操控计算机的实用突破。建议普通读者可进一步探索金融多智能体和自动化操作领域的落地案例。
-- 详情：[/202606/05/README](/202606/05/README)
+今日聚焦智能体服务调度与推理机制，精读两篇高分论文，速读三篇代理系统相关研究；最值得关注的是《Observation, Not Prediction》提出的对话级解耦调度（9.0分）和《Adaptive Latent Agentic Reasoning》的潜在推理方法（8.0分）；建议普通读者优先精读这两篇，从调度与推理入手理解智能体系统核心效率瓶颈。
+- 详情：[/202606/06/README](/202606/06/README)
 
 ### 精读区论文标签
-1. [FinCom: A Financial Multi-Agent Demo with Disagree-or-Commit Deliberation](/202606/05/2606.00939v1-fincom-a-financial-multi-agent-demo-with-disagree-or-commit-deliberation)  
+1. [Observation, Not Prediction: Conversation-Level Disaggregated Scheduling for Agentic Serving](/202606/06/2606.01839v1-observation-not-prediction-conversation-level-disaggregated-scheduling-for-agentic-serving)  
    标签：评分：9.0/10、query:mas-routing
-   evidence：提出中央监督者协调专家智能体的多智能体框架，直接针对LLM多智能体路由
-2. [Multi-Agent Computer Use](/202606/05/2606.01533v1-multi-agent-computer-use)  
+   evidence：对话级调度用于智能体服务，类似于任务路由
+2. [Adaptive Latent Agentic Reasoning](/202606/06/2606.02871v1-adaptive-latent-agentic-reasoning)  
    标签：评分：8.0/10、query:mas-routing
-   evidence：基于DAG任务分解的管理者调度子智能体
+   evidence：多轮代理任务中推理努力的动态路由
+3. [What Should Agents Say? Action-state Communication for Efficient Multi-Agent Systems](/202606/06/2606.05304v1-what-should-agents-say-action-state-communication-for-efficient-multi-agent-systems)  
+   标签：评分：8.0/10、query:mas-routing
+   evidence：面向高效智能体间信息路由的动作状态通信协议
 
 ### 速读区论文标签
-1. [PR2: Predictive Routing Replay for MoE-Based LLM Reinforcement Learning](/202606/05/2606.00395v2-pr2-predictive-routing-replay-for-moe-based-llm-reinforcement-learning)  
+1. [Learning to Route LLMs from Implicit Cost-Performance Preferences via Meta-Learning](/202606/06/2606.06178v1-learning-to-route-llms-from-implicit-cost-performance-preferences-via-meta-learning)  
    标签：评分：7.0/10、query:mas-routing
-   evidence：预测性路由回放稳定MoE LLM强化学习
-2. [Dynamic Coordination Strategy Selection for Enterprise Multi-Agent Systems](/202606/05/2606.00804v2-dynamic-coordination-strategy-selection-for-enterprise-multi-agent-systems)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：评估企业多智能体系统中动态协调策略选择，类似于智能体的动态路由
-3. [Ahoy: LLMs Enacting Multiagent Interaction Protocols](/202606/05/2606.05390v1-ahoy-llms-enacting-multiagent-interaction-protocols)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：动态协议选择作为智能体路由策略
-4. [Scaling Behavior of Single LLM-Driven Multi-Agent Systems](/202606/05/2606.00655v1-scaling-behavior-of-single-llm-driven-multi-agent-systems)  
+   evidence：基于成本性能偏好学习路由LLM，类比多跳推理配置
+2. [Learning to Construct Practical Agentic Systems](/202606/06/2606.00189v1-learning-to-construct-practical-agentic-systems)  
    标签：评分：6.0/10、query:mas-routing
-   evidence：单LLM驱动的多智能体系统扩展行为，与多智能体协调和路由动态相关
-5. [RAG-driven Multi-Agent LLM Framework with Task Decomposition for Beyond 5G Auto-Configuration](/202606/05/2606.01222v1-rag-driven-multi-agent-llm-framework-with-task-decomposition-for-beyond-5g-auto-configuration)  
+   evidence：设计实用的模块化智能体系统
+3. [LayerRoute: Input-Conditioned Adaptive Layer Skipping via LoRA Fine-Tuning for Agentic Language Models](/202606/06/2606.01838v1-layerroute-input-conditioned-adaptive-layer-skipping-via-lora-fine-tuning-for-agentic-language-models)  
    标签：评分：6.0/10、query:mas-routing
-   evidence：基于任务分解的多智能体LLM框架用于自动配置
+   evidence：面向智能体语言模型的输入条件自适应层跳过
 
 
 <div class="dpr-home-promo-card">

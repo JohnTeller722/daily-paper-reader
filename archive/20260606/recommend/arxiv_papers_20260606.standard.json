@@ -1,0 +1,253 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-06T20:33:47.634872+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 3,
+    "deep_cap": 6,
+    "deep_selected": 3,
+    "quick_candidates": 3,
+    "quick_skim_target": 11,
+    "quick_selected": 3
+  },
+  "deep_dive": [
+    {
+      "id": "2606.01839v1",
+      "source": "arxiv",
+      "title": "Observation, Not Prediction: Conversation-Level Disaggregated Scheduling for Agentic Serving",
+      "abstract": "LLM-based agents resolve a user task through many turns of dependent inference and tool calls, producing a workload whose total cost is unknown when the task arrives. Existing multi-turn systems keep the turn as the scheduling unit and decide, turn by turn, whether to disaggregate prefill from decode. That decision rests on the turn's decode length, tool behavior, and KV growth, quantities that are not observable when the scheduler must act, forcing the system to predict them. We show this dependence on prediction is imposed by the scheduling unit, not the workload. Raising the scheduling unit from the turn to the conversation converts turn-level irregularity into a stable, two-phase structure: 1) a compute-bound turn-1 prefill followed by 2) a long, memory-bound tail. Thus, with the conversation as the scheduling unit, placement reduces to reading the first-turn input length and per-decoder KV occupancy, both directly observable. We instantiate this principle in ConServe, which routes the first-turn prefill to a high-throughput prefiller, transfers the KV cache exactly once, and pins the conversation to a single decoder for its entire tail, with no learned model of decode-side cost. Against a per-turn prediction baseline, ConServe reduces p95 time-to-first-effective-token (the latency of a conversation's first user-visible output) by 51.08% and improves energy efficiency by 7.51% while preserving last-turn TBT and SLOs; mapping the two phases onto heterogeneous GPU tiers adds a further 22.75% in energy efficiency.",
+      "authors": [
+        "Jianru Ding",
+        "Ryien Hosseini",
+        "Pouya Mahdi Gholami",
+        "Mingyuan Xiang",
+        "Henry Hoffmann"
+      ],
+      "primary_category": "cs.DC",
+      "categories": [
+        "cs.DC",
+        "cs.AR",
+        "cs.LG"
+      ],
+      "published": "2026-06-01T07:51:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.01839v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "conversation-level scheduling for agentic serving, analogous to task routing",
+      "llm_evidence_cn": "对话级调度用于智能体服务，类似于任务路由",
+      "llm_evidence": "对话级调度用于智能体服务，类似于任务路由",
+      "canonical_evidence": "对话级调度用于智能体服务，类似于任务路由",
+      "llm_tldr_en": "Raises scheduling unit from turn to conversation, converting irregular turn-level workload into a stable two-phase structure, eliminating dependency on prediction.",
+      "llm_tldr_cn": "现有多轮智能体系统以轮次为调度单元，需预测解码长度等不可观测量。本文将调度单元提升到对话级别，将轮次级不规则转化为稳定两阶段结构，避免预测依赖，显著提升调度效率。",
+      "llm_tldr": "现有多轮智能体系统以轮次为调度单元，需预测解码长度等不可观测量。本文将调度单元提升到对话级别，将轮次级不规则转化为稳定两阶段结构，避免预测依赖，显著提升调度效率。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.02871v1",
+      "source": "arxiv",
+      "title": "Adaptive Latent Agentic Reasoning",
+      "abstract": "Large reasoning models improve performance by generating extended chain-of-thought (CoT) reasoning, but this behavior becomes inefficient when applied to LLM agents. Current LLM agents often generate verbose textual reasoning at every decision step and allocate reasoning effort nearly uniformly across turns, leading to substantial inefficiency in multi-turn agentic trajectories. We propose Adaptive Latent Agentic Reasoning (ALAR), a dual-mode framework that uses compact latent reasoning for routine turns and selectively escalates to explicit chain-of-thought when deeper deliberation is needed. ALAR learns latent reasoning by using the agent's actions as supervision anchors and is further optimized to use latent reasoning when it is sufficient for task success and reserve explicit CoT for harder decisions. Experiments on agentic search and tool-use benchmarks show that ALAR maintains comparable or better task accuracy while substantially reducing generated tokens by up to 43.6% in search and 84.6% in tool use. These results demonstrate that ALAR improves the accuracy-efficiency trade-off of LLM agents by reducing unnecessary textual reasoning while preserving explicit deliberation for harder decision steps.",
+      "authors": [
+        "Dongwon Jung",
+        "Peng Shi",
+        "Yi Zhang",
+        "Junshan Zhang",
+        "Muhao Chen"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-06-01T20:36:06+00:00",
+      "link": "https://arxiv.org/pdf/2606.02871v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "dynamic routing of reasoning effort in multi-turn agent tasks",
+      "llm_evidence_cn": "多轮代理任务中推理努力的动态路由",
+      "llm_evidence": "多轮代理任务中推理努力的动态路由",
+      "canonical_evidence": "多轮代理任务中推理努力的动态路由",
+      "llm_tldr_en": "Proposes ALAR, a dual-mode framework that routes between latent reasoning and explicit chain-of-thought for LLM agents based on task difficulty.",
+      "llm_tldr_cn": "LLM智能体在每步都生成冗长文本推理，导致多轮轨迹效率低下。本文提出自适应潜在代理推理（ALAR），一种双模式框架：对常规步骤使用紧凑的潜在推理，仅在需要深度思考时升级到显式链式思维。ALAR通过代理动作作为监督锚点学习潜在推理，并优化何时使用哪种模式。实验表明该方法在保持性能的同时显著降低了推理开销，为多步推理中如何选择最佳配置提供了解决方案。",
+      "llm_tldr": "LLM智能体在每步都生成冗长文本推理，导致多轮轨迹效率低下。本文提出自适应潜在代理推理（ALAR），一种双模式框架：对常规步骤使用紧凑的潜在推理，仅在需要深度思考时升级到显式链式思维。ALAR通过代理动作作为监督锚点学习潜在推理，并优化何时使用哪种模式。实验表明该方法在保持性能的同时显著降低了推理开销，为多步推理中如何选择最佳配置提供了解决方案。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.05304v1",
+      "source": "arxiv",
+      "title": "What Should Agents Say? Action-state Communication for Efficient Multi-Agent Systems",
+      "abstract": "Multi-agent systems (MAS) built on large language models are typically organized around roles, pipelines, and turn schedules, while the content that agents pass to one another is often left as unconstrained natural language. However, this free-form communication can rapidly inflate token usage, consume the shared context window, and ultimately affect both system performance and inference cost. We analyze five common inter-agent communication strategies across two MAS topologies, finding that no fixed strategy is universally optimal. Instead, effective inter-agent messages consistently preserve action-centered information needed by downstream agents. Building on this, we propose the PACT (Protocolized Action-state Communication and Transmission), which treats inter-agent communication as a public state-update problem and projects each raw agent output into a compact action-state record before it enters shared history. Across different MAS topologies, PACT consistently improves the performance-cost trade-off, achieving comparable or stronger task performance with substantially fewer tokens. The gains extend to production coding harnesses: PACT lifts OpenHands' resolve rate at -10% tokens-per-resolved, and is resolve-neutral on SWE-agent while halving input tokens. Our code is publicly available at https://github.com/iNLP-Lab/PACT.",
+      "authors": [
+        "Chen Huang",
+        "Yuhao Wu",
+        "Wenxuan Zhang"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-03T18:00:22+00:00",
+      "link": "https://arxiv.org/pdf/2606.05304v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "action-state communication protocol for efficient inter-agent information routing",
+      "llm_evidence_cn": "面向高效智能体间信息路由的动作状态通信协议",
+      "llm_evidence": "面向高效智能体间信息路由的动作状态通信协议",
+      "canonical_evidence": "面向高效智能体间信息路由的动作状态通信协议",
+      "llm_tldr_en": "Proposes PACT, a protocolized action-state communication that optimizes inter-agent message content to reduce token usage and improve efficiency in LLM-based MAS.",
+      "llm_tldr_cn": "LLM多智能体系统中自由形式通信导致大量token浪费。本文分析五种通信策略，发现无固定最优，进而提出PACT协议，确保消息保留动作中心信息，有效降低通信成本并提升系统性能。",
+      "llm_tldr": "LLM多智能体系统中自由形式通信导致大量token浪费。本文分析五种通信策略，发现无固定最优，进而提出PACT协议，确保消息保留动作中心信息，有效降低通信成本并提升系统性能。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "routing strategies for multi agent coordination with LLMs",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.06178v1",
+      "source": "arxiv",
+      "title": "Learning to Route LLMs from Implicit Cost-Performance Preferences via Meta-Learning",
+      "abstract": "Large language models (LLMs) present a trade-off between performance and cost, where more powerful models incur greater expense. LLM routing aims to mitigate expenses while maintaining performance by sending queries to the most suitable model. However, existing methods cannot perform well for different user cost-performance preferences. To address this gap, we introduce a novel perceptive LLM routing paradigm for personalized and user-centric cost-performance optimization, which efficiently learns users' implicit preferences through little interaction. To handle the challenge of heterogeneous user needs, we formulate preference profiles as a set of distinct tasks in contextual bandit and propose MetaRouter, a meta-learning framework designed for preference-aware LLM routing. Experimental results show that MetaRouter outperforms strong baselines on both in-distribution and out-of-distribution tasks. Furthermore, it exhibits high efficiency in learning user preferences, robustness to changes in the routable LLMs, and scalability to multi-model routing.",
+      "authors": [
+        "Jiahao Zeng",
+        "Ming Tang",
+        "Ningning Ding"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI",
+        "cs.CL"
+      ],
+      "published": "2026-06-04T13:53:03+00:00",
+      "link": "https://arxiv.org/pdf/2606.06178v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "learning to route LLMs based on cost-performance preferences, analogous to multi-hop reasoning configuration",
+      "llm_evidence_cn": "基于成本性能偏好学习路由LLM，类比多跳推理配置",
+      "llm_evidence": "基于成本性能偏好学习路由LLM，类比多跳推理配置",
+      "canonical_evidence": "基于成本性能偏好学习路由LLM，类比多跳推理配置",
+      "llm_tldr_en": "MetaRouter meta-learning framework learns user-specific cost-performance preferences for LLM routing, adapting to heterogeneous needs with few interactions.",
+      "llm_tldr_cn": "针对用户对成本性能偏好的个性化需求，提出MetaRouter元学习框架，将偏好建模为上下文多臂赌博机任务，通过少量交互高效学习隐式偏好，实现用户导向的LLM路由。",
+      "llm_tldr": "针对用户对成本性能偏好的个性化需求，提出MetaRouter元学习框架，将偏好建模为上下文多臂赌博机任务，通过少量交互高效学习隐式偏好，实现用户导向的LLM路由。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.00189v1",
+      "source": "arxiv",
+      "title": "Learning to Construct Practical Agentic Systems",
+      "abstract": "Automated design and optimization of agentic LLM-based systems leads to sophisticated systems that substantially improve result quality over off-the-shelf agentic patterns. However, studies of fielded agentic systems show that production systems focus much more on issues such as simplicity, controllability, and predictability of inference costs. In this paper we propose principled approaches to designing and optimizing practical agentic systems. We describe an agent framework that enables designers to enforce modularity in agentic systems, by defining \"pseudo-tools\" that call LLMs recursively on a restricted context. Using this framework we hand-engineer agents for a diverse set of tasks, and show that relative to dynamically-planned workflows, hand-constructed fixed workflows are generally cheaper and more accurate. We then propose novel learning methods for the agentic components required by this framework, namely pseudo-tools and fixed workflows. These learning methods generally outperform hand-engineered agents. We also exploit the modularity of the framework to apply multi-objective optimization methods to jointly optimize cost and response quality and blend the results of multiple learning systems.",
+      "authors": [
+        "Aditya Kumar",
+        "Zhihan Lei",
+        "Jerry Yan",
+        "Joshua W. Momo",
+        "Lauhitya Reddy",
+        "Rafael Enrique Cabrera Jimenez",
+        "Cassandra A. Cohen",
+        "Arthur Kajiyama",
+        "William W. Cohen"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG",
+        "cs.AI"
+      ],
+      "published": "2026-05-29T16:02:26+00:00",
+      "link": "https://arxiv.org/pdf/2606.00189v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "designing practical agentic systems with modularity",
+      "llm_evidence_cn": "设计实用的模块化智能体系统",
+      "llm_evidence": "设计实用的模块化智能体系统",
+      "canonical_evidence": "设计实用的模块化智能体系统",
+      "llm_tldr_en": "Proposes principled approaches to design practical agentic LLM systems, emphasizing modularity via pseudo-tools and fixed workflows for simplicity and cost predictability.",
+      "llm_tldr_cn": "针对生产级智能体系统对简单性、可控性和成本可预测性的需求，提出通过定义伪工具强制模块化的原则性设计方法。相比动态规划工作流，手工构建的固定工作流在多种任务上取得了更优的实际效果。",
+      "llm_tldr": "针对生产级智能体系统对简单性、可控性和成本可预测性的需求，提出通过定义伪工具强制模块化的原则性设计方法。相比动态规划工作流，手工构建的固定工作流在多种任务上取得了更优的实际效果。",
+      "llm_tags": [
+        "query:mas-routing:composite"
+      ],
+      "matched_query_tag": "query:mas-routing:composite",
+      "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning.",
+      "matched_requirement_id": "req-composite-mas-routing",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.01838v1",
+      "source": "arxiv",
+      "title": "LayerRoute: Input-Conditioned Adaptive Layer Skipping via LoRA Fine-Tuning for Agentic Language Models",
+      "abstract": "Agentic language model systems alternate between two structurally distinct step types: structured tool calls (short, deterministic, low perplexity) and open-ended planning/reasoning steps (long, complex, high perplexity). Despite this heterogeneity, current inference systems apply identical compute to every step. We introduce LayerRoute, a lightweight adapter that learns to selectively skip transformer blocks on a per-input basis. LayerRoute augments each of the 24 transformer blocks in Qwen2.5-0.5B-Instruct with: (1) a per-layer router (~897 parameters, Linear(896,1)) that outputs a hard binary gate via the straight-through estimator, and (2) LoRA adapters (rank 8, ~1.08M parameters) on the Q/K/V/O attention projections. The backbone weights remain frozen. A single end-to-end training pass on agentic data (Hermes, Glaive, GSM8K, Turing) with a gate regularisation term forces the system to discover which blocks are skippable per input type. After 3,000 steps (6.4 minutes on an A100 40GB), LayerRoute achieves a 12.91% skip differential: tool calls skip 15.25% of FLOPs while planning steps skip only 2.34%, using only 1.10M trainable parameters (0.22% of the 494M backbone). Quality improves over the base model due to LoRA adaptation, with perplexity delta of -1.29 on tool calls and -1.30 on planning.",
+      "authors": [
+        "Prateek Kumar Sikdar"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI",
+        "cs.LG"
+      ],
+      "published": "2026-06-01T07:50:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.01838v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "input-conditioned adaptive layer skipping for agentic language models",
+      "llm_evidence_cn": "面向智能体语言模型的输入条件自适应层跳过",
+      "llm_evidence": "面向智能体语言模型的输入条件自适应层跳过",
+      "canonical_evidence": "面向智能体语言模型的输入条件自适应层跳过",
+      "llm_tldr_en": "Proposes LayerRoute, a lightweight adapter that learns to skip transformer blocks per input, dynamically allocating compute for tool calls vs planning steps.",
+      "llm_tldr_cn": "智能体语言模型的不同步骤（工具调用与规划）计算需求差异大，但当前推理系统统一分配计算。本文提出LayerRoute，通过每个输入层的二值门控和LoRA微调，自适应跳过不需要的层，为动态计算配置提供了新方法。",
+      "llm_tldr": "智能体语言模型的不同步骤（工具调用与规划）计算需求差异大，但当前推理系统统一分配计算。本文提出LayerRoute，通过每个输入层的二值门控和LoRA微调，自适应跳过不需要的层，为动态计算配置提供了新方法。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "how to choose best configuration for multi hop reasoning",
+      "matched_requirement_id": "req-10",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
