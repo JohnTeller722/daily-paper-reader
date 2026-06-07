@@ -1,0 +1,93 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-07T20:15:15.239802+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 11,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.05670v1",
+      "source": "arxiv",
+      "title": "Do More Agents Help? Controlled and Protocol-Aligned Evaluation of LLM Agent Workflows",
+      "abstract": "Does adding more agents help an LLM workflow once compared systems share the same benchmark loader, tool access, answer contract, usage accounting, and trajectory logging? We introduce BenchAgent, an evaluation framework that places single-agent, fixed multi-agent (MAS), and evolving MAS workflows under one normalized execution and logging protocol. BenchAgent evaluates these substrate-internal workflows across ten reasoning, coding, and tool-use benchmarks with GPT-4.1, and separately reports a Protocol-Aligned External (PAE) GAIA study of a runtime-generated workflow. Under SI conditions, at most one of six tested MAS exceeds the matched single-agent anchor on benchmark-balanced average accuracy: EvoAgent lies within the Wilson one-run guidance, while the remaining five trail by 2.56-11.29 points and occupy more expensive accuracy-cost trade-offs. On the PAE GAIA snapshot, a Claude-Code-style runtime workflow reaches 66.72% overall and 69.23% on Level 3, more than 20 points above the strongest non-Claude baseline, Jarvis, a fixed MAS.",
+      "authors": [
+        "Yuhang Fu",
+        "Ruishan Fang",
+        "Jiaqi Shao",
+        "Huiyu Zheng",
+        "Zhengtao Zhu",
+        "Bing Luo",
+        "Tao Lin"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-04T03:50:47+00:00",
+      "link": "https://arxiv.org/pdf/2606.05670v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "evaluation of adding more agents in LLM workflows, relevant to routing strategy selection",
+      "llm_evidence_cn": "评估增加智能体数量对工作流的影响，与路由策略选择相关",
+      "llm_evidence": "评估增加智能体数量对工作流的影响，与路由策略选择相关",
+      "canonical_evidence": "评估增加智能体数量对工作流的影响，与路由策略选择相关",
+      "llm_tldr_en": "Introduces BenchAgent, a protocol-aligned evaluation framework for single-agent, fixed MAS, and evolving MAS, finding limited benefit of more agents.",
+      "llm_tldr_cn": "本文针对多智能体工作流是否更优的问题，提出BenchAgent评估框架，在同一协议下比较单智能体、固定多智能体和演化多智能体系统。在十个基准上测试发现，只有一个演化多智能体方法略优于单智能体基线。结论是增加智能体需谨慎，为任务路由中的智能体数量选择提供了重要参考。",
+      "llm_tldr": "本文针对多智能体工作流是否更优的问题，提出BenchAgent评估框架，在同一协议下比较单智能体、固定多智能体和演化多智能体系统。在十个基准上测试发现，只有一个演化多智能体方法略优于单智能体基线。结论是增加智能体需谨慎，为任务路由中的智能体数量选择提供了重要参考。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.05711v1",
+      "source": "arxiv",
+      "title": "Beyond tokens: a unified framework for latent communication in LLM-based multi-agent systems",
+      "abstract": "Multi-agent systems built on large language models (LLMs) have become a prevailing paradigm for tackling complex reasoning, planning, and tool-use tasks. The dominant communication protocol in such systems is natural language: agents exchange messages token-by-token, verbalising their internal reasoning so that peers can read, verify, and respond. While convenient and interpretable, this protocol suffers from three structural drawbacks -- high inference cost, irreversible information loss during discretization, and ambiguity/redundancy of natural language. A growing body of work therefore explores an alternative protocol -- latent communication -- in which agents exchange continuous representations (embeddings, hidden states, or KV-caches) directly, bypassing the bottleneck of text generation. This paper presents a unified framework for organising the rapidly expanding literature on latent communication. We analyse existing methods along three orthogonal axes: (1) WHAT information is communicated (Embeddings, Hidden States, KV-Caches, or other continuous state); (2) WHICH sender-receiver alignment is used (latent-space alignment and layer alignment); and (3) HOW the communicated information is fused into the receiver (concatenation, prepending, mathematical operations, cross-attention, or cache restoration). Under this 3-axis framework, we systematically categorise eighteen representative methods proposed between 2024 and 2026, identify five major design patterns, and surface a set of open challenges -- including cross-architecture alignment, security of latent channels, compression for edge deployment, and the relationship between latent communication and latent chain-of-thought. We hope that this framework both lowers the barrier to entry for new researchers and provides a vocabulary for comparing future work.",
+      "authors": [
+        "Yingzhuo Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-04T05:10:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.05711v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Latent communication framework for LLM-based multi-agent systems, addressing routing efficiency",
+      "llm_evidence_cn": "基于LLM的多智能体系统潜在通信框架，解决路由效率问题",
+      "llm_evidence": "基于LLM的多智能体系统潜在通信框架，解决路由效率问题",
+      "canonical_evidence": "基于LLM的多智能体系统潜在通信框架，解决路由效率问题",
+      "llm_tldr_en": "Proposes a unified framework for latent communication in LLM-based MAS, reducing inference cost and information loss, which can improve routing of information between agents.",
+      "llm_tldr_cn": "这篇论文针对基于大语言模型的多智能体系统中自然语言通信导致的推理成本高、信息损失和冗余问题，提出了一种潜在通信框架，让智能体之间直接交换连续表示（如嵌入或隐藏状态）。该框架作为统一协议，有望提升多智能体系统中的信息路由效率和保真度，从而支持更高效的协调与决策。",
+      "llm_tldr": "这篇论文针对基于大语言模型的多智能体系统中自然语言通信导致的推理成本高、信息损失和冗余问题，提出了一种潜在通信框架，让智能体之间直接交换连续表示（如嵌入或隐藏状态）。该框架作为统一协议，有望提升多智能体系统中的信息路由效率和保真度，从而支持更高效的协调与决策。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent system routing mechanisms",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

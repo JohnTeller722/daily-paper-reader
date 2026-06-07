@@ -6,38 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-06
-- 运行时间：2026-06-06 20:37:41 UTC
+- 最新运行日期：2026-06-07
+- 运行时间：2026-06-07 20:17:12 UTC
 - 运行状态：成功
-- 本次总论文数：6
-- 精读区：3
-- 速读区：3
+- 本次总论文数：2
+- 精读区：0
+- 速读区：2
 
 ### 今日简报（AI）
-今日聚焦智能体服务调度与推理机制，精读两篇高分论文，速读三篇代理系统相关研究；最值得关注的是《Observation, Not Prediction》提出的对话级解耦调度（9.0分）和《Adaptive Latent Agentic Reasoning》的潜在推理方法（8.0分）；建议普通读者优先精读这两篇，从调度与推理入手理解智能体系统核心效率瓶颈。
-- 详情：[/202606/06/README](/202606/06/README)
+今日速读2篇LLM多智能体工作流论文，关注评估与通信框架。  
+值得关注的核心方向：多智能体并非“越多越好”，需协议对齐评估；潜在通信框架可超越token限制。  
+建议普通读者优先关注智能体协作效率而非数量，并留意通信标准化趋势。
+- 详情：[/202606/07/README](/202606/07/README)
 
 ### 精读区论文标签
-1. [Observation, Not Prediction: Conversation-Level Disaggregated Scheduling for Agentic Serving](/202606/06/2606.01839v1-observation-not-prediction-conversation-level-disaggregated-scheduling-for-agentic-serving)  
-   标签：评分：9.0/10、query:mas-routing
-   evidence：对话级调度用于智能体服务，类似于任务路由
-2. [Adaptive Latent Agentic Reasoning](/202606/06/2606.02871v1-adaptive-latent-agentic-reasoning)  
-   标签：评分：8.0/10、query:mas-routing
-   evidence：多轮代理任务中推理努力的动态路由
-3. [What Should Agents Say? Action-state Communication for Efficient Multi-Agent Systems](/202606/06/2606.05304v1-what-should-agents-say-action-state-communication-for-efficient-multi-agent-systems)  
-   标签：评分：8.0/10、query:mas-routing
-   evidence：面向高效智能体间信息路由的动作状态通信协议
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Learning to Route LLMs from Implicit Cost-Performance Preferences via Meta-Learning](/202606/06/2606.06178v1-learning-to-route-llms-from-implicit-cost-performance-preferences-via-meta-learning)  
-   标签：评分：7.0/10、query:mas-routing
-   evidence：基于成本性能偏好学习路由LLM，类比多跳推理配置
-2. [Learning to Construct Practical Agentic Systems](/202606/06/2606.00189v1-learning-to-construct-practical-agentic-systems)  
+1. [Do More Agents Help? Controlled and Protocol-Aligned Evaluation of LLM Agent Workflows](/202606/07/2606.05670v1-do-more-agents-help-controlled-and-protocol-aligned-evaluation-of-llm-agent-workflows)  
    标签：评分：6.0/10、query:mas-routing
-   evidence：设计实用的模块化智能体系统
-3. [LayerRoute: Input-Conditioned Adaptive Layer Skipping via LoRA Fine-Tuning for Agentic Language Models](/202606/06/2606.01838v1-layerroute-input-conditioned-adaptive-layer-skipping-via-lora-fine-tuning-for-agentic-language-models)  
+   evidence：评估增加智能体数量对工作流的影响，与路由策略选择相关
+2. [Beyond tokens: a unified framework for latent communication in LLM-based multi-agent systems](/202606/07/2606.05711v1-beyond-tokens-a-unified-framework-for-latent-communication-in-llm-based-multi-agent-systems)  
    标签：评分：6.0/10、query:mas-routing
-   evidence：面向智能体语言模型的输入条件自适应层跳过
+   evidence：基于LLM的多智能体系统潜在通信框架，解决路由效率问题
 
 
 <div class="dpr-home-promo-card">
