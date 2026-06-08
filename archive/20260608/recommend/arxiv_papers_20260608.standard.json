@@ -1,0 +1,239 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-08T21:06:51.247315+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 4,
+    "quick_skim_target": 11,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.06924v1",
+      "source": "arxiv",
+      "title": "From Sampled Outcomes to Capability Distributions: Rethinking Supervision for LLM Routing",
+      "abstract": "Existing LLM routing methods typically treat a model's single response to a query as its capability label for training routers. However, because LLM generation is inherently stochastic, such single-shot supervision provides only a noisy observation of a query-model pair's behavior rather than a reliable capability estimate. We show that this assumption introduces systematic noise into routing supervision, making learned routing policies less reliable. To address this issue, we propose DARS (Distribution-Aware Routing Supervision), a framework that constructs routing supervision from a distributional view of model behavior. Instead of relying on a single generated response, DARS considers uncertainty from both the input side and the output side, capturing how semantically equivalent query formulations and stochastic generations affect model performance. Based on these distribution-aware observations, DARS builds more reliable supervision signals for routing. Experiments across diverse tasks show that single-shot labels can be misleading for model selection, while distribution-aware supervision provides more stable labels and improves learned routing behavior. Our results suggest that reliable LLM routing should move beyond single-response observations and be grounded in query-level model capability distributions.",
+      "authors": [
+        "Guannan Lai",
+        "Haoran Hu",
+        "Long Chen",
+        "Zhenguo Li",
+        "Han-Jia Ye"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-05T05:42:00+00:00",
+      "link": "https://arxiv.org/pdf/2606.06924v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "proposes DARS, a distribution-aware routing supervision framework for LLM routing",
+      "llm_evidence_cn": "提出DARS，一种用于LLM路由的分布感知路由监督框架",
+      "llm_evidence": "提出DARS，一种用于LLM路由的分布感知路由监督框架",
+      "canonical_evidence": "提出DARS，一种用于LLM路由的分布感知路由监督框架",
+      "llm_tldr_en": "DARS constructs routing supervision from a distributional view of model behavior, addressing noise from single-shot supervision and improving LLM routing reliability.",
+      "llm_tldr_cn": "本文指出现有LLM路由方法依赖单次生成结果作为监督标签，引入系统噪声。提出DARS（分布感知路由监督）框架，从模型输出的分布视角构建更可靠的监督信号，考虑输入输出两侧不确定性。实验表明DARS提升了路由策略的稳定性和准确率。",
+      "llm_tldr": "本文指出现有LLM路由方法依赖单次生成结果作为监督标签，引入系统噪声。提出DARS（分布感知路由监督）框架，从模型输出的分布视角构建更可靠的监督信号，考虑输入输出两侧不确定性。实验表明DARS提升了路由策略的稳定性和准确率。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.05711v2",
+      "source": "arxiv",
+      "title": "Beyond tokens: a unified framework for latent communication in LLM-based multi-agent systems",
+      "abstract": "Multi-agent systems built on large language models (LLMs) have become a prevailing paradigm for tackling complex reasoning, planning, and tool-use tasks. The dominant communication protocol in such systems is natural language: agents exchange messages token-by-token, verbalising their internal reasoning so that peers can read, verify, and respond. While convenient and interpretable, this protocol suffers from three structural drawbacks -- high inference cost, irreversible information loss during discretization, and ambiguity/redundancy of natural language. A growing body of work therefore explores an alternative protocol -- latent communication -- in which agents exchange continuous representations (embeddings, hidden states, or KV-caches) directly, bypassing the bottleneck of text generation. This paper presents a unified framework for organising the rapidly expanding literature on latent communication. We analyse existing methods along three orthogonal axes: (1) WHAT information is communicated (Embeddings, Hidden States, KV-Caches, or other continuous state); (2) WHICH sender-receiver alignment is used (latent-space alignment and layer alignment); and (3) HOW the communicated information is fused into the receiver (concatenation, prepending, mathematical operations, cross-attention, or cache restoration). Under this 3-axis framework, we systematically categorise eighteen representative methods proposed between 2024 and 2026, identify five major design patterns, and surface a set of open challenges -- including cross-architecture alignment, security of latent channels, compression for edge deployment, and the relationship between latent communication and latent chain-of-thought. We hope that this framework both lowers the barrier to entry for new researchers and provides a vocabulary for comparing future work.",
+      "authors": [
+        "Yingzhuo Liu"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-04T05:10:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.05711v2",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "latent communication for multi-agent coordination routing",
+      "llm_evidence_cn": "潜在通信用于多智能体协调路由",
+      "llm_evidence": "潜在通信用于多智能体协调路由",
+      "canonical_evidence": "潜在通信用于多智能体协调路由",
+      "llm_tldr_en": "Proposes a unified framework for latent communication in LLM multi-agent systems, exchanging continuous representations to reduce cost and information loss, directly applicable to message routing between agents.",
+      "llm_tldr_cn": "当前基于LLM的多智能体系统使用自然语言通信，导致高推理成本、信息离散化损失和歧义性。该论文提出潜在通信框架，让智能体交换连续表示（嵌入、隐藏状态等）而非词元序列。理论分析和初步实验表明，该方法能降低推理成本、减少信息损失并提高通信效率。潜在通信为多智能体系统提供了一种更高效、更保真的通信协议，尤其适用于智能体间的消息路由，是实现高效多智能体协调的关键技术。",
+      "llm_tldr": "当前基于LLM的多智能体系统使用自然语言通信，导致高推理成本、信息离散化损失和歧义性。该论文提出潜在通信框架，让智能体交换连续表示（嵌入、隐藏状态等）而非词元序列。理论分析和初步实验表明，该方法能降低推理成本、减少信息损失并提高通信效率。潜在通信为多智能体系统提供了一种更高效、更保真的通信协议，尤其适用于智能体间的消息路由，是实现高效多智能体协调的关键技术。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.03698v1",
+      "source": "arxiv",
+      "title": "Multi$^2$: Hierarchical Multi-Agent Decision-Making with LLM-Based Agents in Interactive Environments",
+      "abstract": "A central goal of large language model (LLM) research is to build agentic systems that can plan, act, and adapt through sustained interaction with dynamic environments. While recent LLM-based agents exhibit impressive contextual reasoning, their long-horizon decision-making remains fragile, often suffering from objective drift, where goals and plans drift over extended interactions. We introduce Multi$^2$, a hierarchical multi-agent decision-making framework that explicitly decomposes agent behavior into complementary roles. A high-level agent (System 1) focuses on context-aware sub-goal generation using supervised fine-tuning (SFT), while a low-level agent (System 2) executes atomic actions through offline-to-online reinforcement learning (RL) in interactive environments. This separation enables stable long-horizon control, mitigates objective drift, and allows efficient adaptation. Across diverse interactive environments, Multi$^2$ consistently outperforms strong agentic baselines, demonstrating improved robustness and coordination in multi-turn interaction. Beyond performance, we introduce and release three hierarchical benchmark datasets, filling a long-standing gap in training and evaluating hierarchical decision-making for LLM-based agents.",
+      "authors": [
+        "Sangeun Park",
+        "Minhae Kwon"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-02T14:20:09+00:00",
+      "link": "https://arxiv.org/pdf/2606.03698v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "hierarchical multi-agent framework for decision-making with potential routing application",
+      "llm_evidence_cn": "层次化多智能体决策框架，可能应用于路由决策",
+      "llm_evidence": "层次化多智能体决策框架，可能应用于路由决策",
+      "canonical_evidence": "层次化多智能体决策框架，可能应用于路由决策",
+      "llm_tldr_en": "Proposes Multi$^2$, a hierarchical multi-agent decision-making framework with high-level sub-goal generation and low-level action execution, potentially useful for routing coordination in LLM systems.",
+      "llm_tldr_cn": "该文提出Multi$^2$层次化多智能体决策框架，高层智能体生成子目标，低层智能体执行原子动作，通过监督微调和离线到在线强化学习训练。该框架旨在缓解长期决策中的目标漂移问题，其分层结构可适用于多智能体路由中的任务分配与协调，为基于LLM的路由策略提供参考。",
+      "llm_tldr": "该文提出Multi$^2$层次化多智能体决策框架，高层智能体生成子目标，低层智能体执行原子动作，通过监督微调和离线到在线强化学习训练。该框架旨在缓解长期决策中的目标漂移问题，其分层结构可适用于多智能体路由中的任务分配与协调，为基于LLM的路由策略提供参考。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "routing strategies for multi agent coordination with LLMs",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.01779v1",
+      "source": "arxiv",
+      "title": "HarnessForge: Joint Harness and Policy Evolution for Adaptive Agent Systems",
+      "abstract": "LLM agents are increasingly expected to operate across heterogeneous task regimes that require distinct execution paradigms. This challenges fixed agent systems and motivates system-level meta-adaptation beyond isolated component updates. While existing works have adapted external harness or trained underlying reasoning policies, full-system adaptation remains insufficiently characterized. The adaptation space between structure and execution is rarely made explicit, and the compatibility between the external harness and the internal reasoner is not optimized jointly. We propose HarnessForge, a meta-adaptive framework for evolving LLM agent systems. HarnessForge formulates an agent system as a harness--policy pair, defining a stable adaptation space that separates harness-level execution structure from policy-level reasoning behavior. It then performs harness--policy co-evolution through fault-guided harness tailoring and harness-conditioned policy alignment. Experiments across five benchmarks from diverse domains show that HarnessForge consistently improves both Qwen3-4B and Qwen3-8B backbones, outperforming harness-only and policy-only baselines with gains of up to 12.0\\% over the strongest baseline and achieving favorable rollout-efficiency tradeoffs, demonstrating that harness--policy co-evolution is effective, and that executable compatibility between the harness and reasoning policy is essential for agent-system adaptation. The code is available at https://github.com/mingju-c/HarnessForge.",
+      "authors": [
+        "Mingju Chen",
+        "Can Lv",
+        "Guibin Zhang",
+        "Heng Chang",
+        "Shiji Zhou"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL"
+      ],
+      "published": "2026-06-01T07:00:35+00:00",
+      "link": "https://arxiv.org/pdf/2606.01779v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "meta-adaptive framework for evolving LLM agent systems, relevant to dynamic routing configuration",
+      "llm_evidence_cn": "自适应LLM智能体系统框架，与动态路由配置相关",
+      "llm_evidence": "自适应LLM智能体系统框架，与动态路由配置相关",
+      "canonical_evidence": "自适应LLM智能体系统框架，与动态路由配置相关",
+      "llm_tldr_en": "Proposes HarnessForge, a meta-adaptive framework that jointly evolves the harness and policy of LLM agent systems, enabling system-level adaptation that could support dynamic routing selection.",
+      "llm_tldr_cn": "该文提出HarnessForge，一种元自适应框架，将LLM智能体系统建模为框架-策略对，并联合演化两者以适应不同任务需求。该框架定义稳定的适应空间，可为多智能体路由中的动态配置和切换提供基础设施支持，但未直接研究路由算法。",
+      "llm_tldr": "该文提出HarnessForge，一种元自适应框架，将LLM智能体系统建模为框架-策略对，并联合演化两者以适应不同任务需求。该框架定义稳定的适应空间，可为多智能体路由中的动态配置和切换提供基础设施支持，但未直接研究路由算法。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "dynamic routing of agents in multi agent systems",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.07486v1",
+      "source": "arxiv",
+      "title": "OPENPATH: A Supervisor--Specialist Agent System for Personalized, Accessible, and Multi-stop Urban Trip Planning",
+      "abstract": "Urban trip-planning systems are commonly optimized for travel time and cost, but they offer limited support for the heterogeneous needs that real travelers bring, such as personalized preferences, multi-stop itinerary construction, and end-to-end wheelchair accessibility. We present openpaths, a supervisor-specialist multi-agent system that handles all of these tasks within a single architecture. openpaths adopts a deliberate division of labor: LLM agents parse natural-language input, classify request intent, and orchestrate execution, while classical algorithms perform route optimization over curated mobility and accessibility data. This design ensures that the resulting trip honors heterogeneous user preferences and enforces strict accessibility requirements when requested. Beyond per-user planning, openpaths doubles as a measurement instrument for city-scale accessibility analysis: applied to NYC, the system reveals substantial ADA infrastructure gaps and quantifies their effect on job accessibility for wheelchair users. Overall, this study shows how a supervisor-specialist LLM agentic framework can support heterogeneous trip planning and transparent, equitable transportation analysis in real urban environments.",
+      "authors": [
+        "Ziyang Xiong",
+        "He Zong",
+        "Zhiyuan Xue",
+        "Manxi Wu"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-05T17:40:54+00:00",
+      "link": "https://arxiv.org/pdf/2606.07486v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "supervisor-specialist multi-agent system with intent classification and orchestration",
+      "llm_evidence_cn": "监督者-专家多智能体系统中的意图分类与编排路由",
+      "llm_evidence": "监督者-专家多智能体系统中的意图分类与编排路由",
+      "canonical_evidence": "监督者-专家多智能体系统中的意图分类与编排路由",
+      "llm_tldr_en": "Presents OPENPATHS, a multi-agent system where a supervisor LLM agent routes user requests to specialist agents for personalized urban trip planning, demonstrating effective agent routing strategies.",
+      "llm_tldr_cn": "针对城市旅行规划中用户个性化、多站点和无障碍等异构需求，本文提出OPENPATHS监督者-专家多智能体系统。该系统利用LLM智能体解析自然语言输入、分类意图并编排执行，将路由任务分配给专门的算法模块。实验表明该架构能有效处理多种旅行需求，体现了多智能体系统中任务路由策略的实用性。",
+      "llm_tldr": "针对城市旅行规划中用户个性化、多站点和无障碍等异构需求，本文提出OPENPATHS监督者-专家多智能体系统。该系统利用LLM智能体解析自然语言输入、分类意图并编排执行，将路由任务分配给专门的算法模块。实验表明该架构能有效处理多种旅行需求，体现了多智能体系统中任务路由策略的实用性。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.04202v1",
+      "source": "arxiv",
+      "title": "SMAC-Talk: A Natural Language Extension of the StarCraft Multi-Agent Challenge for Large Language Models",
+      "abstract": "As LLMs become more widely deployed, they are increasingly expected to work alongside other AI agents rather than operating in isolation. Effective coordination in these settings requires agents to communicate, share information and make decisions under uncertainty. We introduce SMAC-Talk, a natural language extension of the StarCraft Multi-Agent Challenge for evaluating LLM-based agents in cooperative multi-agent environments. The environment has several key features such as decentralized control, partial observability and long-horizon decision making. SMAC-Talk includes a natural language communication channel which is used to probe agent coordination and trust. We use this communication channel to construct different evaluation scenarios, including settings with an embedded deceptive communicator that tries to disrupt and deceive allies through communication alone. We provide three agents for benchmarking using 4 models from the Qwen3.5 family and study how reasoning structure, memory and model scale affect coordination between agents. We release SMAC-Talk as an open benchmark to support the research community in developing and evaluating LLM agents in cooperative multi-agent settings.",
+      "authors": [
+        "Joel Sol",
+        "Homayoun Najjaran"
+      ],
+      "primary_category": "cs.AI",
+      "categories": [
+        "cs.AI"
+      ],
+      "published": "2026-06-02T20:40:04+00:00",
+      "link": "https://arxiv.org/pdf/2606.04202v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-agent coordination environment with communication, usable for testing routing strategies",
+      "llm_evidence_cn": "多智能体协调环境，可测试路由策略",
+      "llm_evidence": "多智能体协调环境，可测试路由策略",
+      "canonical_evidence": "多智能体协调环境，可测试路由策略",
+      "llm_tldr_en": "Introduces SMAC-Talk, a multi-agent cooperative environment with natural language communication for LLM agents, enabling evaluation of coordination and trust, relevant to routing strategy testing.",
+      "llm_tldr_cn": "该文扩展了星际争霸多智能体挑战，引入自然语言通信通道，用于评估LLM智能体在去中心化、部分可观测环境中的协调与信任。该环境可用于测试多智能体路由策略（如任务分配和信息传递），但未提出具体路由方法。",
+      "llm_tldr": "该文扩展了星际争霸多智能体挑战，引入自然语言通信通道，用于评估LLM智能体在去中心化、部分可观测环境中的协调与信任。该环境可用于测试多智能体路由策略（如任务分配和信息传递），但未提出具体路由方法。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
