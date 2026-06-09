@@ -1,0 +1,726 @@
+Title: Macro Economists in the Machine: A Multi-Agent LLM Framework for Commodity-Related ETF Portfolio Construction
+
+URL Source: https://arxiv.org/pdf/2606.08283v1
+
+Published Time: Tue, 09 Jun 2026 00:49:18 GMT
+
+Number of Pages: 46
+
+Markdown Content:
+# Macro Economists in the Machine: A Multi-Agent LLM Framework for Commodity-Related ETF Portfolio Construction 
+
+# Yiqing Wang a Dehao Dai b Ding Ma c Kerui Geng d,* 
+
+> a
+
+Citigroup, Dallas, Texas 
+
+> b
+
+University of California San Diego, La Jolla, California 
+
+> c
+
+Georgia Institute of Technology, Atlanta, Georgia 
+
+> d
+
+Tulane University, New Orleans, Louisiana 
+
+> *
+
+Corresponding author: kgeng@tulane.edu This version: June 9, 2026 
+
+> arXiv:2606.08283v1 [q-fin.PM] 6 Jun 2026
+
+# Abstract 
+
+We test whether large language models (LLMs) add value in commodity portfolio construction when the information set and implementation rules are held fixed across strategies. A Hawkish Agent (inflation-tightening prior), a Dovish Agent (growth-easing prior), a Debate Agent, and a deterministic z-score Rule Agent each receive identical FRED macro z-scores and route their tilt signals through the same portfolio engine. Across 124 weekly rebalancing dates spanning the 2023 U.S. rate peak and the 2024–2025 soft landing, all three LLM strategies outperform the Rule Agent in Sharpe terms; the Hawkish and Debate Agents record the largest gains ( ∆Sharpe = +0 .044 
+
+and +0 .040 , both p < 0.10 under a block bootstrap) and preserve a net-of-cost ad-vantage over the passive inverse-volatility benchmark at one-way trading costs up to 30 basis points, while the Rule Agent’s thin margin over passive disappears at ap-proximately 5 basis points. The Debate Agent does not outperform the best single agent ( ∆Sharpe = −0.004 , p = 0 .769 ); its contribution is bias correction—averaging out the Dovish Agent’s miscalibrated prior—rather than deliberation-generated re-turn. The performance advantage is concentrated in the soft-landing sub-period, the evaluation window spans a single rate cycle, and the reported p-values are unadjusted for multiple comparisons. Within these limits, the results suggest that an LLM act-ing as a constrained macro-interpretation function can add modest but economically meaningful value over a transparent rule layer, though the margin is small and its persistence beyond this sample is unknown. 
+
+Keywords: Large language models; multi-agent systems; commodity-related port-folio construction; Sharpe ratio; block bootstrap inference. 
+
+JEL Classification: G11; G12; G17; C45; C58. 1Macro Economists in the Machine 2
+
+# 1. Introduction 
+
+Commodity allocation as a traditional asset allocation is an investment strategy in which investors construct portfolios of commodity exposures to maximize risk-adjusted returns and to hedge against inflation and macroeconomic shocks. In re-cent years, investors and trading institutions have increasingly adopted quantitative strategies to make decisions. This shift has been driven by the growing availability of high-frequency price data, the maturation of liquid commodity ETFs and futures mar-kets, and a substantial empirical literature linking commodity returns to identifiable risk premia. A first generation of quantitative strategies, rooted in factor investing, exploits the cross-sectional and time-series structure of commodity returns. Momentum, carry, ba-sis, hedging pressure, and value have been documented as robust drivers of commodity futures returns (Erb and Harvey, 2006; Gorton and Rouwenhorst, 2006; Gorton et al., 2013; Daskalaki et al., 2014; Szymanowska et al., 2014; Bakshi et al., 2019; Dai and Zhang, 2025). These factors are constructed from ranked signals and provide a sys-tematic, replicable structure for commodity portfolio construction. More recently, machine learning techniques have emerged as alternatives to classical factor models, with tree-based ensembles, neural networks, and deep learning architectures applied to commodity return forecasting and dynamic portfolio construction (Gu et al., 2020; Jiang et al., 2017; Kelly and Xiu, 2023). Compared to the classical factor models, these methods can relax the linearity and stationarity assumptions to capture non-linear interactions and high-dimensional dependencies between predictors. However, commodity markets exhibit pronounced non-stationarity, structural breaks driven by geopolitics and the energy transition, and heavy-tailed returns, all of which limit the in-sample patterns these methods can reliably learn. Large language models (LLMs) are now widely used to process the unstructured Macro Economists in the Machine 3
+
+information flow related to commodity prices, such as central bank communications, OPEC press releases, or geopolitical news. LLMs can extract sentiment signals from textual data (Kim et al., 2024; Dai et al., 2026), synthesize heterogeneous evi-dence into structured outputs such as risk indices or scenario forecasts (Yang et al., 2023; Lopez-Lira and Tang, 2023), and make decisions within agentic trading frame-works(Wu et al., 2023). Multi-agent designs, in which several LLM agents interact through structured deliberation, have attracted particular attention as a way to com-bine specialization with disciplined aggregation (Chan et al., 2024; Liang et al., 2024). However, LLMs in these applications often appear useful in part because they have access to richer text inputs and more flexible trading systems than the rule-based baselines they are compared with, making it difficult to isolate the contribution of the language model itself. A clean methodological question arises: given the same structured macro data and the same portfolio engine, can a large language model produce a better mapping from macro conditions to commodity ETF tilts than a deterministic rule? Commodity allocation is a particularly demanding setting for this test since its macroeconomic drivers often pull in opposite directions, and a fixed sign-mapping cannot resolve such conflicts. The empirical design keeps the comparison clean. At each weekly rebalancing date, all strategies observe the same seven indicators: the VIX, the broad U.S. dollar index, the federal funds rate, industrial production, 10-year breakeven inflation, the 10-year TIPS real yield, and the unemployment rate. Each variable is converted into a rolling three-year z-score. The strategies differ only in how they translate these z-scores into ticker-level tilts; after that step, every strategy uses the same inverse-volatility base allocation, equal-weight blend, macro-tilt scaling, risk controls, and turnover constraints. The exercise is therefore an ablation of the interpretation layer, not a comparison of unrestricted trading systems. We compare four signal-generating approaches. The Rule Agent applies a pre-Macro Economists in the Machine 4
+
+specified loading matrix that maps each macro z-score to fixed tilts on the underlying ETFs. The Hawkish Agent places greater weight on inflation control, tight monetary policy, and elevated real rates, while the Dovish Agent places greater weight on em-ployment, growth support, and recovery momentum. The Debate Agent combines the two single-agent outputs through a structured review step. This design varies the macro prior across agents while holding the rest of the implementation fixed, and it allows us to test whether the debate structure adds value beyond either single prior. All three LLM agents outperform the Rule Agent in full-sample Sharpe terms, with the largest gains for the Hawkish and Debate Agents. The bootstrap evidence for these two comparisons reaches the 10% level, although the confidence intervals include zero and the gains do not survive a conservative multiple-testing correction. The advantage is also regime-dependent: it is concentrated in the 2024–2025 soft-landing period, when inflation moderated while growth remained resilient, whereas during the 2023 rates-peak period the passive inverse-volatility benchmark outper-forms all signal-based strategies. Within the LLM family, the Debate Agent does not outperform the stronger single agent, suggesting that its main role is to hedge against a poorly aligned prior rather than to generate a separate deliberation premium. Transaction-cost tests support the economic relevance of these findings within reasonable cost levels. The Hawkish and Debate Agents retain a Sharpe advantage over the inverse-volatility benchmark at one-way costs up to 30 basis points, while the Rule Agent’s small advantage over the same benchmark largely disappears even at low cost levels. The performance differences are nonetheless small, and the sample is short. The paper should therefore be read as evidence that LLM-based macro interpretation, embedded in a controlled portfolio engine, can improve on a rule-based mapping in this setting, not as evidence of persistent trading skill. The paper makes three contributions. First, it extends work on LLMs in finance (Lopez-Lira and Tang, 2023; Wu et al., 2023; Kim et al., 2024) from text-based Macro Economists in the Machine 5
+
+return prediction to constrained portfolio construction with structured macro inputs. Second, it adds to the multi-agent LLM literature (Chan et al., 2024; Liang et al., 2024) by treating Hawkish and Dovish macro priors as testable design choices rather than free stylistic variation. Third, it speaks to the commodity allocation literature by asking whether LLM-based macro interpretation improves on rule-based baselines built from familiar macro predictors. The closest related work is Zhao et al. (2025); our design is narrower because it isolates the macro-interpretation layer in a setting where the macroeconomic channels driving commodity returns are direct and well documented. The remainder of the paper is organized as follows. Section 2 reviews related work on LLMs in finance, multi-agent designs, and commodity allocation. Section 3 describes the agent architecture and the portfolio construction procedure that all four strategies share. Section 4 presents the macro indicators and ETF universe used in the empirical exercise. Section 5 reports the main performance comparisons, subpe-riod analysis, and transaction-cost robustness. Section 6 discusses the findings and their limitations. Section 7 summarizes the comparison across agents and discusses implications for LLM-based allocation strategies. 
+
+# 2. Related Literature 
+
+2.1 Commodity Allocation and Macroeconomic Drivers 
+
+Commodity allocation has long been studied as both a strategic asset allocation prob-lem and a tactical source of macroeconomic exposure.Early studies document that commodity futures can provide diversification benefits relative to traditional equity and bond portfolios, while also exhibiting distinct risk-return behavior across macroe-conomic regimes (Gorton and Rouwenhorst, 2006; Erb and Harvey, 2006). A related strand of work identifies the cross-sectional and time-series drivers of commodity returns. Term structure, basis, hedging pressure, momentum, carry, and Macro Economists in the Machine 6
+
+inventory-related variables have been shown to explain meaningful variation in com-modity futures returns (Gorton et al., 2013; Szymanowska et al., 2014; Daskalaki et al., 2014; Bakshi et al., 2019). These findings motivate rule-based and factor-based commodity strategies, in which transparent signals are mapped into portfolio weights using economically interpretable relationships. For example, backwardation and pos-itive carry are commonly associated with higher expected commodity returns, while contango and weak demand conditions are often interpreted as unfavorable signals. Such approaches are attractive because they are transparent, auditable, and easy to implement. Macroeconomic variables provide another important channel for commodity allo-cation. Inflation expectations, real interest rates, the U.S. dollar, industrial produc-tion, financial-market volatility, and labor-market conditions all affect commodity-related assets through different mechanisms. Higher inflation expectations may sup-port precious metals and broad commodity exposures, while higher real yields in-crease the opportunity cost of holding non-yielding assets such as gold. A stronger U.S. dollar can pressure dollar-denominated commodities, whereas stronger industrial production may support energy, metals, and other cyclical commodities. Similarly, elevated market volatility can signal risk-off conditions that reduce the attractive-ness of cyclical commodity exposures. These channels motivate the use of macro variables such as the VIX, the broad dollar index, the federal funds rate, industrial production, breakeven inflation, real yields, and unemployment as state variables for commodity-related allocation decisions. However, a key difficulty is that commodity-relevant macro signals often point in different directions. For example, an environment with elevated inflation expec-tations may appear favorable for commodities, but if it is accompanied by high real yields, a strong dollar, or weak industrial activity, the directional implication becomes ambiguous. A deterministic sign-mapping rule can encode standard macro-finance re-Macro Economists in the Machine 7
+
+lationships, but it may be too rigid when signals conflict. This limitation is especially relevant after the financialization of commodity markets, as index participation and cross-asset flows have increased the interaction between commodity returns, equity markets, and macro-financial conditions (Tang and Xiong, 2012). As a result, adap-tive interpretation of macro states may be valuable even when the underlying macro variables are familiar and economically motivated. Our paper builds on this literature but asks a different question. We do not test whether macro variables have predictive power for commodity returns in general. Instead, we examine whether a constrained large language model can translate the same standardized macro state into better commodity-related ETF tilts than a fixed rule-based mapping. This distinction is important because the information set, asset universe, portfolio construction engine, and risk controls are held constant across strategies. The comparison therefore isolates the incremental value of the macro-interpretation layer rather than the value of a different forecasting model or a more flexible portfolio optimization system. 
+
+2.2 Machine Learning and LLMs in Financial Signal Generation 
+
+A second related literature studies the use of machine learning and artificial intel-ligence for financial signal generation and asset allocation. Traditional rule-based strategies are attractive because they are transparent, easy to audit, and closely tied to economic intuition. However, fixed rules typically impose stable directional relationships between predictors and assets. This can be restrictive in financial mar-kets, where predictive relationships are often nonlinear, state-dependent, and unstable across regimes. Machine learning methods have therefore been introduced to capture complex interactions among predictors and to improve return prediction and portfolio construction. For example, Gu et al. (2020) shows that machine learning methods can improve empirical asset-pricing performance by capturing nonlinear relationships in a Macro Economists in the Machine 8
+
+high-dimensional predictor space. Kelly and Xiu (2023) provide a broad overview of financial machine learning and emphasize its ability to model flexible predictive struc-tures, while also noting the challenges created by limited samples, non-stationarity, and overfitting. Deep learning and reinforcement learning methods have also been ap-plied to dynamic portfolio allocation, where models learn allocation policies directly from market data (Jiang et al., 2017). Large language models provide a distinct approach to financial signal genera-tion. Instead of learning only from numerical return histories, LLMs can process lan-guage, summarize heterogeneous information, and translate qualitative evidence into structured signals. This development builds on an earlier textual-analysis literature showing that language contains economically meaningful information. Tetlock (2007) shows that media pessimism predicts stock-market movements and trading volume, while Loughran and McDonald (2011) demonstrate that financial-domain dictionaries are necessary because generic sentiment classifications often misrepresent the mean-ing of words in corporate disclosures. More recent work studies whether GPT-class models can extract return-relevant information from financial text. Lopez-Lira and Tang (2023) find that ChatGPT-based sentiment scores on news headlines contain predictive information for short-horizon stock returns. Kim et al. (2024) show that large language models can perform financial statement analysis tasks and generate useful forecasts from structured accounting information. Domain-specific financial LLMs, such as BloombergGPT and FinGPT, further illustrate the growing role of LLMs in financial natural language processing and decision support (Wu et al., 2023; Yang et al., 2023). Most LLM-finance studies focus on information extraction from unstructured text, such as news, earnings calls, filings, or analyst reports. In these settings, the LLM may add value because it has access to richer information or because it processes text more effectively than traditional sentiment models. Our setting is intentionally different. Macro Economists in the Machine 9
+
+The LLM agents do not read unrestricted news, search for external information, or forecast asset returns directly. Instead, they receive a compact table of standardized macroeconomic indicators and produce bounded ticker-level tilt signals. The model’s role is therefore limited to translating a structured macro state into portfolio tilts. This distinction is important for identification. If an LLM-based trading strategy outperforms a rule-based benchmark while using richer inputs, different risk controls, or a more flexible trading engine, it is difficult to determine whether the improvement comes from the language model itself or from the broader system design. In our framework, the information set, asset universe, inverse-volatility base allocation, risk constraints, and transaction-cost assumptions are held fixed across strategies. The comparison therefore isolates whether LLM-based interpretation of the same macro evidence improves on a deterministic rule-based mapping. In this sense, the LLM is not treated as an unrestricted trading engine, but as a constrained interpretation layer embedded within a transparent portfolio construction framework. 
+
+2.3 Multi-Agent LLM Systems and Financial Agents 
+
+The intellectual motivation is related to the view that complex intelligence may arise from interactions among specialized sub-agents rather than from a single centralized mechanism (Minsky, 1986). In the LLM context, multi-agent debate has been pro-posed as a way to improve reasoning, factuality, and robustness. Du et al. (2024) show that multiple language-model instances can propose, debate, and revise answers over several rounds, improving factual accuracy and mathematical reasoning relative to single-pass generation. Liang et al. (2024) argue that debate among agents can encourage divergent thinking and reduce the tendency of a single model to remain locked into an initially incorrect reasoning path. Relatedly, Chan et al. (2024) in-troduce ChatEval, a multi-agent debate framework for LLM-based evaluation, and show that multiple agent-judges can improve open-ended text evaluation relative to Macro Economists in the Machine 10 
+
+single-agent judging. Recent work has extended the multi-agent paradigm to financial decision-making. Zhao et al. (2025) propose AlphaAgents, a role-based multi-agent framework for eq-uity portfolio construction in which specialized agents collaborate on stock selection and portfolio formation. Xiao et al. (2024) introduce TradingAgents, a multi-agent trading framework that simulates the structure of a trading firm through agents such as fundamental analysts, sentiment analysts, technical analysts, bull and bear re-searchers, traders, and risk managers. These studies highlight the potential of agent specialization and structured debate in investment workflows. However, existing financial multi-agent systems are often broad trading architec-tures rather than controlled tests of the value of multi-agent reasoning itself. Agents may process heterogeneous data sources, search for external information, use domain-specific tools, or influence several stages of the trading process. As a result, superior performance may reflect richer information, more flexible portfolio construction, or stronger risk management rather than the incremental value of multi-agent interpre-tation. Our framework is intentionally more restricted. The Hawkish and Dovish agents observe the same standardized macroeconomic state and differ only in their interpre-tive prior. The Hawkish Agent places greater weight on inflation control, tight mon-etary policy, and elevated real rates, while the Dovish Agent places greater weight on employment, growth support, and recovery momentum. Neither agent can search for additional information, call external tools, or modify the downstream portfolio construction engine. The Debate Agent then aggregates the two single-agent outputs through a structured review mechanism. This design allows us to study multi-agent debate as a controlled prior-aggregation mechanism rather than as an unrestricted trading architecture. This distinction is important for interpreting the empirical results. If the De-Macro Economists in the Machine 11 
+
+bate Agent outperforms the Rule Agent, the improvement can be attributed to the mapping from the same macro state into ETF-level tilt signals, not to a different information set or a different portfolio engine. Conversely, if the Debate Agent does not outperform the stronger single agent, the result suggests that debate mainly sta-bilizes exposure across competing macro priors rather than creating an independent deliberation premium. Thus, our contribution to the multi-agent LLM literature is to evaluate whether structured disagreement between macroeconomic priors adds value in a constrained portfolio-construction setting. 
+
+2.4 Controlled Portfolio Evaluation and the Interpretation Layer 
+
+A central challenge in evaluating AI-based trading systems is attribution. When an AI strategy outperforms a benchmark, the source of the improvement is often unclear. It may reflect a richer information set, a more flexible forecasting model, a different portfolio optimizer, stronger risk controls, or a favorable sample period rather than the specific contribution of the AI component itself. This problem is especially important in portfolio applications, where small changes in asset universe, weighting rule, turnover constraint, or transaction-cost assumption can materially change measured performance. The empirical asset-pricing and portfolio-choice literature has long emphasized the importance of transparent benchmarks and disciplined out-of-sample evaluation. Simple allocation rules, such as equal-weighted or inverse-volatility portfolios, are commonly used because they provide robust reference points and avoid excessive es-timation error. For example, DeMiguel et al. (2009b) show that naive diversification can be difficult to outperform out of sample, while DeMiguel et al. (2009a) empha-size that portfolio constraints can improve performance by limiting estimation error and extreme portfolio weights. These findings motivate the use of simple, transpar-ent portfolio engines as benchmarks when evaluating more flexible signal-generation Macro Economists in the Machine 12 
+
+methods. A related literature cautions that financial backtests are vulnerable to data snoop-ing, multiple testing, and overfitting. White (2000) develops a reality-check frame-work for evaluating whether a selected strategy truly outperforms a benchmark after accounting for data snooping. Hansen (2005) proposes the superior predictive ability test as a refinement for comparing many forecasting models. Bailey et al. (2014) emphasize that repeated strategy search can create backtest overfitting, causing ap-parently strong performance to disappear out of sample. In the asset-pricing context, Harvey et al. (2016) similarly argue that multiple testing requires more conservative evidence thresholds when many candidate predictors or strategies are examined. Our design responds to these concerns by separating the interpretation layer from the portfolio construction layer. The Rule Agent, Hawkish Agent, Dovish Agent, and Debate Agent all observe the same standardized macroeconomic variables and trade the same commodity-related ETF universe. After each strategy produces ticker-level tilt signals, the signals are passed through the same inverse-volatility base alloca-tion, equal-weight blend, macro-tilt scaling rule, risk-off cap, single-name weight cap, turnover constraint, and transaction-cost calculation. The passive inverse-volatility portfolio further serves as a no-macro-signal benchmark. Therefore, differences in performance across the active strategies are not driven by different risk engines or different implementation rules. This controlled design makes the empirical comparison narrower but more inter-pretable. The paper does not ask whether an unrestricted LLM trading agent can generate profitable commodity trades. Instead, it asks whether an LLM can improve the mapping from a fixed macroeconomic state to bounded ETF-level tilt signals rel-ative to a deterministic rule. In this sense, the LLM is evaluated as a constrained interpretation layer embedded within a transparent portfolio framework. If the LLM agents outperform the Rule Agent, the improvement can be attributed to more flex-Macro Economists in the Machine 13 
+
+ible macro-state interpretation rather than to a larger information set or a different portfolio optimizer. 
+
+2.5 Performance Inference in Short Financial Samples 
+
+A final related literature concerns statistical inference for trading-strategy perfor-mance. Sharpe-ratio comparisons are widely used in empirical asset management, but their sampling properties are nontrivial in short samples and in the presence of serial dependence. Lo (2002) shows that the Sharpe ratio has different asymptotic behavior under different return-generating processes and that the common square-root-of-time annualization rule can be misleading when returns are serially correlated. This issue is particularly relevant for portfolio strategies formed from overlapping macroeconomic conditions, rolling volatility estimates, turnover constraints, and weekly rebalancing rules. Testing whether one strategy has a higher Sharpe ratio than another also requires care. Standard tests based on independent and normally distributed returns may be unreliable when returns are heavy-tailed or serially dependent. Ledoit and Wolf (2008) propose a robust bootstrap-based procedure for testing differences in Sharpe ratios and recommend time-series resampling methods to account for dependence in portfolio returns. This motivates our use of a paired stationary block bootstrap applied to the joint return vector across strategies. By resampling strategies jointly, the procedure preserves both the time-series dependence within each strategy and the contemporaneous dependence across strategies. The stationary bootstrap provides a natural resampling method for weakly depen-dent financial time series because it resamples blocks of random length and preserves local serial dependence (Politis and Romano, 1994). The choice of block length is important in finite samples, and automatic block-length selection procedures provide a data-dependent way to choose this tuning parameter (Politis and White, 2004). In Macro Economists in the Machine 14 
+
+our setting, this approach is useful because the evaluation window contains only 124 weekly observations, making asymptotic approximations potentially fragile. A related concern is multiple testing. Portfolio studies often compare several strategies against multiple benchmarks, which can overstate evidence if unadjusted p-values are interpreted as confirmatory results. Stepdown multiple-testing methods such as those proposed by Romano and Wolf (2005b) and Romano and Wolf (2005a) provide a formal way to control familywise error rates while accounting for dependence across test statistics. Because our sample is short and several pairwise Sharpe-ratio comparisons are reported, we interpret unadjusted bootstrap p-values as directional evidence rather than conclusive proof of persistent outperformance. This inference framework is consistent with the paper’s broader empirical objec-tive. The goal is not to claim that LLM-based agents generate statistically robust trading profits in general. Instead, the bootstrap tests provide a disciplined way to assess whether the observed Sharpe-ratio differences are consistent with incremental value from the macro-interpretation layer, while recognizing the limitations created by short samples, serial dependence, and multiple comparisons. 
+
+# 3. Methodology 
+
+3.1 Architecture Overview 
+
+This paper mainly compares the five strategies to construct an ETF portfolio. To ensure consistency and comparability across results, all strategies share the same data pipeline and the same portfolio construction engine. The following are the five strategies: (1) Rule Agent : a deterministic z-score mapping that serves as the transparent benchmark; (2) Hawkish Agent : an LLM agent with an inflation-control and monetary-tightening Macro Economists in the Machine 15 
+
+prior; (3) Dovish Agent : an LLM agent with a growth-supportive and monetary-easing prior; (4) Debate Agent : a consensus strategy formed from the Hawkish and Dovish outputs; and (5) Inverse Volatility : a passive risk-only benchmark with no macro signal. The important feature of the design is that the LLM agents do not receive ad-ditional information and do not control the final risk management step. Their only role is to produce a macro tilt contract from the same set of inputs. This restriction makes the comparison more conservative than a general AI trading exercise, but it also makes the source of any performance difference easier to interpret. 
+
+3.2 Macro Feature Extraction 
+
+At each weekly rebalancing date t, the system constructs a seven-dimensional feature vector from FRED: 
+
+ft =   zvix  
+
+> t
+
+, z usd  
+
+> t
+
+, z ff  
+
+> t
+
+, z indpro  
+
+> t
+
+, z bkevn  
+
+> t
+
+, z ryr  
+
+> t
+
+, z unrate 
+
+> t
+
+, (1) where each element is the rolling 156-week z-score of the corresponding macro series. Standardizing the inputs serves two purposes. It places variables with different units on a common scale, and it gives the LLM a simple description of whether each macro indicator is unusually high, unusually low, or close to normal. The timing of the variables is designed to mitigate look-ahead bias. Daily market-based series, including the VIX, broad dollar index, breakeven inflation, and real yields, are measured using the latest observations available at or before each weekly rebalancing date. In contrast, lower-frequency macroeconomic releases, such as indus-trial production and unemployment, are incorporated only after their public release Macro Economists in the Machine 16 
+
+dates, so that each weekly feature vector reflects the information set available to in-vestors at that time. Release-lag adjustments are applied before the rolling z-scores are computed. This procedure is release-aware rather than fully vintage-based: it does not reconstruct every historical data vintage or eliminate the effect of subse-quent data revisions. Nevertheless, it avoids the most direct form of look-ahead bias by preventing unreleased macroeconomic data from entering the backtest. 
+
+3.3 Rule Agent 
+
+The Rule Agent translates the macro feature vector into portfolio tilt signals using a pre-specified loading matrix. For asset i, the raw tilt score is 
+
+˜si,t = X
+
+> k∈K
+
+βik zk,t 1 {| zk,t | ≥ 0.5} , (2) where βik ∈ {− 1, 0, +1 } denotes the directional exposure of asset i to macro variable 
+
+k. Macro deviations smaller than one-half standard deviation in absolute value are set to zero before aggregation, which reduces the influence of small and potentially noisy fluctuations. The raw score is then mapped into a five-level tilt signal, 
+
+bi,t ∈ {− 2, −1, 0, +1 , +2 },
+
+using thresholds at ±1 and ±2:
+
+bi,t =
+
+
+
++2 , ˜si,t ≥ 2,
+
++1 , 1 ≤ ˜si,t < 2,
+
+0, |˜si,t | < 1,
+
+−1, −2 < ˜si,t ≤ − 1,
+
+−2, ˜si,t ≤ − 2.
+
+(3) Macro Economists in the Machine 17 
+
+For notational consistency with the portfolio construction step, the Rule Agent’s final tilt signal is defined as 
+
+sRule  
+
+> i,t
+
+= bi,t .
+
+The loading matrix is reported in Appendix A. All loadings and thresholds are fixed ex ante and are not estimated from evaluation-period returns. 
+
+3.4 LLM Agent Protocol 
+
+Each LLM agent receives a structured prompt containing three elements: the agent’s macro prior, the current table of standardized macro indicators, and a short machine-generated narrative summarizing the macro state. The narrative is mechanically gen-erated from the same standardized indicators and contains no external news, future returns, or future macro realizations. The agent returns a JSON contract with four components: 
+
+• a probability distribution over macro regimes; 
+
+• ticker-level tilt signals in [−2, +2] for the 15 ETFs; 
+
+• a brief economic rationale; and 
+
+• confidence scores attached to the signals. Confidence scores are retained for diag-nostics but are not used directly in the portfolio-weighting rule. The Hawkish Agent is instructed to place greater weight on inflation pressure, tight financial conditions, and elevated real rates. The Dovish Agent is instructed to place greater weight on employment, industrial recovery, and the possibility that inflation pressure is temporary. Both agents observe the same macro evidence; the only difference is the interpretive prior through which that evidence is evaluated. All calls use temperature equal to zero. Deterministic decoding reduces sampling variability, and outputs are cached by date and agent type so that the backtest uses a Macro Economists in the Machine 18 
+
+fixed set of agent contracts. The full prompt templates used for the Hawkish, Dovish, and Debate Agents are reported in Appendix D. 
+
+3.5 Debate Mechanism 
+
+Let CHt and CDt denote the first-round contracts from the Hawkish and Dovish agents, respectively. Let sHi,t and sDi,t denote the corresponding ticker-level tilt signals for asset 
+
+i. We measure the average absolute disagreement between the two agents as 
+
+δt = 1
+
+N
+
+> N
+
+X
+
+> i=1
+
+sHi,t − sDi,t , (4) where N = 15 is the number of ETFs in the investment universe. If δt ≤ θ = 0 .15 , the two contracts are merged without an additional deliberation round. If disagreement is larger, each agent reviews the other agent’s contract and may revise its own ticker-level tilt signals, subject to a maximum of R = 2 deliberation rounds. The final Debate Agent tilt signal is defined as the equal-weighted average of the revised Hawkish and Dovish tilt signals: 
+
+sDebate  
+
+> i,t
+
+= 12sH, rev  
+
+> i,t
+
++ 12sD, rev  
+
+> i,t
+
+. (5) This structure is intentionally simple. It allows the results to show whether the debate procedure creates additional value or whether the consensus mainly reflects averaging between two interpretive macro priors. The disagreement threshold θ and the maximum number of deliberation rounds R are fixed ex ante and are not estimated from evaluation-period returns. Macro Economists in the Machine 19 
+
+3.6 Portfolio Weight Construction 
+
+Portfolio weights are constructed using a common portfolio engine across all strategies. Let S denote a signal-generating strategy, with 
+
+S ∈ { Rule , Hawkish , Dovish , Debate }.
+
+The passive inverse-volatility benchmark is obtained by setting all macro tilt signals to zero. This common engine ensures that differences in performance come from the macro-to-tilt mapping rather than from differences in portfolio construction. First, the inverse-volatility base weight uses a 26-week rolling volatility estimate: 
+
+wivol  
+
+> i,t
+
+= 1/bσi,t 
+
+PNj=1 1/bσj,t 
+
+, (6) where bσi,t is the rolling volatility estimate for asset i and N = 15 is the number of ETFs in the investment universe. Second, this inverse-volatility allocation is blended with equal weights: 
+
+wbase  
+
+> i,t
+
+= αEW wivol  
+
+> i,t
+
++ (1 − αEW ) 1
+
+N , αEW = 0 .50 . (7) Third, strategy-specific macro tilts are applied multiplicatively to the base allocation: 
+
+ewSi,t = wbase 
+
+> i,t
+
+ 1 + κs Si,t 
+
+ , κ = 0 .25 , (8) where sSi,t ∈ [−2, +2] is the final ticker-level tilt signal produced by strategy S. Since 
+
+κ = 0 .25 , the tilt multiplier lies between 0.50 and 1.50 , so macro signals adjust but do not dominate the base allocation. Then, the portfolio is subject to a risk-off cyclical cap. Let bρS 
+
+> ro ,t
+
+denote the estimated risk-off probability for strategy S, and let C denote Macro Economists in the Machine 20 
+
+the pre-specified set of cyclical commodity ETFs. When 
+
+bρS 
+
+> ro ,t
+
+> 0.65 ,
+
+the total portfolio weight assigned to cyclical assets is capped at 
+
+X
+
+> i∈C
+
+wSi,t ≤ wcyc , wcyc = 0 .45 . (9) The cap is applied by proportionally scaling down cyclical positions when the con-straint binds, followed by renormalization of the full portfolio. Weights are renor-malized and constrained by a maximum single-name weight and a maximum weekly turnover rule: 
+
+wSi,t ≤ wi, wi = 0 .30 , (10) and 
+
+∆St = 12
+
+> N
+
+X
+
+> i=1
+
+wSi,t − wSi,t −1 ≤ 0.50 . (11) If the turnover constraint binds, the target portfolio is scaled back toward the previous week’s weights until the constraint is satisfied. All weights formed at date t are applied to returns over the following week, which imposes a one-week execution lag. 
+
+3.7 Performance Measurement and Inference 
+
+We evaluate each strategy using weekly portfolio returns. Let rSt denote the weekly return of strategy S at date t. We report annualised return, annualised volatility, Sharpe ratio, maximum drawdown, and hit rate. Annualised return and volatility are computed from weekly returns as 
+
+AnnRet S = 52 · ¯rS , AnnVol S = √52 · bσ(rSt ), (12) Macro Economists in the Machine 21 
+
+where ¯rS is the sample mean weekly return and bσ(rSt ) is the sample standard deviation of weekly returns. The Sharpe ratio is defined as 
+
+Sharpe S = AnnRet S
+
+AnnVol S . (13) We do not subtract the risk-free rate in the baseline Sharpe calculation. This con-vention is used to maintain consistency with the strategy-level return comparison and is applied uniformly across all strategies. As a result, the reported Sharpe ra-tios should be interpreted as return-to-volatility ratios rather than risk-free-adjusted Sharpe ratios. For a Sharpe difference between strategies A and B,
+
+∆SR = Sharpe A − Sharpe B ,
+
+we use a paired stationary bootstrap with B = 5 ,000 resamples and automatic block-length selection. The bootstrap is applied to the joint weekly return vector across strategies, which preserves the contemporaneous dependence between strategy returns as well as the time-series dependence induced by overlapping macro conditions and portfolio constraints. Bootstrap confidence intervals and p-values are then computed from the empirical distribution of the resampled Sharpe differences. Transaction costs are evaluated by subtracting one-way trading costs from weekly portfolio returns. Let c denote the one-way cost in basis points, with 
+
+c ∈ { 0, 5, 10 , 20 , 30 }.Macro Economists in the Machine 22 
+
+The net return after transaction costs is 
+
+rS,c t = rSt − (c × 10 −4)∆ St , ∆St = 12
+
+> N
+
+X
+
+> i=1
+
+wSi,t − wSi,t −1 , (14) where ∆St is the one-way portfolio turnover implied by the weekly rebalancing from 
+
+wSt−1 to wSt . This transaction-cost exercise is intended as a sensitivity analysis rather than a full implementation-cost model, since it does not include market impact, taxes, or operational frictions. 
+
+# 4. Data 
+
+4.1 Commodity-Related ETF Universe 
+
+The investment universe contains 15 U.S.-listed commodity-related ETFs, covering precious metals, energy, agriculture, transition metals, broad commodity exposures, and one equity cash-flow proxy. The universe is therefore best interpreted as a commodity-related allocation universe rather than a pure commodity-only universe. Most assets provide direct commodity or commodity-subsector exposure. COWZ is retained because it was included in the pre-specified universe as an equity cash-flow proxy linked to real-asset and inflation-sensitive exposure; it is not interpreted as direct commodity exposure. Accordingly, all empirical results are framed as evidence on commodity-related ETF allocation rather than pure commodity investing. 
+
+4.2 Macroeconomic Data 
+
+The macro feature set contains seven FRED series, listed in Table 2. These variables are selected because they correspond to the main macro channels emphasized in the commodity literature: risk appetite, dollar strength, monetary policy, industrial demand, inflation expectations, real yields, and labor-market slack. Daily series are used as observed at the weekly close. Monthly series are lagged to reflect public Macro Economists in the Machine 23 
+
+release timing. 
+
+4.3 LLM Configuration 
+
+All LLM calls use gpt-4o-mini through the OpenAI API with temperature set to zero. The zero-temperature setting is used to reduce sampling variability in the map-ping from standardized macro evidence to portfolio tilts. To ensure that the backtest is based on a fixed set of model outputs, all generated contracts are cached by date and agent type. The prompts provide only standardized macro states and mechan-ically constructed summaries based on those same variables; they do not provide future returns, future macro realizations, unrestricted news text, or external tool ac-cess. Based on observed token usage and API prices at the time of implementation, the direct API cost is approximately $0.002 per weekly observation. This figure ex-cludes the operational burden of maintaining prompts, validating JSON outputs, and monitoring model behavior. 
+
+4.4 Evaluation Window and Sub-Period Definition 
+
+The evaluation sample contains 124 weekly rebalancing dates from October 2023 through February 2026. Observations before the evaluation window are used only to initialise rolling z-scores and volatility estimates. For descriptive sub-period analysis, we divide the sample into two calendar-based macro regimes. The Rates Peak period covers the late-2023 environment, when U.S. policy rates and real yields were elevated and monetary tightening remained the dominant macro theme. The Soft Landing 
+
+period covers January 2024 through February 2026, when inflation moderated while economic activity remained resilient and macro signals became more mixed. These sub-period labels are used only for ex post performance attribution and are not used by any strategy in forming portfolio weights. The division is useful because it separates a tightening-dominated environment from a later period in which inflation, growth, and rate signals provided less one-sided guidance. Macro Economists in the Machine 24 
+
+# 5. Empirical Results 
+
+5.1 Full-Period Performance 
+
+Table 3 reports the full-period performance of the five strategies. The inverse-volatility benchmark earns an annualized return of 6.68% with a Sharpe ratio of 0.52, while the Rule Agent earns 7.11% with a Sharpe ratio of 0.53. All three LLM-based strategies deliver higher full-period return-to-volatility ratios than the Rule Agent. The Hawkish Agent has the strongest full-period performance, with an annualized return of 7.74% and a Sharpe ratio of 0.57. The Debate Agent follows closely at 7.69% and 0.57, while the Dovish Agent earns 7.61% with a Sharpe ratio of 0.56. Figure 1 shows that these performance differences emerge mainly late in the sam-ple. The cumulative-return paths remain close through late 2023 and much of 2024, while the relative performance gap becomes more visible during the soft-landing pe-riod’s later recovery phase. The drawdown panel also shows that the LLM strategies do not avoid the main losses. Their advantage comes primarily from stronger partic-ipation in the recovery rather than from materially reducing downside risk. 
+
+5.2 Incremental Value of LLM-Based Macro Interpretation 
+
+Table 4 compares each LLM-based strategy with the Rule Agent. Relative to the Rule Agent, the LLM agents add 51–64 basis points of annualized return and 0.034–0.044 Sharpe points over the full sample. These effects are economically modest, but the controlled design makes them informative: the information set, risk constraints, and portfolio construction engine are held fixed, so any systematic differences are at-tributable to the mapping between standardized macro states and ticker-level tilt signals. The Debate Agent’s Sharpe ratio is only 0.001 above the arithmetic average of the Hawkish and Dovish Sharpe ratios. This provides little evidence of a separate deliberation premium in the full sample. Instead, the Debate Agent is better inter-Macro Economists in the Machine 25 
+
+preted as a prior-aggregation mechanism that reduces dependence on either a single interpretive prior. 
+
+5.3 Active Return Attribution 
+
+Figure 2 decomposes the Debate Agent’s active return relative to the Rule Agent. The largest positive contributions come from precious-metals exposures, especially SLV, GLD, and PALL, while several energy and agricultural positions, including BNO and CORN, detract from relative performance. Panel B shows that the Debate Agent’s cumulative active return is negative for part of the sample but turns positive during the later recovery phase. This pattern suggests that the Debate Agent’s relative performance is driven more by cross-sectional allocation across commodity-related ETFs than by a simple increase in broad commodity exposure. This interpretation is consistent with the paper’s focus on the macro-to-tilt mapping. 
+
+5.4 Bootstrap Significance Tests 
+
+Table 5 reports paired stationary block-bootstrap tests for pairwise Sharpe-ratio dif-ferences. The bootstrap resamples the joint weekly return vector across strategies, rather than each strategy separately, so that both time-series dependence and con-temporaneous cross-strategy dependence are preserved. This is important because the weekly portfolio returns are generated from overlapping macro conditions, rolling volatility estimates, and turnover-constrained portfolio weights. Hawkish versus Rule is positive and statistically different from zero at the 10% level under the unadjusted bootstrap test ( p = 0 .067 ), and Debate versus Rule also reaches the 10% level ( p = 0 .089 ). The Dovish comparison is positive but not statis-tically significant, and no cross-agent comparison is significant. Because the sample contains only 124 weekly observations and several related pairwise tests are reported, these results should be interpreted as directional evidence rather than conclusive in-Macro Economists in the Machine 26 
+
+ference. 
+
+5.5 Sub-Period Analysis 
+
+Table 6 decomposes performance by macro regime. During the Rates Peak period, all signal-based strategies have negative Sharpe ratios, while the inverse-volatility bench-mark has the least negative Sharpe ratio. This pattern is consistent with the view that macro tilts were less useful in the late-2023 environment, when tight monetary policy and elevated real yields dominated commodity-related returns. During the Soft Landing period, the ranking reverses. The Hawkish and Debate Agents deliver the highest Sharpe ratios, followed by the Dovish Agent, the Rule Agent, and the inverse-volatility benchmark. The sub-period evidence therefore sug-gests that the LLM-based contribution is concentrated in the period when inflation, growth, and rate signals gave more mixed guidance. 
+
+5.6 Transaction Cost Sensitivity 
+
+Table 7 and Figure 3 report transaction-cost sensitivity. For each strategy, transaction costs are applied to the realized weekly one-way turnover, and Sharpe ratios are recomputed from the resulting net weekly returns. The LLM-based strategies remain above the inverse-volatility benchmark across one-way cost assumptions from 0 to 30 basis points, while the Rule Agent’s small advantage over the passive benchmark is largely eliminated at low cost levels. Figure 3 presents the same pattern visually through the cost-sensitivity curves and heatmap. This exercise should be interpreted as a net-performance sensitivity rather than as evidence that the LLM-based strategies trade less, because the paper does not separately report strategy-level turnover statistics. The result also does not establish full implementability, since market impact, taxes, bid–ask spread variation, and op-erational frictions are excluded. It shows only that the LLM-based advantage is not purely a zero-cost artifact under the realized turnover paths. Macro Economists in the Machine 27 
+
+5.7 Debate Mechanism Dynamics 
+
+Figure 4 examines the behavior of the debate mechanism. The two single agents often disagree only modestly, as reflected in the low average divergence between their portfolio weights and regime assessments. Larger disagreements occur around macro turning points, especially when inflation and growth signals provide conflicting guid-ance. This pattern helps explain both the stability and the limitations of the Debate Agent. The Debate Agent primarily serves as a conservative averaging device between the Hawkish and Dovish interpretations. It should therefore be interpreted as a prior-aggregation mechanism rather than as a separate information-acquisition channel or an independent signal source. 
+
+5.8 Risk Profile Robustness 
+
+Table 8 compares the risk-neutral and risk-averse parameterizations of the portfolio engine. The risk-averse profile imposes a tighter cyclical cap and a more conservative risk-off trigger, while the risk-neutral profile allows greater cyclical exposure. The LLM-based strategies maintain positive Sharpe differences relative to the Rule Agent under both profiles. The ranking of the single agents changes across profiles. The Hawkish Agent performs best under the risk-neutral profile, while the Dovish Agent improves under the risk-averse profile. The Debate Agent is the least sensitive to the profile change. This stability is consistent with the interpretation that consensus reduces dependence on any single macro prior when the appropriate regime interpretation is uncertain. Macro Economists in the Machine 28 
+
+# 6. Discussion 
+
+6.1 Does LLM-Based Macro Interpretation Add Value Over a Rule Layer? 
+
+The evidence is positive but modest. LLM-based strategies produce higher Sharpe ratios than the Rule Agent across the main specifications, but the improvements are small and statistically fragile. The strongest comparisons reach the 10% level in the paired stationary block bootstrap, not the 5% level, and the confidence inter-vals include zero. Thus, the paper does not show that LLMs can reliably generate commodity trading profits in general. The result is narrower: in one U.S. rate-cycle sample, with a fixed information set and a fixed implementation rule, LLM-based macro interpretation delivers modestly higher return-to-volatility performance than a transparent sign-mapping benchmark. 
+
+6.2 Interpretive Prior and Regime Alignment 
+
+The Hawkish–Dovish comparison shows that an LLM-based interpretive prior is most useful when it is aligned with the prevailing macro regime. The sample begins in an environment of elevated real rates and tight monetary policy, which is more naturally aligned with the Hawkish prior. As conditions shift toward a soft landing, the Dovish interpretation becomes more competitive, although it can also generate excessive cyclical exposure under the less restrictive risk-neutral parameterisation. The Debate Agent partly mitigates this prior-selection problem by averaging the Hawkish and Dovish views. However, the results do not show that deliberation creates a separate signal beyond the two underlying priors. A natural extension is dynamic prior weighting, in which the Hawkish or Dovish Agent receives greater weight as estimated regime probabilities change. Macro Economists in the Machine 29 
+
+6.3 Limitations 
+
+Five limitations are central. First, the backtest covers only one U.S. rate cycle, and the soft-landing period drives much of the full-sample advantage. Second, the macro data are release-aware but not fully vintage; an ALFRED-based implementation would better reconstruct the information set available to investors in real time. Third, the asset universe is commodity-related rather than purely commodity-only because it includes one equity cash-flow proxy. Future robustness work should re-estimate the framework after excluding this proxy. Fourth, the prompt protocol does not yet include a masked-date robustness test, which would further reduce concerns that the pretrained model uses calendar-specific background knowledge rather than only the supplied macro state. Fifth, the portfolio construction parameters are fixed before the evaluation period but are still chosen by the researchers, and the reported bootstrap p-values are not formally adjusted for multiple testing. Longer out-of-sample tests, fully vintage macro data, masked-date prompts, pure-commodity universe checks, and systematic parameter sensitivity analysis would help determine whether the observed advantage reflects a persistent interpretation effect or a favorable sample period. 
+
+# 7. Conclusion 
+
+This paper examines whether LLMs add value to commodity-related ETF portfolio construction when their role is limited to macro interpretation. All strategies observe the same structured macro data and use the same portfolio engine; only the mapping from macro states to ticker-level tilt signals differs. This controlled design allows the paper to evaluate LLM-based macro interpretation as a constrained interpretation layer rather than as an unrestricted trading system. Macro Economists in the Machine 30 
+
+The results are cautiously affirmative. The Hawkish, Dovish, and Debate Agents all deliver higher full-sample return-to-volatility ratios than the deterministic Rule Agent, with the strongest evidence for the Hawkish and Debate Agents. The gains are concentrated in the soft-landing period and remain visible under moderate one-way transaction-cost assumptions. However, the statistical strength is modest, and the strongest comparisons do not survive conservative multiple-testing adjustment. The Debate Agent is useful mainly as a prior-averaging device. It does not out-perform the strongest single agent, so the data do not support a separate deliberation premium in this sample. Its value is instead stability: it reduces reliance on any one interpretive macro prior when the appropriate regime interpretation is uncertain. The broader implication is that LLMs are more credible as constrained interpre-tation tools than as standalone trading engines. In this setting, LLM-based macro interpretation adds a small improvement over a transparent rule-based benchmark. Whether that improvement is persistent enough to justify the added operational com-plexity requires longer samples, fully vintage macro data, masked-date robustness tests, pure-commodity universe checks, and further out-of-sample evaluation. 
+
+# Funding details 
+
+The authors received no financial support for the research, authorship, and/or pub-lication of this article. 
+
+# Disclosure statement 
+
+The authors report there are no competing interests to declare. The views expressed in this paper are solely those of the author and do not represent the views, positions, or policies of Citigroup Inc. or any of its affiliates. Macro Economists in the Machine 31 
+
+# Author Contributions statement 
+
+Kerui Geng contributed to the conception and design of the study, the empirical methodology, the analysis and interpretation of the data, and the drafting and revi-sion of the manuscript. Yiqing Wang contributed to literature review, the research design, the LLM-agent framework, interpretation of results, and manuscript revision. Dehao Dai contributed to data processing, implementation support, empirical vali-dation, interpretation of the results, and critical revision of the manuscript for intel-lectual content. Ding Ma contributed to portfolio construction, robustness analysis, interpretation of empirical findings, and manuscript revision. All authors reviewed and approved the final version of the manuscript and agree to be accountable for all aspects of the work. 
+
+# Data availability statement 
+
+The raw market data are obtained from Yahoo Finance, and the macroeconomic variables are obtained from FRED. The processed weekly panel, generated LLM con-tracts, and replication materials that support the findings of this study are available from the corresponding author upon reasonable request, subject to any applicable data-use restrictions. 
+
+# Generative AI use statement 
+
+For manuscript preparation, the authors used ChatGPT (GPT-5.5 Thinking, Ope-nAI) only for writing polishing and editorial assistance, including grammar, clarity, concision, and formatting. This use is separate from the LLM agents analyzed as part of the research design, which are described in Sections 3 and 4. The authors reviewed and edited all AI-assisted text and take full responsibility for the final content of the manuscript. Macro Economists in the Machine 32 
+
+# References 
+
+Bailey, D. H., Borwein, J. M., De Prado, M. L., and Zhu, Q. J. (2014). Pseudo-mathematics and financial charlatanism: The effects of backtest over fitting on out-of-sample performance. Notices of the AMS , 61(5):458–471. Bakshi, G., Gao, X., and Rossi, A. G. (2019). Understanding the sources of risk under-lying the cross section of commodity returns. Management Science , 65(2):619–641. Chan, C.-M., Chen, W., Su, Y., Yu, J., Xue, W., Zhang, S., Fu, J., and Liu, Z. (2024). Chateval: Towards better LLM-based evaluators through multi-agent debate. In 
+
+The Twelfth International Conference on Learning Representations .Dai, D., Ma, D., Liu, D., Geng, K., and Wang, Y. (2026). Beyond polarity: Multi-dimensional llm sentiment signals for wti crude oil futures return prediction. arXiv preprint arXiv:2603.11408 .Dai, D. and Zhang, Y. (2025). On statistical inference for high-dimensional binary time series. arXiv preprint arXiv:2512.00338 .Daskalaki, C., Kostakis, A., and Skiadopoulos, G. (2014). Are there common factors in individual commodity futures returns? Journal of Banking & Finance , 40:346– 363. DeMiguel, V., Garlappi, L., Nogales, F. J., and Uppal, R. (2009a). A generalized ap-proach to portfolio optimization: Improving performance by constraining portfolio norms. Management science , 55(5):798–812. DeMiguel, V., Garlappi, L., and Uppal, R. (2009b). Optimal versus naive diversifica-tion: How inefficient is the 1/n portfolio strategy? The review of Financial studies ,22(5):1915–1953. Macro Economists in the Machine 33 
+
+Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., and Mordatch, I. (2024). Improv-ing factuality and reasoning in language models through multiagent debate. In 
+
+Proceedings of the 41st International Conference on Machine Learning , ICML’24. JMLR.org. Erb, C. B. and Harvey, C. R. (2006). The strategic and tactical value of commodity futures. Financial Analysts Journal , 62(2):69–97. Gorton, G. and Rouwenhorst, K. G. (2006). Facts and fantasies about commodity futures. Financial Analysts Journal , 62(2):47–68. Gorton, G. B., Hayashi, F., and Rouwenhorst, K. G. (2013). The fundamentals of commodity futures returns. Review of Finance , 17(1):35–105. Gu, S., Kelly, B., and Xiu, D. (2020). Empirical asset pricing via machine learning. 
+
+The Review of Financial Studies , 33(5):2223–2273. Hansen, P. R. (2005). A test for superior predictive ability. Journal of Business & Economic Statistics , 23(4):365–380. Harvey, C. R., Liu, Y., and Zhu, H. (2016). . . . and the cross-section of expected returns. The Review of financial studies , 29(1):5–68. Jiang, Z., Xu, D., and Liang, J. (2017). A deep reinforcement learning framework for the financial portfolio management problem. arXiv preprint arXiv:1706.10059 .Kelly, B. and Xiu, D. (2023). Financial machine learning. Foundations and Trends ®
+
+in Finance , 13(3-4):205–363. Kim, A., Muhn, M., and Nikolaev, V. (2024). Financial statement analysis with large language models. arXiv preprint arXiv:2407.17866 .Ledoit, O. and Wolf, M. (2008). Robust performance hypothesis testing with the sharpe ratio. Journal of Empirical Finance , 15(5):850–859. Macro Economists in the Machine 34 
+
+Liang, T., He, Z., Jiao, W., Wang, X., Wang, Y., Wang, R., Yang, Y., Shi, S., and Tu, Z. (2024). Encouraging divergent thinking in large language models through multi-agent debate. In Proceedings of the 2024 conference on empirical methods in natural language processing , pages 17889–17904. Lo, A. W. (2002). The statistics of sharpe ratios. Financial analysts journal , 58(4):36– 52. Lopez-Lira, A. and Tang, Y. (2023). Can chatgpt forecast stock price movements? return predictability and large language models. arXiv preprint arXiv:2304.07619 .Loughran, T. and McDonald, B. (2011). When is a liability not a liability? textual analysis, dictionaries, and 10-ks. The Journal of finance , 66(1):35–65. Minsky, M. (1986). Society of mind . Simon and Schuster. Politis, D. N. and Romano, J. P. (1994). The stationary bootstrap. Journal of the American Statistical association , 89(428):1303–1313. Politis, D. N. and White, H. (2004). Automatic block-length selection for the depen-dent bootstrap. Econometric reviews , 23(1):53–70. Romano, J. P. and Wolf, M. (2005a). Exact and approximate stepdown methods for multiple hypothesis testing. Journal of the American Statistical Association ,100(469):94–108. Romano, J. P. and Wolf, M. (2005b). Stepwise multiple testing as formalized data snooping. Econometrica , 73(4):1237–1282. Szymanowska, M., De Roon, F., Nijman, T., and Van Den Goorbergh, R. (2014). An anatomy of commodity futures risk premia. The Journal of Finance , 69(1):453–482. Tang, K. and Xiong, W. (2012). Index investment and the financialization of com-modities. Financial analysts journal , 68(6):54–74. Macro Economists in the Machine 35 
+
+Tetlock, P. C. (2007). Giving content to investor sentiment: The role of media in the stock market. The Journal of Finance , 62(3):1139–1168. White, H. (2000). A reality check for data snooping. Econometrica , 68(5):1097–1126. Wu, S., Irsoy, O., Lu, S., Dabravolski, V., Dredze, M., Gehrmann, S., Kambadur, P., Rosenberg, D., and Mann, G. (2023). Bloomberggpt: A large language model for finance. arXiv preprint arXiv:2303.17564 .Xiao, Y., Sun, E., Luo, D., and Wang, W. (2024). Tradingagents: Multi-agents llm financial trading framework. arXiv preprint arXiv:2412.20138 .Yang, H., Liu, X.-Y., and Wang, C. D. (2023). Fingpt: Open-source financial large language models. arXiv preprint arXiv:2306.06031 .Zhao, T., Lyu, J., Jones, S., Garber, H., Pasquali, S., and Mehta, D. (2025). Alphaa-gents: Large language model based multi-agents for equity portfolio constructions. 
+
+arXiv preprint arXiv:2508.11152 .Macro Economists in the Machine 36 
+
+Table 1: Commodity-Related ETF Universe Ticker Name Sub-class Exchange GLD SPDR Gold Shares Precious Metals NYSE Arca SLV iShares Silver Trust Precious Metals NYSE Arca PALL Aberdeen Physical Palladium Shares ETF Precious Metals NYSE Arca TMET iShares Transition-Enabling Metals ETF Transition Metals NASDAQ USO United States Oil Fund Energy NYSE Arca BNO United States Brent Oil Fund Energy NYSE Arca DBO Invesco DB Oil Fund Energy NYSE Arca GSG iShares S&P GSCI Commodity Index ETF Broad Commodity NYSE Arca PDBC Invesco Optimum Yield Diversified ETF Broad Commodity NASDAQ FTGC First Trust Global Tactical Commodity ETF Broad Commodity NASDAQ BCI Aberdeen Bloomberg All Commodity ETF Broad Commodity NYSE Arca COWZ Pacer US Cash Cows 100 ETF Equity Cash-Flow Proxy CBOE BZX CORN Teucrium Corn Fund Agriculture NYSE Arca WEAT Teucrium Wheat Fund Agriculture NYSE Arca SOYB Teucrium Soybean Fund Agriculture NYSE Arca Price data are sourced from Yahoo Finance. The price-history window begins in October 2022 to initialise rolling z-score and volatility estimates; the performance evaluation begins in October 2023 and ends in February 2026. COWZ is included as an equity cash-flow proxy in the original pre-specified universe and should not be interpreted as direct commodity exposure. 
+
+Table 2: Macroeconomic Feature Set Feature FRED Series Description Release Lag (weeks) 
+
+zvix VIXCLS CBOE Volatility Index 0
+
+zusd DTWEXBGS Broad nominal U.S. dollar index 0
+
+zff FEDFUNDS Effective federal funds rate 0
+
+zindpro INDPRO Industrial Production Index (seasonally adjusted) 2
+
+zbkevn T10YIE 10-year breakeven inflation rate 0
+
+zryr DFII10 10-year TIPS real yield 0
+
+zunrate UNRATE Civilian unemployment rate (seasonally adjusted) 2Monthly indicators are aligned to the latest public release available as of each weekly rebalancing date. Release-lag corrections are applied prior to z-score com-putation. Macro Economists in the Machine 37 
+
+Table 3: Full-Period Performance Summary Strategy Ann. Return Ann. Vol. Sharpe Max DD Hit Rate Rule Agent (z-score) 7.11% 13.50% 0.53 −9.15% 55.65% Hawkish Agent 7.74% 13.57% 0.57 −9.37% 55.65% Dovish Agent 7.61% 13.57% 0.56 −9.48% 54.84% Debate Agent 7.69% 13.57% 0.57 −9.40% 54.84% Inverse Volatility ∗ 6.68% 12.81% 0.52 −9.54% 56.45% 
+
+> ∗
+
+Inverse volatility is the passive risk-only benchmark. Sharpe ratios are reported without subtracting the risk-free rate, consistent with the commodity roll-yield convention. Sample: 124 weekly observations, October 2023–February 2026. 
+
+Table 4: Incremental Value of LLM Strategies Relative to the Rule Agent Strategy ∆ Ann. Return ∆ Sharpe Hawkish Agent +0 .64% +0 .044 
+
+Dovish Agent +0 .51% +0 .034 
+
+Debate Agent +0 .58% +0 .040 
+
+Debate vs. avg(Hawkish, Dovish) — +0 .001 
+
+Incremental annualised return and Sharpe ratio relative to the Rule Agent, over the full 124-week sample. The last row com-pares the Debate Agent against the arithmetic average of the two single-agent Sharpe ratios. 
+
+Table 5: Block-Bootstrap Sharpe Difference Tests Comparison ∆Sharpe p-value 95% CI Sig. Hawkish vs. Rule +0 .0415 0.067 [−0.014 , +0 .092] ∗
+
+Dovish vs. Rule +0 .0323 0.134 [−0.025 , +0 .090] (ns) Debate vs. Rule +0 .0379 0.089 [−0.017 , +0 .092] ∗
+
+Debate vs. Hawkish −0.0037 0.769 [−0.013 , +0 .007] (ns) Debate vs. Dovish +0 .0056 0.163 [−0.006 , +0 .016] (ns) Any LLM vs. Inv. Vol. +0 .0454 0.262 [−0.101 , +0 .180] (ns) Rule vs. Inv. Vol. +0 .0075 0.452 [−0.123 , +0 .130] (ns) Hawkish vs. Dovish +0 .0092 0.183 [−0.012 , +0 .028] (ns) Stationary bootstrap with B = 5 ,000 resamples and automatic block length selection. ∗ denotes significance at the 10% level; (ns) = not significant. p-values are unadjusted for multiple comparisons; see the text for a Bonferroni discussion. Macro Economists in the Machine 38 
+
+Table 6: Sub-Period Sharpe Ratios Period Rule Hawkish Dovish Debate Inv. Vol. Rates Peak (2023) −1.46 −1.33 −1.32 −1.32 −1.30 
+
+Soft Landing (2024–25) 0.84 0.86 0.85 0.86 0.80 Full Period 0.53 0.57 0.56 0.57 0.52 Sub-period boundaries follow the U.S. policy rate cycle. Rates Peak = 2023; Soft Landing = 2024–2025. 
+
+Table 7: Transaction Cost Sensitivity Strategy 0 bps 5 bps 10 bps 20 bps 30 bps Rule Agent (z-score) 0.526 0.520 0.514 0.503 0.491 Hawkish Agent 0.571 0.567 0.562 0.554 0.546 Dovish Agent 0.561 0.556 0.550 0.540 0.530 Debate Agent 0.567 0.562 0.558 0.549 0.539 Inverse Volatility 0.521 0.514 0.508 0.494 0.481 One-way cost applied to weekly L1 turnover at each rebalancing date. Hawkish and Debate Agents remain above the inverse-volatility benchmark across all cost scenarios. The Rule Agent breaks even against passive at approximately 5 bps. 
+
+Table 8: Risk Profile Robustness: Full-Period Performance Risk-Neutral Risk-Averse Difference (RA −RN) Strategy Return Sharpe Return Sharpe ∆Return ∆Sharpe Consistent? Rule Agent 7.11% 0.53 7.11% 0.53 0.00% +0 .000 —Hawkish Agent 7.74% 0.57 7.60% 0.56 −0.14% −0.010 Yes Dovish Agent 7.61% 0.56 7.76% 0.57 +0 .15% +0 .010 Yes Debate Agent 7.69% 0.57 7.69% 0.57 0.00% −0.000 Yes Inverse Vol. 6.68% 0.52 6.68% 0.52 0.00% +0 .000 —
+
+LLM ∆Sharpe vs. Rule Agent by profile 
+
+Hawkish Agent +0 .044 +0 .034 consistent Dovish Agent +0 .034 +0 .044 consistent Debate Agent +0 .040 +0 .040 consistent Risk-neutral profile: cyclical cap ∈ [0 .25 , 0.45] , triggered at VIX z-score > 1.5. Risk-averse profile: cyclical cap ∈ [0 .10 , 0.25] , triggered at any risk-off signal. “Consistent” denotes positive ∆Sharpe vs. Rule Agent under both profiles. Macro Economists in the Machine 39 
+
+Figure 1: Full-Period Strategy Performance 
+
+Note: The figure reports cumulative return, drawdown, rolling 52-week Sharpe ratio, and rolling 26-week annualised return for the Rule Agent, the three LLM agents, and the inverse-volatility benchmark. All portfolios are evaluated under the risk-neutral parameterisation. Sample: October 2023–February 2026. 
+
+Figure 2: Active Return Attribution: Debate Agent Relative to the Rule Agent 
+
+Note: Panel A decomposes the cumulative active return of the Debate Agent relative to the Rule Agent by ETF ticker. Panel B plots cumulative active return over time. Positive bars indicate tickers that contributed positively to the Debate Agent’s active return; negative bars indicate detractors. Sample: October 2023–February 2026. Macro Economists in the Machine 40 
+
+Figure 3: Transaction Cost Sensitivity 
+
+Note: Panel A plots Sharpe ratios as a function of one-way trading costs from 0 to 30 basis points. The vertical dotted line marks a representative 10 basis-point cost. Panel B reports the same information as a strategy-by-cost heatmap. All strategies are evaluated under the risk-neutral parameterisation. 
+
+Figure 4: Debate Mechanism Analysis 
+
+Note: Panel A plots cumulative returns of the Hawkish, Dovish, and Debate Agents against the inverse-volatility benchmark. Panel B plots the cumulative active return of the Debate Agent relative to the simple average of Hawkish and Dovish returns. Panel C plots weekly L1 weight divergence between the Hawkish and Dovish agents, with the sample mean indicated by a dashed line. Panel D plots differences in estimated risk-off and inflation-scare regime probabilities between the Hawkish and Dovish agents. Macro Economists in the Machine 41 
+
+# A. Rule Agent Z-Score Loading Matrix 
+
+Table A1 reports the directional loadings βik used in equation (2). A positive (neg-ative) sign indicates that an elevated z-score for the corresponding macro variable increases (decreases) the asset’s tilt signal. All loadings are derived from macro-finance theory; no loading is estimated from the return data used in the performance evaluation. 
+
+Table A1: Rule Agent Z-Score Loading Matrix ( βik )Asset VIX USD FF INDPRO BKEVN RYR UNRATE GLD + − − 0 + − +
+
+SLV + − − + + − 0
+
+PALL 0 − 0 + 0 0 0
+
+TMET + − − + + − 0
+
+USO − − 0 + + 0 −
+
+BNO − − 0 + + 0 −
+
+DBO − − 0 + + 0 −
+
+GSG − − 0 + + − 0
+
+PDBC − − 0 + + − 0
+
+FTGC − − 0 + + − 0
+
+BCI − − 0 + + − 0
+
+COWZ − 0 − + 0 − −
+
+CORN 0 − 0 0 + 0 0
+
+WEAT 0 − 0 0 + 0 0
+
+SOYB 0 − 0 0 + 0 0
+
+‘+’, ‘ −’, and ‘ 0’ denote positive, negative, and zero directional effects, respectively. Macro Economists in the Machine 42 
+
+# B. Portfolio Construction Parameters 
+
+Table B2: Portfolio Construction Parameter Summary 
+
+Parameter Description Value 
+
+κ Macro tilt scaling factor 0.25 
+
+αEW Equal-weight blend parameter 0.50 
+
+¯wi Maximum weight per asset 0.30 
+
+∆max Maximum L1 weekly turnover 0.50 
+
+ˆρro trigger Risk-off probability trigger 0.65 
+
+¯wcyc Cyclical weight cap in risk-off 0.45 
+
+θ Debate consensus threshold 0.15 
+
+R Maximum debate rounds 2
+
+Wz Rolling z-score window (weeks) 156 
+
+Wσ Rolling volatility window (weeks) 26 LLM model OpenAI model identifier gpt-4o-mini 
+
+Temperature LLM decoding temperature 0.00 
+
+All parameter values are fixed prior to the evaluation window. No parameter is estimated from the return data used in the performance evaluation. 
+
+# C. Rule Agent: Full Specification 
+
+C.1 Conflict Detection 
+
+Prior to computing asset-level tilt signals, the Rule Agent tests for internally contra-dictory macro evidence: conflict t = 1zvix  
+
+> t
+
+> 1 ∧ zindpro  
+
+> t
+
+> 1 ∨ 1zbkevn  
+
+> t
+
+> 1 ∧ zryr  
+
+> t
+
+< −1.
+
+The first clause flags simultaneously elevated fear and strong industrial production; the second flags elevated nominal inflation expectations alongside negative real yields. When a conflict is detected, all tilt magnitudes are attenuated by γ = 0 .5 to reflect regime uncertainty. Macro Economists in the Machine 43 
+
+C.2 Risk-Off Composite Score 
+
+A portfolio-level risk-off indicator is computed as: RiskOff t = 0 .40 ·1[zvix  
+
+> t
+
+≥ 1.5]+0 .25 ·1[zff  
+
+> t
+
+≥ 1.0]+0 .20 ·1[zryr  
+
+> t
+
+≥ 1.0]+0 .15 ·1[zusd  
+
+> t
+
+≥ 0.5] .
+
+When RiskOff t ≥ 0.65 , positive tilts for cyclical assets are suppressed to zero and the cyclical weight cap ¯wcyc = 0 .45 is enforced. 
+
+C.3 Regime Probability Assignment 
+
+The Rule Agent produces a deterministic regime probability vector over five regimes according to: 
+
+ˆρro  
+
+> t
+
+∝ max(0 , z vix  
+
+> t
+
+) + max(0 , z ryr  
+
+> t
+
+) + max(0 , z usd  
+
+> t
+
+),
+
+ˆρis  
+
+> t
+
+∝ max(0 , z bkevn  
+
+> t
+
+) + max(0 , z ff  
+
+> t
+
+),
+
+ˆρsl  
+
+> t
+
+∝ max(0 , z indpro  
+
+> t
+
+) + max(0 , −zvix  
+
+> t
+
+) + max(0 , −zff  
+
+> t
+
+),
+
+ˆρstag  
+
+> t
+
+∝ max(0 , z bkevn  
+
+> t
+
+) · max(0 , −zindpro  
+
+> t
+
+).
+
+All values are clipped to [0 , 1] and renormalized to unit sum; the risk-on probability is the residual. 
+
+C.4 Worked Example 
+
+At the 2023 rates peak, a representative macro state has zvix = +1 .8, zryr = +2 .1,
+
+zff = +2 .4, zindpro = −0.6, zbkevn = +0 .3. The risk-off score evaluates to 0.40 + 0.25 + 0 .20 + 0 = 0 .85 , triggering the cyclical cap. For GLD: ˜s = (+1)(1 .8) + (−1)(2 .1)+( −1)(2 .4) = −2.7, mapping to b = −2; since GLD is a defensive metal, the risk-off cap does not apply, and the signal survives—correctly reflecting the elevated opportunity cost of holding gold at peak real yields. For USO: ˜s = ( −1)(1 .8) + (0)(0) + ( −1)(0 .6) = −2.4, also mapping to b = −2; the risk-off cap further confirms Macro Economists in the Machine 44 
+
+the strong underweight. The Rule Agent thus mechanically identifies the demand-destruction regime of 2023, consistent with the deeply negative Rates Peak Sharpe ratios reported in Table 6. 
+
+# D. LLM Prompt Templates 
+
+This appendix reports the prompt structure used for the LLM-based agents. The weekly numerical inputs are filled in mechanically from the standardized macro feature vector described in Section 3.2. The agents do not receive future returns, realized backtest performance, benchmark results, unrestricted news text, or external tool access. The Hawkish and Dovish Agents receive the same input block and differ only in the macroeconomic prior stated in the role instruction. The Debate Agent receives the two first-round contracts and forms a consensus under the same information restrictions. 
+
+D.1 Common Prompt Block 
+
+You are a macroeconomist and cross-asset strategist. Your task is to analyze the current macroeconomic state using only the provided macro evidence table and macro feature summary. You must identify the most relevant macro regime(s) and produce auditable portfolio policy signals for the portfolio construction layer. Hard rules: 1. Use only the provided numbers. Do not use external facts, news, invented data, or information not shown in the input. 2. Explicitly refer to the evidence table entries when explaining the macro interpretation. Relevant fields include driver, direction, z-score, and historical 95 percent band. 3. Do not use, infer, or request ETF returns, backtest performance, Macro Economists in the Machine 45 
+
+benchmark results, or future information. 4. Output must be valid JSON following the required schema. 
+
+D.2 Agent-Specific Role Instructions 
+
+Hawkish Agent: You place greater weight on inflation pressure, tight financial conditions, elevated real rates, and U.S. dollar strength. When macro evidence is mixed, interpret the state through a price-stability and monetary-tightening prior. Dovish Agent: You place greater weight on employment conditions, industrial recovery, easing financial conditions, and the possibility that inflation pressure is temporary. When macro evidence is mixed, interpret the state through a growth-supportive and recovery-oriented prior. Debate Agent: You review the first-round Hawkish and Dovish contracts and produce a single consensus contract. Resolve disagreements by referring back to the same macro evidence table. Do not use external information, future information, ETF returns, or backtest performance. 
+
+D.3 Validation 
+
+The JSON output is validated before entering the portfolio construction layer. Regime probabilities are restricted to [0 , 1] , policy parameters are clipped to their pre-specified bounds, and category adjustments are restricted to the asset categories reported in Table 1. Textual rationales and evidence citations are retained for auditability but are not directly used in portfolio weighting.

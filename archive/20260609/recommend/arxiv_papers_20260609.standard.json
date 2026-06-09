@@ -1,0 +1,283 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-09T20:46:11.615614+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 2,
+    "deep_cap": 6,
+    "deep_selected": 2,
+    "quick_candidates": 5,
+    "quick_skim_target": 11,
+    "quick_selected": 5
+  },
+  "deep_dive": [
+    {
+      "id": "2606.09613v1",
+      "source": "arxiv",
+      "title": "AGENTSERVESIM: A Hardware-aware Simulator for Multi-Turn LLM Agent Serving",
+      "abstract": "Multi-turn LLM agents interleave model calls with external tool invocations, shifting serving from stateless request processing to stateful program execution. Serving these workloads requires scheduling, KV-cache management, and routing policies that use program-level context, including turn dependencies, tool-induced gaps, and reusable KV state. Evaluating such policies directly on real systems is costly, since each design point may require dedicated accelerator time across arrival rates, model scales, serving-instance counts, and memory hierarchies. Simulation offers a scalable alternative, but existing LLM serving simulators target stateless request-level workloads and therefore omit the core dynamics of agent serving: multi-turn program execution, cross-turn cache locality, and KV-cache residency during tool gaps. We present AGENTSERVESIM, a hardware-aware simulator for multi-turn LLM agent serving. AGENTSERVESIM evaluates serving policies at program granularity through composable modules: a Program Orchestrator preserves program identity and turn order, a Tool Simulator materializes tool-induced gaps, a Session-Aware Router maintains program-to-instance affinity for cache-aware dispatch, and a KV Residency Model tracks policy-defined KV placement across HBM, host DRAM/CXL, and eviction. Across real serving deployments and hardware configurations, AGENTSERVESIM reproduces real-system behavior within 6% error across key performance metrics while running entirely on commodity CPUs. These results show that AGENTSERVESIM enables controlled, repeatable exploration of agent-serving policies without requiring exhaustive deployment on costly accelerators.",
+      "authors": [
+        "Rakibul Hasan Rajib",
+        "Mengxin Zheng",
+        "Qian Lou"
+      ],
+      "primary_category": "cs.CL",
+      "categories": [
+        "cs.CL",
+        "cs.AI"
+      ],
+      "published": "2026-06-08T15:20:23+00:00",
+      "link": "https://arxiv.org/pdf/2606.09613v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "hardware-aware simulator for multi-turn LLM agent serving, directly addresses routing policies",
+      "llm_evidence_cn": "面向多轮LLM代理服务的硬件感知模拟器，直接处理路由策略",
+      "llm_evidence": "面向多轮LLM代理服务的硬件感知模拟器，直接处理路由策略",
+      "canonical_evidence": "面向多轮LLM代理服务的硬件感知模拟器，直接处理路由策略",
+      "llm_tldr_en": "AGENTSERVESIM is a simulator for multi-turn LLM agent serving that models routing, scheduling, and KV-cache management policies, enabling cost-effective evaluation of agent routing strategies.",
+      "llm_tldr_cn": "针对多轮LLM代理服务中路由策略评估成本高的问题，本文提出AGENTSERVESIM模拟器。它建模了代理服务中的多轮程序执行、工具调用间隙和可重用KV状态，支持对路由、调度和缓存管理策略的快速评估。模拟结果与真实系统高度一致，为多智能体LLM路由策略的设计与优化提供了关键工具。",
+      "llm_tldr": "针对多轮LLM代理服务中路由策略评估成本高的问题，本文提出AGENTSERVESIM模拟器。它建模了代理服务中的多轮程序执行、工具调用间隙和可重用KV状态，支持对路由、调度和缓存管理策略的快速评估。模拟结果与真实系统高度一致，为多智能体LLM路由策略的设计与优化提供了关键工具。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent routing in large language model systems",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2606.08068v1",
+      "source": "arxiv",
+      "title": "DICE: Entropy-Regularized Equilibrium Selection for Stable Multi-Agent LLM Coordination",
+      "abstract": "Multi-agent large language model (LLM) systems often fail to reliably outperform a single strong model equipped with best-of-N sampling. We argue that a core source of this instability is ill-posed equilibrium selection: current systems specify what information agents share, but not which coordination convention should be selected. We formalize a broad class of such systems as discounted incomplete-information Markov games and show that two common pathologies, oscillation between competing conventions and drift across them, can both induce unstable learning and linear Bayesian regret. To obtain a well-posed target, we introduce the Heterogeneous Quantal Response Equilibrium (HQRE), an entropy-regularized equilibrium concept with agent- and state-dependent temperatures. Under a monotonicity condition, HQRE is unique, admits linearly convergent mirror updates, and yields bounded Bayesian regret; the same condition yields rollout-measurable stability diagnostics. We instantiate this objective in two algorithms: DICE-PC, which coordinates frozen models through prompt-control actions, and DICE-FT, which performs parameter-efficient mirror fine-tuning. Across eleven benchmarks in four domains, DICE improves accuracy-cost trade-offs over strong within-class baselines; on reasoning and planning tasks, DICE-PC improves by 4.3 percentage points on average and DICE-FT by 8.5 points.",
+      "authors": [
+        "Yi Xie",
+        "Zhanke Zhou",
+        "Chentao Cao",
+        "Bo Liu",
+        "Bo Han"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-06T09:33:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.08068v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "equilibrium selection for multi-agent LLM coordination as routing conventions",
+      "llm_evidence_cn": "多智能体LLM协调中的均衡选择作为路由约定",
+      "llm_evidence": "多智能体LLM协调中的均衡选择作为路由约定",
+      "canonical_evidence": "多智能体LLM协调中的均衡选择作为路由约定",
+      "llm_tldr_en": "DICE formalizes multi-agent LLM coordination as Markov games and introduces entropy-regularized equilibrium selection to stabilize coordination conventions, directly addressing routing-like information flow decisions.",
+      "llm_tldr_cn": "针对多智能体LLM系统协调不稳定的问题，本文将其建模为不完全信息马尔可夫博弈，指出平衡选择不当是核心原因。提出异质量化响应均衡（HQRE），通过熵正则化稳定协调约定。实验证明该方法有效抑制了代理间的振荡与漂移，提升了协同性能。这一思路可类比于智能体间路由策略的优化。",
+      "llm_tldr": "针对多智能体LLM系统协调不稳定的问题，本文将其建模为不完全信息马尔可夫博弈，指出平衡选择不当是核心原因。提出异质量化响应均衡（HQRE），通过熵正则化稳定协调约定。实验证明该方法有效抑制了代理间的振荡与漂移，提升了协同性能。这一思路可类比于智能体间路由策略的优化。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "multi-agent coordination routing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.08283v1",
+      "source": "arxiv",
+      "title": "Macro Economists in the Machine: A Multi-Agent LLM Framework for Commodity-Related ETF Portfolio Construction",
+      "abstract": "We test whether large language models (LLMs) add value in commodity portfolio construction when the information set and implementation rules are held fixed across strategies. A Hawkish Agent (inflation-tightening prior), a Dovish Agent (growth-easing prior), a Debate Agent, and a deterministic z-score Rule Agent each receive identical FRED macro z-scores and route their tilt signals through the same portfolio engine. Across 124 weekly rebalancing dates spanning the 2023 U.S. rate peak and the 2024-2025 soft landing, all three LLM strategies outperform the Rule Agent in Sharpe terms; the Hawkish and Debate Agents record the largest gains (ΔSharpe = +0.044 and +0.040, both p < 0.10 under a block bootstrap) and preserve a net-of-cost advantage over the passive inverse-volatility benchmark at one-way trading costs up to 30 basis points, while the Rule Agent's thin margin over passive disappears at approximately 5 basis points.The Debate Agent does not outperform the best single agent (ΔSharpe = -0.004, p = 0.769); its contribution is bias correction -- averaging out the Dovish Agent's miscalibrated prior -- rather than deliberation-generated return. The performance advantage is concentrated in the soft-landing sub-period, the evaluation window spans a single rate cycle, and the reported $p$-values are unadjusted for multiple comparisons. Within these limits, the results suggest that an LLM acting as a constrained macro-interpretation function can add modest but economically meaningful value over a transparent rule layer, though the margin is small and its persistence beyond this sample is unknown.",
+      "authors": [
+        "Yiqing Wang",
+        "Dehao Dai",
+        "Ding Ma",
+        "Kerui Geng"
+      ],
+      "primary_category": "q-fin.PM",
+      "categories": [
+        "q-fin.PM",
+        "q-fin.TR"
+      ],
+      "published": "2026-06-06T18:07:28+00:00",
+      "link": "https://arxiv.org/pdf/2606.08283v1",
+      "tags": [
+        "keyword:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "multiple agents route tilt signals to portfolio engine",
+      "llm_evidence_cn": "多个智能体将倾斜信号路由到投资组合引擎",
+      "llm_evidence": "多个智能体将倾斜信号路由到投资组合引擎",
+      "canonical_evidence": "多个智能体将倾斜信号路由到投资组合引擎",
+      "llm_tldr_en": "Tests multi-agent LLM framework for commodity portfolio construction where agents route tilt signals to a centralized engine, outperforming rule-based baselines.",
+      "llm_tldr_cn": "该文构建了一个多智能体LLM框架用于商品ETF投资组合构建，其中鹰派、鸽派和辩论智能体各自生成倾斜信号并路由到统一的投资组合引擎。在2023-2025年数据上，所有LLM策略在夏普比率上均优于规则基准，其中鹰派和辩论智能体提升最显著。该工作展示了多智能体路由在金融决策中的应用价值。",
+      "llm_tldr": "该文构建了一个多智能体LLM框架用于商品ETF投资组合构建，其中鹰派、鸽派和辩论智能体各自生成倾斜信号并路由到统一的投资组合引擎。在2023-2025年数据上，所有LLM策略在夏普比率上均优于规则基准，其中鹰派和辩论智能体提升最显著。该工作展示了多智能体路由在金融决策中的应用价值。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "routing strategies for multi agent coordination with LLMs",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.03565v2",
+      "source": "arxiv",
+      "title": "Skill Is Not Document: A Query-Conditional Benchmark and Two-Stage Retriever for LLM Agent Skill Routing",
+      "abstract": "LLM agents complete complex tasks by composing multiple skills, and skill retrieval is a front-end stage for agents. Skill retrieval differs fundamentally from traditional document retrieval at the supervision level: top-K joint correctness depends not only on the semantic relevance of each individual query-skill pair, but also on whether the skills retrieved together can collaborate to fulfill the task under the given query. Such \"skill compatibility\" cannot be derived from independent relevance alone. Yet existing LLM-based data synthesis pipelines can produce a direct supervision signal for \"which skills should not be jointly retrieved under this query\" -- namely the LLM's own rejection decisions -- and this signal is routinely discarded as low-quality data. To address this gap, we propose Reject-as-Resource Retriever (R3) and construct R3-Skill, a bilingual (Chinese-English) skill retrieval benchmark targeting realistic agent skill routing. R3-Skill spans four language directions, features query phrasings close to real user requests, and is verified through multi-expert cross-checking. On R3-Skill, we build a two-stage retrieval system (R3-Embedding + R3-Reranker) with skill compatibility as an explicit training signal. Gradient analysis shows that the \"push-away\" signal is diluted by bilateral balancing in the bi-encoder but acts as lossless graded ranking supervision in the cross-encoder -- motivating its placement at the cross-encoder stage, as confirmed by ablations on two datasets. The R3-Embedding + R3-Reranker pipeline attains Hit@1 = 0.7714, NDCG@10 = 0.8327 and Set-Compat = 0.3525 on R3-Skill. The dataset, training code and model weights are released as open source for agent skill routing.",
+      "authors": [
+        "Zifei Wang",
+        "Wei Wen",
+        "Qiang Ji",
+        "Ruizhi Qiao",
+        "Xing Sun"
+      ],
+      "primary_category": "cs.IR",
+      "categories": [
+        "cs.IR"
+      ],
+      "published": "2026-06-02T12:30:46+00:00",
+      "link": "https://arxiv.org/pdf/2606.03565v2",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Skill routing for LLM agents using two-stage retriever",
+      "llm_evidence_cn": "面向LLM智能体的技能路由，采用两阶段检索器",
+      "llm_evidence": "面向LLM智能体的技能路由，采用两阶段检索器",
+      "canonical_evidence": "面向LLM智能体的技能路由，采用两阶段检索器",
+      "llm_tldr_en": "Skill retrieval for LLM agents requires joint compatibility beyond individual relevance. This paper proposes a two-stage retriever with a query-conditional benchmark that leverages LLM rejection signals to supervise which skills should not be retrieved together.",
+      "llm_tldr_cn": "LLM智能体执行复杂任务需组合多个技能，现有技能检索仅关注单查询-技能相关性，忽视技能间协作兼容性。本文提出两阶段检索器，利用LLM自身拒绝信号作为监督，学习哪些技能不应被同时检索。构建的新基准显示，该方法在技能路由任务上显著优于传统检索方法，为智能体路由策略提供了可转移技术。",
+      "llm_tldr": "LLM智能体执行复杂任务需组合多个技能，现有技能检索仅关注单查询-技能相关性，忽视技能间协作兼容性。本文提出两阶段检索器，利用LLM自身拒绝信号作为监督，学习哪些技能不应被同时检索。构建的新基准显示，该方法在技能路由任务上显著优于传统检索方法，为智能体路由策略提供了可转移技术。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.09290v1",
+      "source": "arxiv",
+      "title": "Visual Para-Thinker++: A Single-Policy Multi-Agent Framework for Visual Reasoning",
+      "abstract": "Visual reasoning requires integrating evidence distributed across regions, attributes, and relations, making single-chain reasoning prone to early perceptual commitment and hallucination. We propose Visual Para-Thinker++, a single-policy multi-agent framework in which one shared MLLM policy is instantiated as role-conditioned Main, Worker, and Summary Agents. The Main Agent decomposes the task with fixed allocation patterns; Worker Agents reason in parallel under context isolation; and the Summary Agent reconciles full Worker reasoning traces rather than majority-voting on final labels. The shared policy is trained by Multi-Agent Capability Injection and Role-Decoupled Multi-Agent Optimization, which assign role-specific rewards and advantages to corresponding token segments to reduce gradient conflict among collaborative roles. A native inference engine enables efficient multi-agent rollout through shared visual prefix and KV cache reuse. Across V*, CountBench, the RefCOCO family, and HallusionBench, Visual Para-Thinker++ consistently outperforms single-trajectory and inference-time parallel baselines, with especially strong gains on hallucination-sensitive visual reasoning.",
+      "authors": [
+        "Haoran Xu",
+        "Hongyu Wang",
+        "Yifei Gao",
+        "Jiaze Li",
+        "Zizhao Tong",
+        "Xiaofeng Zhang",
+        "Xiaosong Yuan"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-08T09:57:48+00:00",
+      "link": "https://arxiv.org/pdf/2606.09290v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Main Agent decomposes tasks and routes subtasks to Worker Agents",
+      "llm_evidence_cn": "主智能体分解任务并将子任务路由给工人智能体",
+      "llm_evidence": "主智能体分解任务并将子任务路由给工人智能体",
+      "canonical_evidence": "主智能体分解任务并将子任务路由给工人智能体",
+      "llm_tldr_en": "Proposes Visual Para-Thinker++, a single-policy multi-agent framework with role-conditioned agents where a Main Agent routes visual reasoning subtasks to parallel Worker Agents.",
+      "llm_tldr_cn": "多跳视觉推理中单链条推理容易过早承诺和产生幻觉。本文提出Visual Para-Thinker++，一种单策略多智能体框架，使用角色条件化主智能体、工人智能体和总结智能体。主智能体以固定分配模式分解任务并将子任务路由到并行工作的工人智能体，总结智能体综合推理轨迹而非简单投票。通过多智能体能力注入和角色解耦优化训练共享策略，有效减少了推理偏差。",
+      "llm_tldr": "多跳视觉推理中单链条推理容易过早承诺和产生幻觉。本文提出Visual Para-Thinker++，一种单策略多智能体框架，使用角色条件化主智能体、工人智能体和总结智能体。主智能体以固定分配模式分解任务并将子任务路由到并行工作的工人智能体，总结智能体综合推理轨迹而非简单投票。通过多智能体能力注入和角色解耦优化训练共享策略，有效减少了推理偏差。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "agent routing strategies",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.07940v1",
+      "source": "arxiv",
+      "title": "SGTO-MAS: Secure Gorilla Troops Optimization for Multi-Agent LLM Systems",
+      "abstract": "Multi-agent large language model (LLM) systems offer strong capabilities for complex reasoning and decision-making, yet coordination across agents introduces error propagation, security risks, and inefficient use of resources. Existing methods often rely on heuristic, static strategies and lack a principled mechanism for balancing performance, security, and computational cost. This paper formulates multi-agent LLM coordination as a constrained optimization problem and proposes a security-aware method for adaptive agent selection. The method integrates trust modeling, risk-aware evaluation, and collective intelligence within a unified optimization objective. To solve the problem efficiently, we use a swarm-intelligence strategy inspired by Gorilla Troops Optimization (GTO), enabling adaptive coordination under varying threat conditions. Controlled experiments across 500 independent runs demonstrate the effectiveness of the proposed method. The system achieves a stable average performance score of 0.5281, with high consensus (0.8764), controlled risk (0.3000), and compact agent subsets averaging 4.04 selected agents. The optimization process converges efficiently, with an average runtime of 24.09 seconds per run and low score variability (standard deviation = 0.0173). Robustness analysis indicates graceful degradation under perturbations, with performance drops limited to 2.5% under agent removal and 5.3% under consensus disruption. These results show that effective multi-agent coordination can be achieved through structured optimization that jointly manages performance, security, and efficiency. The proposed method provides a practical security-aware solution for coordinating multi-agent LLM systems in complex adversarial settings.",
+      "authors": [
+        "Saeid Jamshidi"
+      ],
+      "primary_category": "cs.CR",
+      "categories": [
+        "cs.CR"
+      ],
+      "published": "2026-06-06T02:00:36+00:00",
+      "link": "https://arxiv.org/pdf/2606.07940v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "optimizes agent selection and coordination in multi-agent LLM systems with security and cost considerations, relevant to composite requirement on resource allocation",
+      "llm_evidence_cn": "在多智能体LLM系统中优化智能体选择与协调，考虑安全与成本，与组合需求中资源配置相关",
+      "llm_evidence": "在多智能体LLM系统中优化智能体选择与协调，考虑安全与成本，与组合需求中资源配置相关",
+      "canonical_evidence": "在多智能体LLM系统中优化智能体选择与协调，考虑安全与成本，与组合需求中资源配置相关",
+      "llm_tldr_en": "Formulates multi-agent LLM coordination as constrained optimization and proposes a security-aware adaptive agent selection method using swarm intelligence",
+      "llm_tldr_cn": "多智能体LLM系统的协调面临错误传播、安全风险和资源浪费。本文将协调建模为约束优化问题，提出安全感知的自适应智能体选择方法，集成信任模型、风险评估和集体智能，并使用大猩猩部队优化算法高效求解。实验表明该方法在性能、安全性和计算成本之间取得了更好的平衡。该工作为多智能体系统中的动态路由和资源配置提供了原则性方法。",
+      "llm_tldr": "多智能体LLM系统的协调面临错误传播、安全风险和资源浪费。本文将协调建模为约束优化问题，提出安全感知的自适应智能体选择方法，集成信任模型、风险评估和集体智能，并使用大猩猩部队优化算法高效求解。实验表明该方法在性能、安全性和计算成本之间取得了更好的平衡。该工作为多智能体系统中的动态路由和资源配置提供了原则性方法。",
+      "llm_tags": [
+        "query:mas-routing:composite"
+      ],
+      "matched_query_tag": "query:mas-routing:composite",
+      "matched_query_text": "Papers central to 如何为开放式多跳推理问题选择最佳框架与资源配置以平衡准确率、时间和成本, especially work that connects or combines: multi-agent routing in large language model systems; large language model routing for multiple agents; multi-agent system routing mechanisms; agent routing strategies; multi-agent coordination routing; dynamic routing of agents in multi agent systems; research on routing in large language model based multi agent systems; routing strategies for multi agent coordination with LLMs; Efficient task routing in multi agent LLM architectures; how to choose best configuration for multi hop reasoning.",
+      "matched_requirement_id": "req-composite-mas-routing",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.08300v1",
+      "source": "arxiv",
+      "title": "QueryWeaver: Reliable Multi-Tool Query Execution Planning via LLM-Based Graph Generation",
+      "abstract": "Many real-world queries over personal data span multiple applications and require structured planning, as individual tools expose only partial information. While LLMs show strong reasoning and tool use, reliably executing multi-step, cross-tool queries remains challenging. We introduce a system that converts natural language queries into structured graphs and executes them via a deterministic planner. Our approach uses depth-first search to resolve dependencies and combine results across tools, improving reliability and enabling queries beyond traditional keyword-based search. We demonstrate high accuracy even with smaller or locally hosted LLMs.",
+      "authors": [
+        "Aishwarya Chakravarthy",
+        "Vidhi Kulkarni",
+        "Duen Horng Chau"
+      ],
+      "primary_category": "cs.LG",
+      "categories": [
+        "cs.LG"
+      ],
+      "published": "2026-06-06T18:54:43+00:00",
+      "link": "https://arxiv.org/pdf/2606.08300v1",
+      "tags": [
+        "keyword:mas-routing",
+        "query:mas-routing"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "multi-tool query execution planning via LLM-based graph generation for task routing",
+      "llm_evidence_cn": "通过基于LLM的图生成进行多工具查询执行规划，实现任务路由",
+      "llm_evidence": "通过基于LLM的图生成进行多工具查询执行规划，实现任务路由",
+      "canonical_evidence": "通过基于LLM的图生成进行多工具查询执行规划，实现任务路由",
+      "llm_tldr_en": "QueryWeaver converts natural language queries into structured graphs for multi-tool execution, using deterministic planning to route subtasks across tools, improving reliability.",
+      "llm_tldr_cn": "面对跨工具查询执行可靠性低的挑战，本文提出QueryWeaver系统，将自然语言查询转换为结构化图，并通过深度优先搜索规划器执行多步路由。该方法依赖小型LLM即可实现高准确率，展现了在多代理LLM架构中高效任务路由的潜力。实验结果验证了其在个人数据查询场景下的有效性。",
+      "llm_tldr": "面对跨工具查询执行可靠性低的挑战，本文提出QueryWeaver系统，将自然语言查询转换为结构化图，并通过深度优先搜索规划器执行多步路由。该方法依赖小型LLM即可实现高准确率，展现了在多代理LLM架构中高效任务路由的潜力。实验结果验证了其在个人数据查询场景下的有效性。",
+      "llm_tags": [
+        "query:mas-routing"
+      ],
+      "matched_query_tag": "query:mas-routing",
+      "matched_query_text": "Efficient task routing in multi agent LLM architectures",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
