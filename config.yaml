@@ -163,6 +163,52 @@ subscriptions:
             updated_at: '2026-06-03T02:28:38.282659+00:00'
       updated_at: '2026-06-03T02:25:07.947Z'
       paused: true
+    - tag: agent-memory
+      description: >-
+        请帮我检索和跟踪“智能体记忆（Agent Memory / Memory for LLM Agents）”方向的代表性论文和最新 arXiv 论文，研究对象限定为大语言模型驱动的智能体，而不是一般神经网络记忆或传统 RAG
+        系统。重点关注：1）记忆类型：working memory、episodic memory、semantic memory、procedural memory、long-term memory；2）记忆机制：memory
+        retrieval、memory writing、memory update、memory consolidation、reflection、forgetting、memory
+        compression；3）系统架构：memory-augmented agents、cognitive architecture、Memory OS、personalized agents、multi-agent
+        shared memory；4）评测与安全：long-context memory benchmarks、memory poisoning、privacy、selective forgetting。请同时检索 2023
+        年以来的最新工作和更早的基础性论文，并按照“发展阶段—代表论文—核心方法—不足—前沿趋势”的方式整理。
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: agent memory
+          keyword_cn: 智能体记忆
+          query: memory mechanisms in intelligent agents
+        - keyword: memory retrieval
+          keyword_cn: 记忆检索
+          query: memory retrieval mechanisms for llm agents
+        - keyword: long-term memory
+          keyword_cn: 长期记忆
+          query: long-term memory in language agent systems
+        - keyword: multi-agent memory
+          keyword_cn: 多智能体记忆
+          query: shared memory in multi-agent llm systems
+      intent_queries:
+        - query: episodic memory for intelligent agents
+          query_cn: 智能体的情景记忆
+          enabled: true
+          source: manual
+          note: ''
+        - query: working memory mechanisms in AI
+          query_cn: 人工智能中的工作记忆机制
+          enabled: true
+          source: manual
+          note: ''
+        - query: memory consolidation in autonomous agents
+          query_cn: 自主智能体中的记忆巩固
+          enabled: true
+          source: manual
+          note: ''
+        - query: memory types and mechanisms for large language model agents
+          query_cn: 大语言模型智能体的记忆类型与机制
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-06-16T06:57:55.761Z'
 source_backends:
   arxiv:
     papers_table: arxiv_papers
