@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-16T07:07:36.037557+00:00",
-  "updated_date": "20260518-20260616",
+  "generated_at": "2026-06-16T21:44:26.683780+00:00",
+  "updated_date": "20260616",
   "carryover_days": 9,
   "tag_states": {
     "mas-routing": {
@@ -9,7 +9,7 @@
       "items": []
     },
     "agent-memory": {
-      "updated_date": "20260518-20260616",
+      "updated_date": "20260616",
       "carryover_days": 9,
       "items": [
         {
@@ -101,85 +101,6 @@
           "matched_requirement_id": "req-8",
           "selection_source": "carryover_cache",
           "paper_id": "2606.00619v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2605.27762v1",
-          "source": "arxiv",
-          "title": "PEAM: Parametric Embodied Agent Memory through Contrastive Internalization of Experience in Minecraft",
-          "abstract": "We present PEAM, a Parametric Embodied Agent Memory framework in Minecraft that transforms agent memory from inference-time retrieval into parameter-resident skills internalized through experience. PEAM pairs a slow deliberative LLM for open-ended reasoning with a fast parametric module for reflexive execution of consolidated skills. The fast module is a multimodal Mixture-of-Experts LoRA architecture with per-category physically isolated adapters, enabling parameter-level continual learning without catastrophic forgetting. We treat failure as a first-class training signal: failure--correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective, so the agent learns not only what succeeds but also how corrected actions differ from failed ones. To govern consolidation, PEAM introduces a parameterization-worthiness score for deciding which experience should be internalized, and a scale-free self-triggered consolidation mechanism for deciding when to internalize without task-specific hand-tuned thresholds, making the agent self-evolving as the trigger transfers across task distributions without re-tuning. Experiments in Minecraft show that PEAM improves long-horizon task performance, mitigates forgetting on previously consolidated skills, and improves parametric-versus-retrieval efficiency over retrieval-based embodied agents and parametric memory variants.",
-          "authors": [
-            "Yuchen Guo",
-            "Junli Gong",
-            "Hongmin Cai",
-            "Yiu-ming Cheung",
-            "Weifeng Su"
-          ],
-          "primary_category": "cs.AI",
-          "categories": [
-            "cs.AI"
-          ],
-          "published": "2026-05-26T23:20:58+00:00",
-          "link": "https://arxiv.org/pdf/2605.27762v1",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "parametric embodied agent memory, episodic experience internalization via contrastive learning",
-          "llm_evidence_cn": "参数化具身智能体记忆，通过对比学习内化情景经验",
-          "llm_evidence": "参数化具身智能体记忆，通过对比学习内化情景经验",
-          "canonical_evidence": "参数化具身智能体记忆，通过对比学习内化情景经验",
-          "llm_tldr_en": "Presents PEAM, a parametric embodied agent memory framework that internalizes episodic experiences into parameter-resident skills using a multimodal MoE-LoRA architecture, enabling continual learning without catastrophic forgetting.",
-          "llm_tldr_cn": "本文提出PEAM框架，将具身智能体的记忆从推理时检索转变为参数化技能内化。采用多模态混合专家LoRA架构，每个类别有独立适配器，实现参数级持续学习而不遗忘。将失败-纠正轨迹作为训练信号，通过行为克隆和对比目标内化经验。在Minecraft环境中，PEAM使智能体无需频繁检索即可快速执行已学技能。",
-          "llm_tldr": "本文提出PEAM框架，将具身智能体的记忆从推理时检索转变为参数化技能内化。采用多模态混合专家LoRA架构，每个类别有独立适配器，实现参数级持续学习而不遗忘。将失败-纠正轨迹作为训练信号，通过行为克隆和对比目标内化经验。在Minecraft环境中，PEAM使智能体无需频繁检索即可快速执行已学技能。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "episodic memory for intelligent agents",
-          "matched_requirement_id": "req-5",
-          "selection_source": "carryover_cache",
-          "paper_id": "2605.27762v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2605.22411v1",
-          "source": "arxiv",
-          "title": "DeferMem: Query-Time Evidence Distillation via Reinforcement Learning for Long-Term Memory QA",
-          "abstract": "Large language model (LLM) agents still struggle with long-term memory question answering, where answer-supporting evidence is often scattered across long conversational histories and buried in substantial irrelevant content. Existing memory systems typically process memory before future queries are known, then retrieve the resulting units based on similarity rather than their utility for answering the query. This workflow leaves downstream answerers to denoise retrieved candidates and reconstruct query-specific evidence. We present DeferMem, a long-term memory framework that decouples this problem into high-recall candidate retrieval and query-conditioned evidence distillation. DeferMem uses a lightweight segment-link structure to organize raw history and retrieve broad candidates at query time. It then applies a memory distiller trained with DistillPO, our reinforcement learning algorithm for distilling the high-recall but highly noisy candidates into a set of faithful, self-contained, and query-conditioned evidence. DistillPO formulates post-retrieval evidence distillation as a structured action comprising message selection and evidence rewriting. It optimizes this action with a decomposed-and-gated reward pipeline and structure-aligned advantage assignment, gating reward components from validity to quality checks while exposing task-level correctness feedback early and assigning each reward to its responsible output span. On LoCoMo and LongMemEval-S, DeferMem surpasses strong baselines in QA accuracy and memory-system efficiency, achieving the highest QA accuracy with the fastest runtime and zero commercial-API token cost for memory operations.",
-          "authors": [
-            "Jianing Yin",
-            "Tan Tang"
-          ],
-          "primary_category": "cs.CL",
-          "categories": [
-            "cs.CL",
-            "cs.AI",
-            "cs.LG"
-          ],
-          "published": "2026-05-21T12:36:46+00:00",
-          "link": "https://arxiv.org/pdf/2605.22411v1",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "query-time evidence distillation via reinforcement learning for long-term memory QA, memory retrieval",
-          "llm_evidence_cn": "通过强化学习进行查询时证据蒸馏的长时记忆问答，涉及记忆检索",
-          "llm_evidence": "通过强化学习进行查询时证据蒸馏的长时记忆问答，涉及记忆检索",
-          "canonical_evidence": "通过强化学习进行查询时证据蒸馏的长时记忆问答，涉及记忆检索",
-          "llm_tldr_en": "DeferMem decouples long-term memory QA into high-recall candidate retrieval and query-conditioned evidence distillation using a segment-link structure and reinforcement learning, improving answer accuracy.",
-          "llm_tldr_cn": "针对长时记忆问答中证据分散的问题，提出DeferMem框架，将过程解耦为高召回候选检索和查询条件证据蒸馏。使用轻量级段-链接结构进行候选检索，再利用强化学习蒸馏出与查询最相关的证据。在多个对话基准上，DeferMem显著提升了答案准确性，并降低了检索噪音的影响。",
-          "llm_tldr": "针对长时记忆问答中证据分散的问题，提出DeferMem框架，将过程解耦为高召回候选检索和查询条件证据蒸馏。使用轻量级段-链接结构进行候选检索，再利用强化学习蒸馏出与查询最相关的证据。在多个对话基准上，DeferMem显著提升了答案准确性，并降低了检索噪音的影响。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "memory retrieval mechanisms for llm agents",
-          "matched_requirement_id": "req-2",
-          "selection_source": "carryover_cache",
-          "paper_id": "2605.22411v1",
           "carry_days": 1
         },
         {
@@ -303,51 +224,6 @@
           "carry_days": 1
         },
         {
-          "id": "2605.21951v1",
-          "source": "arxiv",
-          "title": "Dynamic Mixture of Latent Memories for Self-Evolving Agents",
-          "abstract": "Achieving self-evolution in intelligent agents requires the continual accumulation of new knowledge across changing task sequences without forgetting previously acquired abilities. Existing approaches either internalize knowledge by updating model parameters, which induces catastrophic forgetting, or rely on external memory, which fails to genuinely enhance the model's intrinsic capabilities. We propose MoLEM, a generative mixture of latent memory framework based on a dynamic mixture-of-experts (MoE). We treat multiple experts as independent carriers to generate memory. A router selects and weights experts through key-query matching, and the aggregated latent memory is injected into the reasoning process. The base model for reasoning remains entirely frozen, with all experiential knowledge internalized into the additional modules, avoiding catastrophic forgetting. For continual learning, each training stage is paired with a lightweight autoencoder that selects the appropriate routing group at inference, and inputs that match no stage fall back to the pretrained model. Experiments train the framework on continual-learning sequences spanning math, science, and code domains. After training, we evaluate the framework on the corresponding test sets to measure task learning and competence preservation across continual adaptation stages. After the full continual-learning sequence, our method improves the average accuracy by 10.40% over the Vanilla pretrained baseline, while none of the competing methods consistently exceed this baseline across different training orders.",
-          "authors": [
-            "Dianzhi Yu",
-            "Vireo Zhang",
-            "Hongru Wang",
-            "Yanyu Chen",
-            "Minda Hu",
-            "Wanghan Xu",
-            "Siki Chen",
-            "Philip Torr",
-            "Zhenfei Yin",
-            "Irwin King"
-          ],
-          "primary_category": "cs.LG",
-          "categories": [
-            "cs.LG"
-          ],
-          "published": "2026-05-21T03:35:10+00:00",
-          "link": "https://arxiv.org/pdf/2605.21951v1",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "memory consolidation in autonomous agents",
-          "llm_evidence_cn": "自主智能体中的记忆巩固",
-          "llm_evidence": "自主智能体中的记忆巩固",
-          "canonical_evidence": "自主智能体中的记忆巩固",
-          "llm_tldr_en": "Proposes MoLEM, a generative mixture of latent memory using dynamic MoE, enabling self-evolving agents without catastrophic forgetting.",
-          "llm_tldr_cn": "自演化智能体需持续积累知识而不遗忘。该论文提出MoLEM框架，采用动态专家混合生成潜在记忆，通过路由选择加权并注入推理过程，基模型完全冻结，从而避免灾难性遗忘，同时增强模型固有能力。",
-          "llm_tldr": "自演化智能体需持续积累知识而不遗忘。该论文提出MoLEM框架，采用动态专家混合生成潜在记忆，通过路由选择加权并注入推理过程，基模型完全冻结，从而避免灾难性遗忘，同时增强模型固有能力。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "memory consolidation in autonomous agents",
-          "matched_requirement_id": "req-7",
-          "selection_source": "carryover_cache",
-          "paper_id": "2605.21951v1",
-          "carry_days": 1
-        },
-        {
           "id": "2606.05684v1",
           "source": "arxiv",
           "title": "AdaMEM: Test-Time Adaptive Memory for Language Agents",
@@ -384,47 +260,6 @@
           "matched_requirement_id": "req-3",
           "selection_source": "carryover_cache",
           "paper_id": "2606.05684v1",
-          "carry_days": 1
-        },
-        {
-          "id": "2606.10616v1",
-          "source": "arxiv",
-          "title": "Learning What to Remember: Observability-Safe Memory Retention via Constrained Optimization for Long-Horizon Language Agents",
-          "abstract": "Long-horizon language agents accumulate observations, reasoning traces, and retrieved facts that exceed their finite context windows, making memory retention a fundamental resource-allocation problem. Existing memory systems improve management through heuristic scoring, retrieval optimization, or learned compression, but largely treat retention as a local decision problem and do not explicitly model its long-term consequences under realistic observability constraints. To fill this gap, we formulate memory retention as a constrained stochastic optimization problem with explicit budget feasibility, evidence utility, and delayed costs including miss penalties, reacquisition delays, and stale-information risk. We then propose OSL-MR (Observability-Safe Learning for Memory Retention), a novel framework that enforces a strict separation between online-observable features and offline-available supervision (OAS). OSL-MR combines an evidence learner trained from realized evidence supervision with a Mixed-Score heuristic that serves both as a deployable online-safe baseline and as a structured inductive prior for learning. The resulting policy learns query-conditioned evidence value directly from interaction data while remaining deployable under the same observability constraints. Experiments on LOCOMO and LongMemEval show that OSL-MR consistently outperforms recency-based methods, Generative Agents-style scoring, and other heuristic baselines, particularly under tight memory budgets. The Mixed-Score prior further improves precision while preserving recall, and sensitivity analysis demonstrates robustness across a wide range of cost configurations.",
-          "authors": [
-            "Qingcan Kang",
-            "Liu Mingyang",
-            "Shixiong Kai",
-            "Kaichao Liang",
-            "Tao Zhong",
-            "Mingxuan Yuan"
-          ],
-          "primary_category": "cs.AI",
-          "categories": [
-            "cs.AI"
-          ],
-          "published": "2026-06-09T09:15:33+00:00",
-          "link": "https://arxiv.org/pdf/2606.10616v1",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "long-term memory in language agent systems",
-          "llm_evidence_cn": "语言智能体系统中的长期记忆",
-          "llm_evidence": "语言智能体系统中的长期记忆",
-          "canonical_evidence": "语言智能体系统中的长期记忆",
-          "llm_tldr_en": "Formulates memory retention as constrained stochastic optimization with budget and utility costs for long-horizon language agents.",
-          "llm_tldr_cn": "长期语言智能体面临有限上下文窗口，现有记忆管理忽视长期后果。该论文将记忆保留形式化为带预算和延迟代价的约束随机优化问题，直接建模不可观测性下决策的长期影响，为记忆保留提供理论框架。",
-          "llm_tldr": "长期语言智能体面临有限上下文窗口，现有记忆管理忽视长期后果。该论文将记忆保留形式化为带预算和延迟代价的约束随机优化问题，直接建模不可观测性下决策的长期影响，为记忆保留提供理论框架。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "long-term memory in language agent systems",
-          "matched_requirement_id": "req-3",
-          "selection_source": "carryover_cache",
-          "paper_id": "2606.10616v1",
           "carry_days": 1
         },
         {
@@ -604,47 +439,6 @@
           "carry_days": 1
         },
         {
-          "id": "2605.27762v2",
-          "source": "arxiv",
-          "title": "PEAM: Parametric Embodied Agent Memory through Contrastive Internalization of Experience in Minecraft",
-          "abstract": "We present PEAM, a Parametric Embodied Agent Memory framework in Minecraft that transforms agent memory from inference-time retrieval into parameter-resident skills internalized through experience. PEAM pairs a slow deliberative LLM for open-ended reasoning with a fast parametric module for reflexive execution of consolidated skills. The fast module is a multimodal Mixture-of-Experts LoRA architecture with per-category physically isolated adapters, enabling parameter-level continual learning without catastrophic forgetting. We treat failure as a first-class training signal: failure--correction trajectory pairs are internalized through a joint behavioral-cloning and contrastive objective, so the agent learns not only what succeeds but also how corrected actions differ from failed ones. To govern consolidation, PEAM introduces a parameterization-worthiness score for deciding which experience should be internalized, and a scale-free self-triggered consolidation mechanism for deciding when to internalize without task-specific hand-tuned thresholds, making the agent self-evolving as the trigger transfers across task distributions without re-tuning. Experiments in Minecraft show that PEAM improves long-horizon task performance, mitigates forgetting on previously consolidated skills, and improves parametric-versus-retrieval efficiency over retrieval-based embodied agents and parametric memory variants.",
-          "authors": [
-            "Yuchen Guo",
-            "Junli Gong",
-            "Weicheng Wang",
-            "Hongmin Cai",
-            "Yiu-ming Cheung",
-            "Weifeng Su"
-          ],
-          "primary_category": "cs.AI",
-          "categories": [
-            "cs.AI"
-          ],
-          "published": "2026-05-26T23:20:58+00:00",
-          "link": "https://arxiv.org/pdf/2605.27762v2",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "parametric embodied agent memory with memory consolidation",
-          "llm_evidence_cn": "参数化具身智能体记忆与记忆巩固",
-          "llm_evidence": "参数化具身智能体记忆与记忆巩固",
-          "canonical_evidence": "参数化具身智能体记忆与记忆巩固",
-          "llm_tldr_en": "PEAM transforms agent memory into parameter-resident skills via contrastive internalization, enabling continual learning without catastrophic forgetting in Minecraft.",
-          "llm_tldr_cn": "现有具身智能体的记忆依赖推理时检索，缺乏参数化巩固。本文提出PEAM，在Minecraft中将记忆通过经验内化为参数化技能。采用多模态MoE-LoRA架构，每类技能有物理隔离的适配器，实现参数级持续学习而不遗忘。将失败-纠正轨迹对通过联合行为克隆和对比目标内化。实验表明，PEAM显著提升了零样本泛化和任务完成率，展示了参数化记忆的优势。",
-          "llm_tldr": "现有具身智能体的记忆依赖推理时检索，缺乏参数化巩固。本文提出PEAM，在Minecraft中将记忆通过经验内化为参数化技能。采用多模态MoE-LoRA架构，每类技能有物理隔离的适配器，实现参数级持续学习而不遗忘。将失败-纠正轨迹对通过联合行为克隆和对比目标内化。实验表明，PEAM显著提升了零样本泛化和任务完成率，展示了参数化记忆的优势。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "memory consolidation in autonomous agents",
-          "matched_requirement_id": "req-7",
-          "selection_source": "carryover_cache",
-          "paper_id": "2605.27762v2",
-          "carry_days": 1
-        },
-        {
           "id": "2606.03463v1",
           "source": "arxiv",
           "title": "DMF: A Deterministic Memory Framework for Conversational AI Agents",
@@ -716,6 +510,262 @@
           "matched_requirement_id": "req-3",
           "selection_source": "carryover_cache",
           "paper_id": "2605.30771v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.12852v1",
+          "source": "arxiv",
+          "title": "WISE: A Long-Horizon Agent in Minecraft with Why-Which Reasoning",
+          "abstract": "Rapid advances have been made in developing general-purpose embodied agent in environments like Minecraft through the adoption of LLM-augmented hierarchical approaches. Despite their promise, low-level controllers often become performance bottlenecks due to repeated execution failures. We argue that a key limitation is not only the lack of episodic memory, but also the decoupling of \\textit{what-where-when} memory from \\textit{which-why} reasoning. To address this, we propose \\textbf{WISE} (Which-Why Informed Semantic Explorer), a long-horizon agent framework with an enhanced low-level controller equipped with a Causal Event Graph that augments episodic memory with explicit causal structure linking observations to task relevance. Unlike prior work such as MrSteve, which relies on feature similarity for retrieval, WISE enables robust recall under viewpoint changes and supports opportunistic task reordering through causal reasoning. Building on this memory, we propose an Opportunistic Task Scheduler that dynamically re-prioritizes subtasks when causally relevant opportunities are detected. We further equip WISE with a multi-scale progressive exploration strategy to provide spatially comprehensive observations for downstream reasoning. Experiments show that WISE largely improves task success and efficiency on long-horizon sparse tasks, particularly in settings requiring adaptive decision-making.",
+          "authors": [
+            "Renmin Cheng",
+            "Changhao Chen"
+          ],
+          "primary_category": "cs.AI",
+          "categories": [
+            "cs.AI"
+          ],
+          "published": "2026-06-11T03:35:02+00:00",
+          "link": "https://arxiv.org/pdf/2606.12852v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "episodic memory with causal reasoning",
+          "llm_evidence_cn": "结合因果推理的情节记忆",
+          "llm_evidence": "结合因果推理的情节记忆",
+          "canonical_evidence": "结合因果推理的情节记忆",
+          "llm_tldr_en": "Proposes WISE agent with causal event graph augmenting episodic memory for better long-horizon reasoning.",
+          "llm_tldr_cn": "Minecraft中长视野智能体常因低层控制器失败和记忆与推理脱节而受限。本文提出WISE框架，通过因果事件图增强情节记忆，显式链接观察与任务相关性。实验表明该方法显著提升了低层控制器的成功率。该工作展示了将因果推理融入情节记忆的有效性。",
+          "llm_tldr": "Minecraft中长视野智能体常因低层控制器失败和记忆与推理脱节而受限。本文提出WISE框架，通过因果事件图增强情节记忆，显式链接观察与任务相关性。实验表明该方法显著提升了低层控制器的成功率。该工作展示了将因果推理融入情节记忆的有效性。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "episodic memory for intelligent agents",
+          "matched_requirement_id": "req-5",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.12852v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.12400v1",
+          "source": "arxiv",
+          "title": "Doc-to-Atom: Learning to Compile and Compose Memory Atoms",
+          "abstract": "Long input sequences are central to document understanding and multi-step reasoning in Large Language Models, yet the quadratic cost of attention makes inference both memory-intensive and slow. Context distillation mitigates this by compressing contextual information into model parameters, and recent work such as Doc-to-LoRA amortizes context distillation into a single forward pass that generates one LoRA adapter per document. However, producing a single monolithic adapter for all queries leads to irrelevant-query interference, limited compositional recall, and poor scalability to long-document reasoning. To address these challenges, we propose Doc-to-Atom (Doc2Atom), a compositional parametric memory framework that decomposes each document into semantically typed knowledge atoms. Each atom is compiled into an independent micro-LoRA adapter and a provenance retrieval key. At inference time, a lightweight query router selects and assembles only the relevant atoms into a query-specific adapter, which is then injected into a frozen base model. The entire system is trained end-to-end through a multi-objective distillation framework. Experiments on six diverse QA benchmarks demonstrate that Doc2Atom outperforms Doc-to-LoRA baselines while reducing the memory cost of document internalization.",
+          "authors": [
+            "Xingjian Diao",
+            "Wenbo Li",
+            "Yashas Malur Saidutta",
+            "Avinash Amballa",
+            "Lazar Valkov",
+            "Srinivas Chappidi"
+          ],
+          "primary_category": "cs.CL",
+          "categories": [
+            "cs.CL",
+            "cs.IR"
+          ],
+          "published": "2026-06-10T17:58:20+00:00",
+          "link": "https://arxiv.org/pdf/2606.12400v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "compositional parametric memory for LLMs",
+          "llm_evidence_cn": "大语言模型的组合参数记忆",
+          "llm_evidence": "大语言模型的组合参数记忆",
+          "canonical_evidence": "大语言模型的组合参数记忆",
+          "llm_tldr_en": "Proposes Doc-to-Atom, a compositional memory framework decomposing documents into typed atoms for efficient LLM inference.",
+          "llm_tldr_cn": "长输入序列导致注意力机制的高昂成本。本文提出Doc-to-Atom框架，将文档分解为语义类型的记忆原子，并通过组合方式支持高效推理。该方法避免了单一适配器的查询干扰，提升了组合回忆能力。实验证明在长文档推理中显著降低计算开销并保持准确性。该工作为LLM的紧凑记忆表示提供了新思路。",
+          "llm_tldr": "长输入序列导致注意力机制的高昂成本。本文提出Doc-to-Atom框架，将文档分解为语义类型的记忆原子，并通过组合方式支持高效推理。该方法避免了单一适配器的查询干扰，提升了组合回忆能力。实验证明在长文档推理中显著降低计算开销并保持准确性。该工作为LLM的紧凑记忆表示提供了新思路。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "memory types and mechanisms for large language model agents",
+          "matched_requirement_id": "req-8",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.12400v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.09461v1",
+          "source": "arxiv",
+          "title": "H2HMem: A Multimodal Memory Benchmark for Agents in Human-Human Interactions",
+          "abstract": "Large language model agents are increasingly deployed in human-human interaction settings, such as meeting assistants and clinical documentation systems, where they must observe conversations and retain information for downstream queries. Unlike traditional human-assistant settings, these environments are inherently multimodal, involve complex discourse phenomena such as anaphora and deixis, and contain asynchronous or conflicting information from multiple participants. However, existing memory benchmarks largely focus on single-user, text-only interactions, failing to capture these challenges. To address this gap, we introduce H2HMem, a Human-to-Human Multimodal Memory Benchmark for evaluating memory capabilities in complex human-human interactions. H2HMem includes both dyadic and multi-party conversations with multimodal information streams, and evaluates agents along three dimensions: memory recall, reasoning, and application. Experiments with advanced agents reveal substantial limitations in constructing, retaining, and utilizing memories across modalities, participants, and sessions, highlighting substantial room for improvement in next-generation LLM agents.",
+          "authors": [
+            "Shiping Zhu",
+            "Yibo Yang",
+            "Zhengyang Wang",
+            "Tiancheng Shen",
+            "Dandan Guo",
+            "Ming-Hsuan Yang"
+          ],
+          "primary_category": "cs.CL",
+          "categories": [
+            "cs.CL"
+          ],
+          "published": "2026-06-08T13:17:16+00:00",
+          "link": "https://arxiv.org/pdf/2606.09461v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "multimodal memory benchmark for agents",
+          "llm_evidence_cn": "面向智能体的多模态记忆基准",
+          "llm_evidence": "面向智能体的多模态记忆基准",
+          "canonical_evidence": "面向智能体的多模态记忆基准",
+          "llm_tldr_en": "Introduces H2HMem, a multimodal benchmark for evaluating agent memory in human-human interactions.",
+          "llm_tldr_cn": "现有记忆基准集中于单用户文本交互。本文提出H2HMem，用于评估智能体在多人多模态对话中的记忆能力，涵盖指代、异步和冲突信息等挑战。实验分析了当前模型的局限。该基准填补了智能体记忆评估的重要空白，推动领域发展。",
+          "llm_tldr": "现有记忆基准集中于单用户文本交互。本文提出H2HMem，用于评估智能体在多人多模态对话中的记忆能力，涵盖指代、异步和冲突信息等挑战。实验分析了当前模型的局限。该基准填补了智能体记忆评估的重要空白，推动领域发展。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "memory types and mechanisms for large language model agents",
+          "matched_requirement_id": "req-8",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.09461v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.10662v1",
+          "source": "arxiv",
+          "title": "Decentralized Multi-Agent Systems with Shared Context",
+          "abstract": "Multi-agent systems (MAS) can scale large language model reasoning at test time by decomposing complex problems into parallel subtasks. However, most existing MAS rely on centralized orchestration, where a main agent assigns work, collects outputs, and merges results. As the number of subtasks grows, this controller becomes a communication and integration bottleneck. We propose Decentralized Language Models (DeLM), a MAS framework that decentralizes coordination through parallel agents, a shared verified context, and a task queue. Agents asynchronously claim subtasks, read accumulated progress, perform local reasoning, and write back compact verified updates. The shared context acts as a common communication substrate, enabling agents to build on one another's verified progress without routing every update through a central controller. Empirically, DeLM improves both software-engineering test-time scaling and long-context reasoning. On SWE-bench Verified, DeLM achieves the best performance across Avg.@1, Pass@2, and Pass@4, with gains of up to 10.5 percentage points over the strongest baseline, while reducing cost per task by roughly 50%. On LongBench-v2 Multi-Doc QA, DeLM achieves the highest average accuracy across four frontier model families, improving over the strongest baseline by up to 5.7 percentage points. The code is available on our project website at https://yuzhenmao.github.io/DeLM/.",
+          "authors": [
+            "Yuzhen Mao",
+            "Azalia Mirhoseini"
+          ],
+          "primary_category": "cs.MA",
+          "categories": [
+            "cs.MA",
+            "cs.AI"
+          ],
+          "published": "2026-06-09T10:13:07+00:00",
+          "link": "https://arxiv.org/pdf/2606.10662v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "shared context for decentralized multi-agent LLM systems",
+          "llm_evidence_cn": "去中心化多智能体LLM系统中的共享上下文",
+          "llm_evidence": "去中心化多智能体LLM系统中的共享上下文",
+          "canonical_evidence": "去中心化多智能体LLM系统中的共享上下文",
+          "llm_tldr_en": "Proposes DeLM, a decentralized multi-agent framework with a shared verified context that enables agents to asynchronously read and write updates, avoiding centralized bottlenecks.",
+          "llm_tldr_cn": "现有LLM多智能体系统采用集中式编排，成为瓶颈。本文提出去中心化语言模型（DeLM），通过共享已验证上下文和任务队列，使智能体异步认领子任务、读取进展并写入更新，从而消除单一控制器瓶颈，扩展至更多智能体。",
+          "llm_tldr": "现有LLM多智能体系统采用集中式编排，成为瓶颈。本文提出去中心化语言模型（DeLM），通过共享已验证上下文和任务队列，使智能体异步认领子任务、读取进展并写入更新，从而消除单一控制器瓶颈，扩展至更多智能体。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "shared memory in multi-agent llm systems",
+          "matched_requirement_id": "req-4",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.10662v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.17016v1",
+          "source": "arxiv",
+          "title": "TokenPilot: Cache-Efficient Context Management for LLM Agents",
+          "abstract": "As LLM agents are deployed in long-horizon sessions, context accumulation drives up inference costs. Existing approaches utilize text pruning or dynamic memory eviction to minimize token footprints; however, their unconstrained sequence mutations alter layouts, introducing prefix mismatches and cache invalidation. This reveals a critical trade-off between text sparsity and prompt cache continuity. To address this, we present TokenPilot, a dual-granularity context management framework. Globally, Ingestion-Aware Compaction acts as a framework harness to stabilize prompt prefixes and eliminate open-world environmental noise at the ingestion gate. Locally, Lifecycle-Aware Eviction monitors the ongoing residual utility of context segments, enforcing a conservative batch-turn schedule to offload content segments only when task relevance expires. Experiments on PinchBench and Claw-Eval under both isolated and continuous modes demonstrate that TokenPilot reduces costs by 61% and 56% in isolated mode, and 61% and 87% in continuous mode, while maintaining competitive performance compared to prior systems. TokenPilot has been integrated into LightMem2 at https://github.com/zjunlp/LightMem2.",
+          "authors": [
+            "Buqiang Xu",
+            "Zirui Xue",
+            "Dianmou Chen",
+            "Chenyang Fu",
+            "Chiyu Wu",
+            "Caiying Huang",
+            "Chen Jiang",
+            "Jizhan Fang",
+            "Xinle Deng",
+            "Yijun Chen",
+            "Yunzhi Yao",
+            "Xuehai Wang",
+            "Jin Shang",
+            "Gong Yu",
+            "Ningyu Zhang"
+          ],
+          "primary_category": "cs.CL",
+          "categories": [
+            "cs.CL",
+            "cs.AI",
+            "cs.LG",
+            "cs.MA"
+          ],
+          "published": "2026-06-15T17:46:50+00:00",
+          "link": "https://arxiv.org/pdf/2606.17016v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "cache-efficient context management with memory eviction for LLM agents",
+          "llm_evidence_cn": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
+          "llm_evidence": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
+          "canonical_evidence": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
+          "llm_tldr_en": "TokenPilot is a dual-granularity context management framework for LLM agents that balances text sparsity and prompt cache continuity via ingestion-aware compaction and lifecycle-aware eviction.",
+          "llm_tldr_cn": "针对LLM智能体长会话中上下文累积导致推理成本高的问题，提出TokenPilot框架。它通过双粒度管理：全局的摄取感知压缩稳定前缀，局部的生命周期感知淘汰监控剩余效用。实验表明在保持性能的同时显著降低token占用和推理成本。",
+          "llm_tldr": "针对LLM智能体长会话中上下文累积导致推理成本高的问题，提出TokenPilot框架。它通过双粒度管理：全局的摄取感知压缩稳定前缀，局部的生命周期感知淘汰监控剩余效用。实验表明在保持性能的同时显著降低token占用和推理成本。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "memory types and mechanisms for large language model agents",
+          "matched_requirement_id": "req-8",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.17016v1",
+          "carry_days": 1
+        },
+        {
+          "id": "2606.12497v1",
+          "source": "arxiv",
+          "title": "$μ$VLA: On Recurrent Memory for Partially Observable Manipulation in VLA Models",
+          "abstract": "Vision-language-action (VLA) models predict chunks of future actions from the current observation, an assumption that fails under partial observability, where decisions depend on information no longer visible. Existing memory-augmented VLAs simultaneously introduce recurrence, retrieval, compression modules, auxiliary objectives, hierarchical memory, or task-specific architectural changes, so the contribution of recurrence itself remains entangled with surrounding machinery. We present a controlled isolation study of recurrence in a strong pretrained VLA backbone. Our formulation augments the transformer with a small set of learnable memory tokens carried across timesteps and updated through self-attention, trained end to end with truncated backpropagation through time, with no auxiliary losses and no architectural changes. We instantiate this as $μ$VLA, a family of OpenVLA-OFT variants parameterized by memory width m, TBPTT length K, and the memory update rule (cross-step gradients or a detached EMA), so that recurrence is the only varying factor. On MIKASA-Robo, $μ$VLA improves average success rate on five training tasks from 0.42 to 0.84 at the strongest setting and reaches 0.23 on held-out tasks with the same memory structure versus 0.07 for the memoryless baseline. On tasks requiring different memory structure, performance remains near baseline. On LIBERO, the strongest recurrent variant achieves 96.2% average success, indicating no regression under full observability. We interpret these results as a calibration of the capability envelope of minimal in-backbone recurrence, identifying the regime in which it is sufficient and the regime where additional memory structure is required. Demos and videos can be found in https://avanturist322.github.io/mu-vla/.",
+          "authors": [
+            "Egor Cherepanov",
+            "Nikita Kachaev",
+            "Daniil Zelezetsky",
+            "Aydar Bulatov",
+            "Artem Pshenitsyn",
+            "Yuri Kuratov",
+            "Alexey Skrynnik",
+            "Aleksandr I. Panov",
+            "Alexey K. Kovalev"
+          ],
+          "primary_category": "cs.LG",
+          "categories": [
+            "cs.LG",
+            "cs.RO"
+          ],
+          "published": "2026-06-10T13:26:40+00:00",
+          "link": "https://arxiv.org/pdf/2606.12497v1",
+          "tags": [
+            "keyword:agent-memory",
+            "query:agent-memory"
+          ],
+          "llm_score": 8.0,
+          "llm_evidence_en": "recurrent memory tokens for working memory in VLA agents",
+          "llm_evidence_cn": "VLA智能体中用于工作记忆的循环记忆令牌",
+          "llm_evidence": "VLA智能体中用于工作记忆的循环记忆令牌",
+          "canonical_evidence": "VLA智能体中用于工作记忆的循环记忆令牌",
+          "llm_tldr_en": "Presents a controlled isolation study of recurrence in VLA models by augmenting the transformer with learnable memory tokens across timesteps, showing improved performance under partial observability.",
+          "llm_tldr_cn": "部分可观测环境下VLA模型依赖当前观测，缺失历史信息。本文在强预训练VLA骨干中引入一组可学习记忆令牌跨步传递并通过自注意力更新，严格隔离循环贡献。实验表明即使简单循环也能显著提升部分可观测操控性能。",
+          "llm_tldr": "部分可观测环境下VLA模型依赖当前观测，缺失历史信息。本文在强预训练VLA骨干中引入一组可学习记忆令牌跨步传递并通过自注意力更新，严格隔离循环贡献。实验表明即使简单循环也能显著提升部分可观测操控性能。",
+          "llm_tags": [
+            "query:agent-memory"
+          ],
+          "matched_query_tag": "query:agent-memory",
+          "matched_query_text": "working memory mechanisms in AI",
+          "matched_requirement_id": "req-6",
+          "selection_source": "carryover_cache",
+          "paper_id": "2606.12497v1",
           "carry_days": 1
         }
       ]
