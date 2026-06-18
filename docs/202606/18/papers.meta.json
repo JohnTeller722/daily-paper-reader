@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-18",
+  "date": "2026-06-18",
+  "generated_at": "2026-06-18T21:36:11",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/18/2606.17016v1-tokenpilot-cache-efficient-context-management-for-llm-agents",
+      "section": "deep",
+      "title_en": "TokenPilot: Cache-Efficient Context Management for LLM Agents",
+      "authors": "Buqiang Xu, Zirui Xue, Dianmou Chen, Chenyang Fu, Chiyu Wu, Caiying Huang, Chen Jiang, Jizhan Fang, Xinle Deng, Yijun Chen, Yunzhi Yao, Xuehai Wang, Jin Shang, Gong Yu, Ningyu Zhang",
+      "date": "2026-06-15",
+      "pdf": "https://arxiv.org/pdf/2606.17016v1",
+      "score": "8.0",
+      "evidence": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
+      "tldr": "针对LLM智能体长会话中上下文累积导致推理成本高的问题，提出TokenPilot框架。它通过双粒度管理：全局的摄取感知压缩稳定前缀，局部的生命周期感知淘汰监控剩余效用。实验表明在保持性能的同时显著降低token占用和推理成本。",
+      "tags": "query:agent-memory",
+      "abstract_en": "As LLM agents are deployed in long-horizon sessions, context accumulation drives up inference costs. Existing approaches utilize text pruning or dynamic memory eviction to minimize token footprints; however, their unconstrained sequence mutations alter layouts, introducing prefix mismatches and cache invalidation. This reveals a critical trade-off between text sparsity and prompt cache continuity. To address this, we present TokenPilot, a dual-granularity context management framework. Globally, Ingestion-Aware Compaction acts as a framework harness to stabilize prompt prefixes and eliminate open-world environmental noise at the ingestion gate. Locally, Lifecycle-Aware Eviction monitors the ongoing residual utility of context segments, enforcing a conservative batch-turn schedule to offload content segments only when task relevance expires. Experiments on PinchBench and Claw-Eval under both isolated and continuous modes demonstrate that TokenPilot reduces costs by 61% and 56% in isolated mode, and 61% and 87% in continuous mode, while maintaining competitive performance compared to prior systems. TokenPilot has been integrated into LightMem2 at https://github.com/zjunlp/LightMem2.",
+      "source": "arxiv",
+      "selection_source": "carryover_cache"
+    }
+  ],
+  "errors": []
+}

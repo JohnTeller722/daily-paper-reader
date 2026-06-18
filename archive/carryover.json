@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-17T22:04:28.846223+00:00",
-  "updated_date": "20260617",
+  "generated_at": "2026-06-18T21:34:33.332385+00:00",
+  "updated_date": "20260618",
   "carryover_days": 9,
   "tag_states": {
     "mas-routing": {
@@ -9,63 +9,9 @@
       "items": []
     },
     "agent-memory": {
-      "updated_date": "20260617",
+      "updated_date": "20260618",
       "carryover_days": 9,
-      "items": [
-        {
-          "id": "2606.17016v1",
-          "source": "arxiv",
-          "title": "TokenPilot: Cache-Efficient Context Management for LLM Agents",
-          "abstract": "As LLM agents are deployed in long-horizon sessions, context accumulation drives up inference costs. Existing approaches utilize text pruning or dynamic memory eviction to minimize token footprints; however, their unconstrained sequence mutations alter layouts, introducing prefix mismatches and cache invalidation. This reveals a critical trade-off between text sparsity and prompt cache continuity. To address this, we present TokenPilot, a dual-granularity context management framework. Globally, Ingestion-Aware Compaction acts as a framework harness to stabilize prompt prefixes and eliminate open-world environmental noise at the ingestion gate. Locally, Lifecycle-Aware Eviction monitors the ongoing residual utility of context segments, enforcing a conservative batch-turn schedule to offload content segments only when task relevance expires. Experiments on PinchBench and Claw-Eval under both isolated and continuous modes demonstrate that TokenPilot reduces costs by 61% and 56% in isolated mode, and 61% and 87% in continuous mode, while maintaining competitive performance compared to prior systems. TokenPilot has been integrated into LightMem2 at https://github.com/zjunlp/LightMem2.",
-          "authors": [
-            "Buqiang Xu",
-            "Zirui Xue",
-            "Dianmou Chen",
-            "Chenyang Fu",
-            "Chiyu Wu",
-            "Caiying Huang",
-            "Chen Jiang",
-            "Jizhan Fang",
-            "Xinle Deng",
-            "Yijun Chen",
-            "Yunzhi Yao",
-            "Xuehai Wang",
-            "Jin Shang",
-            "Gong Yu",
-            "Ningyu Zhang"
-          ],
-          "primary_category": "cs.CL",
-          "categories": [
-            "cs.CL",
-            "cs.AI",
-            "cs.LG",
-            "cs.MA"
-          ],
-          "published": "2026-06-15T17:46:50+00:00",
-          "link": "https://arxiv.org/pdf/2606.17016v1",
-          "tags": [
-            "keyword:agent-memory",
-            "query:agent-memory"
-          ],
-          "llm_score": 8.0,
-          "llm_evidence_en": "cache-efficient context management with memory eviction for LLM agents",
-          "llm_evidence_cn": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
-          "llm_evidence": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
-          "canonical_evidence": "面向LLM智能体的缓存高效上下文管理，包含记忆淘汰",
-          "llm_tldr_en": "TokenPilot is a dual-granularity context management framework for LLM agents that balances text sparsity and prompt cache continuity via ingestion-aware compaction and lifecycle-aware eviction.",
-          "llm_tldr_cn": "针对LLM智能体长会话中上下文累积导致推理成本高的问题，提出TokenPilot框架。它通过双粒度管理：全局的摄取感知压缩稳定前缀，局部的生命周期感知淘汰监控剩余效用。实验表明在保持性能的同时显著降低token占用和推理成本。",
-          "llm_tldr": "针对LLM智能体长会话中上下文累积导致推理成本高的问题，提出TokenPilot框架。它通过双粒度管理：全局的摄取感知压缩稳定前缀，局部的生命周期感知淘汰监控剩余效用。实验表明在保持性能的同时显著降低token占用和推理成本。",
-          "llm_tags": [
-            "query:agent-memory"
-          ],
-          "matched_query_tag": "query:agent-memory",
-          "matched_query_text": "memory types and mechanisms for large language model agents",
-          "matched_requirement_id": "req-8",
-          "selection_source": "carryover_cache",
-          "paper_id": "2606.17016v1",
-          "carry_days": 2
-        }
-      ]
+      "items": []
     }
   }
 }
